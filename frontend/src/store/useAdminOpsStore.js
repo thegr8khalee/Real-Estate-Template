@@ -2,6 +2,14 @@ import { create } from 'zustand';
 import { axiosInstance } from '../lib/axios.js';
 import toast from 'react-hot-toast';
 
+const invalidateCarsCache = () => {
+  axiosInstance.cache?.invalidateByUrl?.('cars/');
+};
+
+const invalidateBlogsCache = () => {
+  axiosInstance.cache?.invalidateByUrl?.('blogs/');
+};
+
 export const useAdminOpsStore = create((set, get) => ({
   isLoading: false,
   error: null,
@@ -20,6 +28,7 @@ export const useAdminOpsStore = create((set, get) => ({
     try {
       const res = await axiosInstance.post('/admin/ops/add-car', data);
       toast.success('Car added successfully');
+      invalidateCarsCache();
       return res.data;
     } catch (error) {
       toast.error(error.response?.data?.message || error.message);
@@ -36,6 +45,7 @@ export const useAdminOpsStore = create((set, get) => ({
     try {
       const res = await axiosInstance.put(`/admin/ops/update-car/${id}`, data);
       toast.success('Car updated successfully');
+      invalidateCarsCache();
       return res.data;
     } catch (error) {
       toast.error(error.response?.data?.message || error.message);
@@ -52,6 +62,7 @@ export const useAdminOpsStore = create((set, get) => ({
     try {
       const res = await axiosInstance.delete(`/admin/ops/delete-car/${id}`);
       toast.success('Car deleted successfully');
+      invalidateCarsCache();
       return res.data;
     } catch (error) {
       toast.error(error.response?.data?.message || error.message);
@@ -68,6 +79,7 @@ export const useAdminOpsStore = create((set, get) => ({
     try {
       const res = await axiosInstance.post('/admin/ops/add-blog', data);
       toast.success('Blog added successfully');
+      invalidateBlogsCache();
       return res.data;
     } catch (error) {
       toast.error(error.response?.data?.message || error.message);
@@ -84,6 +96,7 @@ export const useAdminOpsStore = create((set, get) => ({
     try {
       const res = await axiosInstance.put(`/admin/ops/update-blog/${id}`, data);
       toast.success('Blog updated successfully');
+      invalidateBlogsCache();
       return res.data;
     } catch (error) {
       toast.error(error.response?.data?.message || error.message);
@@ -101,6 +114,7 @@ export const useAdminOpsStore = create((set, get) => ({
 
       if (res.data.success) {
         toast.success('Blog deleted successfully');
+        invalidateBlogsCache();
         return res.data;
       }
     } catch (error) {

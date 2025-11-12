@@ -8,23 +8,25 @@ import { useCarStore } from '../store/useCarStore';
 import toast from 'react-hot-toast';
 
 // Import your car type images
-import suv from '../images/suv.png';
-import mileage from '../images/mileage.png';
-import date from '../images/date.png';
-import transmission from '../images/transmission.png';
-import sedan from '../images/sedan.png';
-import hybrid from '../images/hybrid.png';
-import pickup from '../images/pickup.png';
-import sport from '../images/sport.png';
-import coupe from '../images/coupe.png';
-import convertible from '../images/convertible.png';
-import electric from '../images/electric.png';
-import gas from '../images/gas.png';
-import benz from '../images/benz.png';
-import bmw from '../images/bmw.png';
-import audi from '../images/audi.png';
-import toyota from '../images/toyota.png';
-import honda from '../images/honda.png';
+import {
+  audi,
+  benz,
+  bmw,
+  convertible,
+  coupe,
+  date,
+  electric,
+  gas,
+  honda,
+  hybrid,
+  mileage,
+  pickup,
+  sedan,
+  sport,
+  suv,
+  toyota,
+  transmission,
+} from '../config/images';
 import { useLocation, useNavigate } from 'react-router-dom';
 import CarCard from './CarCard';
 import CarList from './CarList';
@@ -52,6 +54,7 @@ const CarSearchBar = () => {
   // Filter states
   const [selectedCondition, setSelectedCondition] = useState([]);
   const [selectedBodyType, setSelectedBodyType] = useState([]);
+  const [selectedCategory, setSelectedCategory] = useState([]);
   const [selectedFuelType, setSelectedFuelType] = useState([]);
   const [selectedMake, setSelectedMake] = useState([]);
   const [selectedYear, setSelectedYear] = useState([]);
@@ -64,6 +67,16 @@ const CarSearchBar = () => {
     (_, i) => currentYear - i
   );
 
+  const categoryFilters = [
+    { id: 'luxury', label: 'Luxury' },
+    { id: 'comfort', label: 'Comfort' },
+    { id: 'sport', label: 'Sport' },
+    { id: 'suv', label: 'SUV' },
+    { id: 'budget', label: 'Budget' },
+    { id: 'pickup', label: 'Pickup' },
+    { id: 'ev', label: 'EV' },
+  ];
+
   // Format price utility for Nigerian Naira
   const formatPrice = (price) => {
     return new Intl.NumberFormat('en-NG', {
@@ -75,26 +88,24 @@ const CarSearchBar = () => {
   };
 
   // Check if any filters are active
-  const checkActiveFilters = () => {
+  // Update active filters check whenever filters or search state change
+  useEffect(() => {
     const hasFilters =
       values[0] > SLIDER_MIN ||
       values[1] < SLIDER_MAX ||
       selectedCondition.length > 0 ||
       selectedBodyType.length > 0 ||
+      selectedCategory.length > 0 ||
       selectedFuelType.length > 0 ||
       selectedMake.length > 0 ||
       selectedYear.length > 0;
 
     setHasActiveFilters(hasFilters);
-  };
-
-  // Update active filters check whenever filters change
-  useEffect(() => {
-    checkActiveFilters();
   }, [
     values,
     selectedCondition,
     selectedBodyType,
+    selectedCategory,
     selectedFuelType,
     selectedMake,
     selectedYear,
@@ -117,6 +128,14 @@ const CarSearchBar = () => {
       prev.includes(bodyType)
         ? prev.filter((b) => b !== bodyType)
         : [...prev, bodyType]
+    );
+  };
+
+  const toggleSelectCategory = (category) => {
+    setSelectedCategory((prev) =>
+      prev.includes(category)
+        ? prev.filter((c) => c !== category)
+        : [...prev, category]
     );
   };
 
@@ -183,6 +202,10 @@ const CarSearchBar = () => {
         Sport: 'sports_car',
       };
       params.bodyType = selectedBodyType.map((b) => bodyTypeMap[b]).join(',');
+    }
+
+    if (selectedCategory.length > 0) {
+      params.category = selectedCategory.join(',');
     }
 
     // Add fuel type filters
@@ -254,6 +277,7 @@ const CarSearchBar = () => {
       setValues([SLIDER_MIN, SLIDER_MAX]);
       setSelectedCondition([]);
       setSelectedBodyType([]);
+  setSelectedCategory([]);
       setSelectedFuelType([]);
       setSelectedMake([]);
       setSelectedYear([]);
@@ -275,6 +299,7 @@ const CarSearchBar = () => {
     if (values[0] > SLIDER_MIN || values[1] < SLIDER_MAX) count++;
     if (selectedCondition.length > 0) count++;
     if (selectedBodyType.length > 0) count++;
+  if (selectedCategory.length > 0) count++;
     if (selectedFuelType.length > 0) count++;
     if (selectedMake.length > 0) count++;
     if (selectedYear.length > 0) count++;
@@ -392,10 +417,10 @@ const CarSearchBar = () => {
               {/* Header */}
               <div className="flex justify-between items-center mb-4">
                 <div>
-                  <h1 className="font-semibold font-[poppins] text-lg">
+                  <h1 className="font-semibold font-inter text-lg">
                     Search Filters
                   </h1>
-                  <p className="font-[poppins] text-xs text-gray-500">
+                  <p className="font-inter text-xs text-gray-500">
                     Narrow down your search with these filters
                   </p>
                 </div>
@@ -420,7 +445,7 @@ const CarSearchBar = () => {
 
               {/* Price Range */}
               <div className="mb-6">
-                <h1 className="text-secondary font-medium font-[poppins] text-sm mb-3">
+                <h1 className="text-secondary font-medium font-inter text-sm mb-3">
                   Price Range
                 </h1>
                 <div className="pt-2">
@@ -476,7 +501,7 @@ const CarSearchBar = () => {
 
               {/* Condition */}
               <div className="mb-6">
-                <h1 className=" font-medium font-[poppins] text-sm mb-3">
+                <h1 className=" font-medium font-inter text-sm mb-3">
                   Condition
                 </h1>
                 <div className="flex flex-wrap gap-2">
@@ -500,7 +525,7 @@ const CarSearchBar = () => {
 
               {/* Body Type */}
               <div className="mb-6">
-                <h1 className="text font-medium font-[poppins] text-sm mb-3">
+                <h1 className="text font-medium font-inter text-sm mb-3">
                   Body Type
                 </h1>
                 <div className="flex overflow-x-auto w-full space-x-3 pb-2">
@@ -536,9 +561,31 @@ const CarSearchBar = () => {
                 </div>
               </div>
 
+              {/* Category */}
+              <div className="mb-6">
+                <h1 className="text font-medium font-inter text-sm mb-3">
+                  Category
+                </h1>
+                <div className="flex flex-wrap gap-2">
+                  {categoryFilters.map((category) => (
+                    <button
+                      key={category.id}
+                      className={`btn btn-sm rounded-full font-medium transition-all ${
+                        selectedCategory.includes(category.id)
+                          ? 'bg-primary text-secondary border-primary'
+                          : 'border-gray-300 text-gray-600 bg-white hover:bg-gray-50'
+                      }`}
+                      onClick={() => toggleSelectCategory(category.id)}
+                    >
+                      {category.label}
+                    </button>
+                  ))}
+                </div>
+              </div>
+
               {/* Fuel Type */}
               <div className="mb-6">
-                <h1 className="text- font-medium font-[poppins] text-sm mb-3">
+                <h1 className="text- font-medium font-inter text-sm mb-3">
                   Fuel Type
                 </h1>
                 <div className="flex gap-3">
@@ -575,7 +622,7 @@ const CarSearchBar = () => {
 
               {/* Make */}
               <div className="mb-6">
-                <h1 className="text- font-medium font-[poppins] text-sm mb-3">
+                <h1 className="text- font-medium font-inter text-sm mb-3">
                   Make
                 </h1>
                 <div className="flex overflow-x-auto w-full space-x-3 pb-2">
@@ -610,7 +657,7 @@ const CarSearchBar = () => {
 
               {/* Year */}
               <div className="mb-6">
-                <h1 className="text- font-medium font-[poppins] text-sm mb-3">
+                <h1 className="text- font-medium font-inter text-sm mb-3">
                   Year
                 </h1>
                 <div className="flex overflow-x-auto w-full space-x-2 pb-2">

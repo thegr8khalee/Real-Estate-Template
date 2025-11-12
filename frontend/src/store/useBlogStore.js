@@ -1,6 +1,12 @@
 import { create } from 'zustand';
 import { axiosInstance } from '../lib/axios.js';
 import toast from 'react-hot-toast';
+import {
+  buildCacheConfig,
+  buildAxiosCacheOptions,
+  hasCachedResponse,
+  createAxiosRequestConfig,
+} from './cacheHelpers.js';
 
 export const useBlogStore = create((set) => ({
   // State
@@ -15,10 +21,17 @@ export const useBlogStore = create((set) => ({
     totalBlogs: 0,
   },
 
-  fetchBlogs: async (params = {}) => {
-    set({ isLoading: true, error: null });
+  fetchBlogs: async (params = {}, options = {}) => {
+    const cacheOptions = buildAxiosCacheOptions(options);
+    const cacheConfig = buildCacheConfig('/blogs/get-all', params);
+    const hasCachedData = hasCachedResponse(cacheConfig, cacheOptions);
+
+    set({ isLoading: !hasCachedData, error: null });
     try {
-      const response = await axiosInstance.get(`/blogs/get-all`, { params });
+      const response = await axiosInstance.get(
+        `/blogs/get-all`,
+        createAxiosRequestConfig(cacheOptions, { params })
+      );
       const { data, currentPage, totalPages, totalBlogs } = response.data;
       set({
         blogs: data,
@@ -35,10 +48,17 @@ export const useBlogStore = create((set) => ({
     }
   },
 
-  fetchBlogById: async (id) => {
-    set({ isLoading: true, error: null });
+  fetchBlogById: async (id, options = {}) => {
+    const cacheOptions = buildAxiosCacheOptions(options);
+    const cacheConfig = buildCacheConfig(`/blogs/get/${id}`);
+    const hasCachedData = hasCachedResponse(cacheConfig, cacheOptions);
+
+    set({ isLoading: !hasCachedData, error: null });
     try {
-      const response = await axiosInstance.get(`/blogs/get/${id}`);
+      const response = await axiosInstance.get(
+        `/blogs/get/${id}`,
+        createAxiosRequestConfig(cacheOptions)
+      );
       set({ currentBlog: response.data.data });
     } catch (error) {
       console.error('Error fetching blog:', error);
@@ -51,10 +71,18 @@ export const useBlogStore = create((set) => ({
     }
   },
 
-  searchBlogs: async (query) => {
-    set({ isLoading: true, error: null });
+  searchBlogs: async (query, options = {}) => {
+    const cacheOptions = buildAxiosCacheOptions(options);
+    const url = `/blogs/search?query=${encodeURIComponent(query)}`;
+    const cacheConfig = buildCacheConfig(url);
+    const hasCachedData = hasCachedResponse(cacheConfig, cacheOptions);
+
+    set({ isLoading: !hasCachedData, error: null });
     try {
-      const response = await axiosInstance.get(`/blogs/search?query=${query}`);
+      const response = await axiosInstance.get(
+        url,
+        createAxiosRequestConfig(cacheOptions)
+      );
       set({ blogs: response.data.data });
     } catch (error) {
       console.error('Error searching blogs:', error);
@@ -67,10 +95,17 @@ export const useBlogStore = create((set) => ({
     }
   },
 
-  getRelatedBlogsById: async (id) => {
-    set({ isLoading: true, error: null });
+  getRelatedBlogsById: async (id, options = {}) => {
+    const cacheOptions = buildAxiosCacheOptions(options);
+    const cacheConfig = buildCacheConfig(`/blogs/getRelated/${id}`);
+    const hasCachedData = hasCachedResponse(cacheConfig, cacheOptions);
+
+    set({ isLoading: !hasCachedData, error: null });
     try {
-      const response = await axiosInstance.get(`/blogs/getRelated/${id}`);
+      const response = await axiosInstance.get(
+        `/blogs/getRelated/${id}`,
+        createAxiosRequestConfig(cacheOptions)
+      );
       set({ relatedBlogs: response.data.data.relatedBlogs });
     } catch (error) {
       console.error('Error fetching related blogs:', error);

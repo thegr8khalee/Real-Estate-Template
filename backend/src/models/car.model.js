@@ -48,6 +48,19 @@ const Car = sequelize.define(
       ),
       allowNull: true,
     },
+    category: {
+      type: DataTypes.ENUM(
+        'luxury',
+        'comfort',
+        'sport',
+        'suv',
+        'budget',
+        'pickup',
+        'ev'
+      ),
+      allowNull: false,
+      defaultValue: 'budget',
+    },
     fuelType: {
       type: DataTypes.ENUM(
         'gasoline',
@@ -247,6 +260,9 @@ const Car = sequelize.define(
       },
       {
         fields: ['bodyType'],
+      },
+      {
+        fields: ['category'],
       },
     ],
   }

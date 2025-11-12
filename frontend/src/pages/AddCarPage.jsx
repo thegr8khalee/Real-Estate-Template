@@ -17,6 +17,7 @@ const AddCarPage = () => {
     transmission: '',
     year: '',
     bodyType: '',
+  category: '',
     engineSize: '',
     horsepower: '',
     torque: '',
@@ -65,6 +66,15 @@ const AddCarPage = () => {
     'luxury',
     'electric',
     'hybrid',
+  ];
+  const categoryOptions = [
+    'luxury',
+    'comfort',
+    'sport',
+    'suv',
+    'budget',
+    'pickup',
+    'ev',
   ];
   const drivetrainOptions = ['fwd', 'rwd', 'awd', '4wd'];
   const conditionOptions = ['new', 'used', 'clean', 'accident free'];
@@ -181,6 +191,7 @@ const AddCarPage = () => {
           tireSize: '',
           zeroToHundred: '',
           bodyType: '',
+          category: '',
           engineSize: '',
           horsepower: '',
           torque: '',
@@ -212,7 +223,7 @@ const AddCarPage = () => {
     {
       id: 1,
       title: 'Basic Info',
-      fields: ['make', 'model', 'year', 'price', 'condition'],
+      fields: ['make', 'model', 'year', 'price', 'condition', 'category'],
     },
     {
       id: 2,
@@ -307,6 +318,23 @@ const AddCarPage = () => {
                 >
                   <option value="">Select Condition</option>
                   {conditionOptions.map((option) => (
+                    <option key={option} value={option}>
+                      {option.charAt(0).toUpperCase() + option.slice(1)}
+                    </option>
+                  ))}
+                </select>
+              </div>
+              <div className="md:col-span-2">
+                <label className="label font-medium">Category *</label>
+                <select
+                  name="category"
+                  value={formData.category}
+                  onChange={handleInputChange}
+                  className="select select-bordered w-full rounded-full"
+                  required
+                >
+                  <option value="">Select Category</option>
+                  {categoryOptions.map((option) => (
                     <option key={option} value={option}>
                       {option.charAt(0).toUpperCase() + option.slice(1)}
                     </option>

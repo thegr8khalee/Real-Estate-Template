@@ -124,7 +124,7 @@ const ProfilePage = () => {
   }
 
   return (
-    <div className="pt-16 font-[poppins]">
+    <div className="pt-16 font-inter">
       <div className="container mx-auto p-4 sm:p-6 lg:p-8">
         <h1 className="text-4xl font-bold font-[inter] mb-8 text-center">
           My Profile

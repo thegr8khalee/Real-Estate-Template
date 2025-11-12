@@ -115,6 +115,7 @@ export const seedData = async () => {
       {
         make: 'Toyota',
         model: 'Camry',
+        category: 'comfort',
         year: 2024,
         price: 37000000,
         condition: 'new',
@@ -152,6 +153,7 @@ export const seedData = async () => {
       {
         make: 'Honda',
         model: 'Civic',
+        category: 'budget',
         year: 2023,
         price: 41440000,
         condition: 'new',
@@ -188,6 +190,7 @@ export const seedData = async () => {
       {
         make: 'Ford',
         model: 'F-150',
+        category: 'pickup',
         year: 2022,
         price: 66600000,
         condition: 'used',
@@ -224,6 +227,7 @@ export const seedData = async () => {
       {
         make: 'Tesla',
         model: 'Model 3',
+        category: 'ev',
         year: 2024,
         price: 59200000,
         condition: 'new',
@@ -260,6 +264,7 @@ export const seedData = async () => {
       {
         make: 'Jeep',
         model: 'Wrangler',
+        category: 'suv',
         year: 2023,
         price: 62160000,
         condition: 'new',

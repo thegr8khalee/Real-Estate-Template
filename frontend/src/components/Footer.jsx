@@ -1,12 +1,14 @@
+import branding from '../config/branding';
+
 const Footer = () => {
   return (
-    <footer className="bg-secondary text-white py-10 px-6 font-[poppins] flex flex-col justify-center items-center w-full mt-auto">
+    <footer className="bg-secondary text-white py-10 px-6 font-inter flex flex-col justify-center items-center w-full mt-auto">
       {/* Top section */}
       <div className="mb-10 md:flex w-full max-w-6xl items-center justify-between">
         <div className="w-full md:w-1/2 mb-6 md:mb-0">
           <h3 className="text-xl md:text-2xl font-semibold">Join</h3>
           <h3 className="text-2xl md:text-4xl font-semibold mb-2 font-['Microgramma_D_Extended'] text-primary">
-            Sarkin <span className="text-white">Mota</span>
+            {branding.company.name}
           </h3>
           <p className="mb-3 text-gray-300 text-xs md:text-sm">
             Receive Price Updates, Blog Notifications & More.
@@ -46,6 +48,9 @@ const Footer = () => {
           <a href="/listings" className="hover:text-primary transition-colors">
             Listings
           </a>
+          <a href="/categories" className="hover:text-primary transition-colors">
+            Categories
+          </a>
           <a href="/contact" className="hover:text-primary transition-colors">
             Contact
           </a>
@@ -55,7 +60,7 @@ const Footer = () => {
         </div>
 
         <div className="text-sm text-gray-400">
-          &copy; {new Date().getFullYear()} Sarkin Mota Automobile. All rights reserved.
+          &copy; {new Date().getFullYear()} {branding.company.legalName}. All rights reserved.
         </div>
       </div>
     </footer>

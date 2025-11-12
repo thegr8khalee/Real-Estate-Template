@@ -12,7 +12,7 @@ const BlogCard = ({ publisher, date, title, tagline, image, link }) => {
   };
   
   return (
-    <div className="min-w-60 my-4 font-[poppins]">
+    <div className="min-w-60 my-4 font-inter">
       <figure>
         <img
           src={image}

@@ -253,6 +253,17 @@ export const getCarStats = async (req, res) => {
       order: [[fn('COUNT', col('id')), 'DESC']],
     });
 
+    const carsByCategory = await Car.findAll({
+      attributes: [
+        'category',
+        [fn('COUNT', col('id')), 'count'],
+        [fn('AVG', col('price')), 'averagePrice'],
+      ],
+      where: { category: { [Op.not]: null } },
+      group: ['category'],
+      order: [[fn('COUNT', col('id')), 'DESC']],
+    });
+
     // Cars by make
     const carsByMake = await Car.findAll({
       attributes: [
@@ -315,6 +326,7 @@ export const getCarStats = async (req, res) => {
       success: true,
       data: {
         byBodyType: carsByBodyType,
+  byCategory: carsByCategory,
         byMake: carsByMake,
         priceDistribution: priceRanges,
         monthlyTrend: {

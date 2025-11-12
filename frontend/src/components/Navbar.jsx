@@ -5,7 +5,8 @@ import { Link, useNavigate, useLocation } from 'react-router-dom';
 // import { useAuthStore } from '../store/useAuthStore';
 import { useUserAuthStore } from '../store/useUserAuthStore';
 import { useAdminAuthStore } from '../store/useAdminAuthStore';
-import logo from '../images/logo.png';
+import branding from '../config/branding';
+import { logo } from '../config/images';
 
 const Navbar = ({ className = '' }) => {
   const { adminLogout } = useAdminAuthStore();
@@ -62,7 +63,7 @@ const Navbar = ({ className = '' }) => {
             >
               <MenuIcon />
             </label>
-            <div className="pl-4 space-x-4 hidden md:flex font-[poppins] text-sm text-white">
+            <div className="pl-4 space-x-4 hidden md:flex font-inter text-sm text-white">
               <Link to={'/'}>Home</Link>
               <Link to={'/listings'}>Listing</Link>
               <Link to={'/makes'}>Makes</Link>
@@ -77,8 +78,8 @@ const Navbar = ({ className = '' }) => {
               className="text-lg flex items-center justify-center sm:text-2xl font-['Microgramma_D_Extended'] text-white"
               href="/"
             >
-              <img src={logo} alt="" className='w-10 mr-2' />
-              SARKIN MOTA
+              <img src={logo} alt={branding.branding.logoAlt} className="w-10 mr-2" />
+              {branding.company.uppercaseName}
             </a>
           </div>
 

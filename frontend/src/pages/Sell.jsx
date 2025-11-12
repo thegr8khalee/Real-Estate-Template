@@ -97,10 +97,10 @@ const LearnMoreSell = () => {
             transition={{ duration: 0.6 }}
             className="text-center"
           >
-            <h1 className="text-white text-3xl font-bold font-[poppins] mb-4">
+            <h1 className="text-white text-3xl font-bold font-inter mb-4">
               How to Sell Your Car with Ease
             </h1>
-            <p className="text-gray-200 text-sm font-[poppins]">
+            <p className="text-gray-200 text-sm font-inter">
               At [Dealership Name], we believe selling your car should be fast,
               transparent, and stress-free.
             </p>
@@ -109,7 +109,7 @@ const LearnMoreSell = () => {
 
         {/* Steps Section */}
         <section className="px-4 py-8">
-          <h2 className="text-2xl font-bold font-[poppins] mb-6 text-center">
+          <h2 className="text-2xl font-bold font-inter mb-6 text-center">
             Three Easy Steps
           </h2>
           <div className="space-y-6">
@@ -129,7 +129,7 @@ const LearnMoreSell = () => {
                       {step.number}
                     </div>
                     <div className="flex-1">
-                      <h3 className="text-lg font-semibold font-[poppins] mb-2">
+                      <h3 className="text-lg font-semibold font-inter mb-2">
                         {step.title}
                       </h3>
                       <p className="text-gray-600 text-sm">
@@ -145,7 +145,7 @@ const LearnMoreSell = () => {
 
         {/* Why Choose Us */}
         <section className="bg-white py-8 px-4">
-          <h2 className="text-2xl font-bold font-[poppins] mb-6 text-center">
+          <h2 className="text-2xl font-bold font-inter mb-6 text-center">
             Why Choose Us?
           </h2>
           <div className="space-y-4">
@@ -167,7 +167,7 @@ const LearnMoreSell = () => {
 
         {/* FAQ Section */}
         <section className="py-8 px-4">
-          <h2 className="text-2xl font-bold font-[poppins] mb-6 text-center">
+          <h2 className="text-2xl font-bold font-inter mb-6 text-center">
             Frequently Asked Questions
           </h2>
           <div className="space-y-4">
@@ -184,7 +184,7 @@ const LearnMoreSell = () => {
                   onClick={() => setOpenFaq(openFaq === index ? null : index)}
                   className="w-full p-4 flex justify-between items-center text-left"
                 >
-                  <h3 className="font-semibold font-[poppins]">
+                  <h3 className="font-semibold font-inter">
                     {faq.question}
                   </h3>
                   <ChevronDown
@@ -216,7 +216,7 @@ const LearnMoreSell = () => {
         {/* CTA Section */}
         <section className="bg-secondary/70 py-12 px-4">
           <div className="text-center">
-            <h2 className="text-white text-2xl font-bold font-[poppins] mb-6">
+            <h2 className="text-white text-2xl font-bold font-inter mb-6">
               Ready to Sell?
             </h2>
             <div className="space-y-4">
@@ -259,10 +259,10 @@ const LearnMoreSell = () => {
               transition={{ duration: 0.6 }}
               className="text-center"
             >
-              <h1 className="text-white text-5xl md:text-6xl font-bold font-[poppins] mb-6">
+              <h1 className="text-white text-5xl md:text-6xl font-bold font-inter mb-6">
                 How to Sell Your Car with Ease
               </h1>
-              <p className="text-gray-200 text-lg font-[poppins] max-w-3xl mx-auto">
+              <p className="text-gray-200 text-lg font-inter max-w-3xl mx-auto">
                 At [Dealership Name], we believe selling your car should be
                 fast, transparent, and stress-free. That's why we've simplified
                 the process into three easy steps.
@@ -274,7 +274,7 @@ const LearnMoreSell = () => {
         {/* Steps Section */}
         <section className="py-16 px-4">
           <div className="max-w-6xl mx-auto">
-            <h2 className="text-4xl font-bold font-[poppins] mb-12 text-center">
+            <h2 className="text-4xl font-bold font-inter mb-12 text-center">
               Three Easy Steps
             </h2>
             <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
@@ -292,7 +292,7 @@ const LearnMoreSell = () => {
                     <div className="bg-primary text-white rounded-full w-16 h-16 flex items-center justify-center text-2xl font-bold mb-6 mx-auto">
                       {step.number}
                     </div>
-                    <h3 className="text-xl font-semibold font-[poppins] mb-4 text-center">
+                    <h3 className="text-xl font-semibold font-inter mb-4 text-center">
                       {step.title}
                     </h3>
                     <p className="text-gray-600 text-center">
@@ -308,7 +308,7 @@ const LearnMoreSell = () => {
         {/* Why Choose Us */}
         <section className="bg-white py-16 px-4">
           <div className="max-w-6xl mx-auto">
-            <h2 className="text-4xl font-bold font-[poppins] mb-12 text-center">
+            <h2 className="text-4xl font-bold font-inter mb-12 text-center">
               Why Choose Us?
             </h2>
             <div className="grid grid-cols-1 md:grid-cols-2 gap-6 max-w-4xl mx-auto">
@@ -335,7 +335,7 @@ const LearnMoreSell = () => {
         {/* FAQ Section */}
         <section className="py-16 px-4">
           <div className="max-w-4xl mx-auto">
-            <h2 className="text-4xl font-bold font-[poppins] mb-12 text-center">
+            <h2 className="text-4xl font-bold font-inter mb-12 text-center">
               Frequently Asked Questions
             </h2>
             <div className="space-y-4">
@@ -352,7 +352,7 @@ const LearnMoreSell = () => {
                     onClick={() => setOpenFaq(openFaq === index ? null : index)}
                     className="w-full p-6 flex justify-between items-center text-left hover:bg-gray-50 transition-colors"
                   >
-                    <h3 className="font-semibold font-[poppins] text-lg">
+                    <h3 className="font-semibold font-inter text-lg">
                       {faq.question}
                     </h3>
                     <ChevronDown
@@ -386,7 +386,7 @@ const LearnMoreSell = () => {
         {/* CTA Section */}
         <section className="bg-secondary/70 py-20 px-4">
           <div className="max-w-4xl mx-auto text-center">
-            <h2 className="text-white text-4xl font-bold font-[poppins] mb-8">
+            <h2 className="text-white text-4xl font-bold font-inter mb-8">
               Ready to Sell?
             </h2>
             <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-8">

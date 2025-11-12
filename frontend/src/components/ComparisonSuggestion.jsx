@@ -1,9 +1,7 @@
 import { Link } from 'react-router-dom';
 import { ArrowUpRight } from 'lucide-react';
 
-import electric from '../images/electric.png';
-import gas from '../images/gas.png';
-import hybrid from '../images/hybrid.png';
+import { electric, gas, hybrid } from '../config/images';
 
 const CarCardSuggestion = ({
   image,

@@ -14,12 +14,9 @@ import {
 import { motion, AnimatePresence } from 'framer-motion';
 import { useNavigate, useLocation, useSearchParams } from 'react-router-dom';
 import { useCarStore } from '../store/useCarStore';
-import mileage from '../images/mileage.png';
-import transmission from '../images/transmission.png';
-import date from '../images/date.png';
-import gas from '../images/gas.png';
 import CarCard from '../components/CarCard';
 import CarCardSuggestion from '../components/ComparisonSuggestion';
+import { date, gas, mileage, transmission } from '../config/images';
 
 const CompareCars = () => {
   const navigate = useNavigate();
@@ -183,7 +180,7 @@ const CompareCars = () => {
   }
 
   return (
-    <div className="min-h-screen bg-base-200 font-[poppins]">
+    <div className="min-h-screen bg-base-200 font-inter">
       <div className="bg-secondary h-16 w-full sticky top-0 z-50"></div>
 
       <div className="max-w-7xl mx-auto px-4 py-8">

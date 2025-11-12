@@ -1,4 +1,5 @@
 import axios from 'axios';
+import { setupAxiosCache } from './httpCache.js';
 
 export const axiosInstance = axios.create({
   baseURL:
@@ -9,4 +10,8 @@ export const axiosInstance = axios.create({
   headers: {
     'Content-Type': 'application/json',
   },
+});
+
+setupAxiosCache(axiosInstance, {
+  ttl: 1000 * 60 * 5,
 });

@@ -2,13 +2,16 @@ import React, { useState } from 'react';
 import { motion } from 'framer-motion';
 import { Search, Filter, ArrowRight, ArrowUpRight } from 'lucide-react';
 
-// Import your make images
-import benz from '../images/benz.png';
-import bmw from '../images/bmw.png';
-import audi from '../images/audi.png';
-import toyota from '../images/toyota.png';
-import honda from '../images/honda.png';
 import { useNavigate } from 'react-router-dom';
+import MakeCard from '../components/MakeCard';
+import {
+  audi,
+  benz,
+  bmw,
+  honda,
+  mercedes,
+  toyota,
+} from '../config/images';
 
 const Makes = () => {
   const [searchQuery, setSearchQuery] = useState('');
@@ -24,7 +27,7 @@ const Makes = () => {
     {
       name: 'Mercedes-Benz',
       slug: 'mercedes',
-      src: benz,
+      src: mercedes,
       category: 'luxury',
       models: 45,
       description: 'Premium German engineering and luxury vehicles',
@@ -77,16 +80,10 @@ const Makes = () => {
       selectedCategory === 'all' || make.category === selectedCategory;
     return matchesSearch && matchesCategory;
   });
-
-  const handleMakeClick = (slug) => {
-    // Handle navigation to make detail page
-    console.log('Navigate to:', slug);
-  };
-
   return (
     <div className="min-h-screen bg-white">
       {/* Hero Section */}
-      <section className="w-full bg-gradient-to-b from-gray-50 to-white py-20">
+      <section className="w-full bg-gradient-to-b from-gray-50 to-white pt-26">
         <motion.div
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
@@ -96,7 +93,7 @@ const Makes = () => {
           {/* <div className="inline-block p-2 px-6 rounded-full border border-gray-300 mb-6">
             <span className="text-sm text-gray-800">Vehicle Makes</span>
           </div> */}
-          <h1 className="text-4xl md:text-5xl lg:text-6xl font-bold mb-6">
+          <h1 className="text-4xl md:text-5xl lg:text-6xl font-medium mb-6">
             Explore Our Top Makes
           </h1>
           <p className="text-xl text-gray-600 max-w-2xl mx-auto">
@@ -124,14 +121,14 @@ const Makes = () => {
 
             {/* Category Filter */}
             <div className="flex gap-2 items-center">
-              <Filter className="text-secondary size-5" />
+              {/* <Filter className="text-secondary size-5" /> */}
               {categories.map((category) => (
                 <button
                   key={category.id}
                   onClick={() => setSelectedCategory(category.id)}
                   className={`px-4 py-2 rounded-full font-medium transition ${
                     selectedCategory === category.id
-                      ? 'bg-primary text-secondary'
+                      ? 'bg-primary text-white'
                       : 'bg-gray-100'
                   }`}
                 >
@@ -153,7 +150,7 @@ const Makes = () => {
               </p>
             </div>
           ) : (
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+            <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
               {filteredMakes.map((make, index) => (
                 <motion.button
                 onClick={() => selectMake(make.slug)}
@@ -162,38 +159,9 @@ const Makes = () => {
                   animate={{ opacity: 1, y: 0 }}
                   transition={{ duration: 0.5, delay: index * 0.1 }}
                   // onClick={() => handleMakeClick(make.slug)}
-                  className="group bg-white border border-gray-200 rounded-2xl p-6 hover:shadow-xl transition-all duration-300 cursor-pointer"
+                  className=""
                 >
-                  {/* Make Logo */}
-                  <div className="bg-gray-50 rounded-xl p-8 mb-6 flex items-center justify-center group-hover:bg-gray-100 transition">
-                    <img
-                      src={make.src}
-                      alt={make.name}
-                      className="w-full h-24 object-contain"
-                    />
-                  </div>
-
-                  {/* Make Info */}
-                  <div className="space-y-3">
-                    <div className="flex items-center justify-between">
-                      <h3 className="text-2xl font-bold text-gray-900">
-                        {make.name}
-                      </h3>
-                      <span className="text-sm text-gray-500 bg-gray-100 px-3 py-1 rounded-full">
-                        {make.models} models
-                      </span>
-                    </div>
-
-                    <p className="text-gray-600">{make.description}</p>
-
-                    {/* View Button */}
-                    {/* <button 
-                    onClick={() => selectMake(make.slug)}
-                    className="flex items-center gap-2 text-primary font-medium transition-all">
-                      View Models
-                      <ArrowUpRight className="size-4" />
-                    </button> */}
-                  </div>
+                 <MakeCard label={make.name} img={make.src} />
                 </motion.button>
               ))}
             </div>

@@ -21,16 +21,16 @@ import { motion, AnimatePresence } from 'framer-motion';
 
 // Using placeholder URLs for images and Breadcrumbs component
 // const Breadcrumbs = () => <div className="text-sm text-gray-500 mb-2">Home &gt; BMW &gt; M3</div>;
-import mileage from '../images/mileage.png';
-import transmission from '../images/transmission.png';
-import sedan from '../images/sedan.png';
-import engine from '../images/engine.png';
-import door from '../images/door.png';
-import cylinder from '../images/cylinder.png';
-import gas from '../images/gas.png';
-import whatsapp from '../images/whatsapp.png';
+import mileage from '/images/mileage.png';
+import transmission from '/images/transmission.png';
+import sedan from '/images/sedan.png';
+import engine from '/images/engine.png';
+import door from '/images/door.png';
+import cylinder from '/images/cylinder.png';
+import gas from '/images/gas.png';
+import whatsapp from '/images/whatsapp.png';
 import CarCard from '../components/CarCard';
-import date from '../images/date.png';
+import date from '/images/date.png';
 import { useNavigate, useParams } from 'react-router-dom';
 import { useCarStore } from '../store/useCarStore';
 import { useEffect } from 'react';
@@ -38,6 +38,7 @@ import Review from '../components/Review';
 import toast from 'react-hot-toast';
 import { useInteractStore } from '../store/useInteractStore';
 import { useUserAuthStore } from '../store/useUserAuthStore';
+import { formatPrice } from '../lib/utils';
 
 const CarDetails = () => {
   const { id } = useParams();
@@ -133,8 +134,8 @@ const CarDetails = () => {
     <svg
       xmlns="http://www.w3.org/2000/svg"
       viewBox="0 0 24 24"
-      fill={filled ? '#f0c710' : 'none'}
-      stroke="#f0c710"
+      fill={filled ? '#ff0000' : 'none'}
+      stroke="#ff0000"
       strokeWidth="1.5"
       className="size-5 transition-transform duration-200 cursor-pointer text-yellow-400"
       onClick={onClick}
@@ -285,17 +286,34 @@ const CarDetails = () => {
   }
 
   return (
-    <div className="font-[poppins] bg-base-200">
+    <div className="pt-20 font-inter bg-base-200">
       <div id="main-content mobile" className="sm:hidden w-full">
-        <div className="bg-secondary h-16 w-full sticky top-0 z-50"></div>
+        {/* <div className="bg-secondary h-16 w-full sticky top-0 z-50"></div> */}
         <div className="w-full max-w-7xl mx-auto px-4 mt-2">
           {/* <Breadcrumbs /> */}
 
           {/* New Hero Section with Image and CTAs */}
           <section
             id="hero"
-            className="grid grid-cols-1 md:grid-cols-2 gap-8 my-6"
+            className="grid grid-cols-1 md:grid-cols-2 mb-6"
           >
+            <div className="flex justify-around items-center space-x-2 mt-6">
+              <button
+                className="flex-1 btn rounded-full border-2 border-gray-300 bg-transparent text-gray-700 hover:bg-gray-200"
+                onClick={() => handleShare()}
+              >
+                <Share className="size-5 text-primary" /> Share
+              </button>
+              <button
+                onClick={handleCompareClick}
+                className="flex-1 btn rounded-full border-2 border-gray-300 bg-transparent text-gray-700 hover:bg-gray-200"
+              >
+                <ArrowUpDown className="size-5 text-primary" /> Compare
+              </button>
+              <button className="flex-1 btn rounded-full border-2 border-gray-300 bg-transparent text-gray-700 hover:bg-gray-200">
+                <Bookmark className="size-5 text-primary" /> Save
+              </button>
+            </div>
             {/* Image Gallery */}
             {car?.imageUrls && car?.imageUrls.length > 0 && (
               <div className="relative flex justify-center items-center h-[40vh]">
@@ -303,10 +321,10 @@ const CarDetails = () => {
                 <button
                   onClick={prevImage}
                   disabled={images.length <= 1}
-                  className="absolute left-2 top-1/2 -translate-y-1/2 bg-white/50 backdrop-blur-md shadow-lg border-0 rounded-full p-3 hover:scale-100 active:scale-100 transition-none"
+                  className="absolute left-2 top-1/2 -translate-y-1/2 bg-white/10 backdrop-blur-md shadow-lg border-0 rounded-full p-3 hover:scale-100 active:scale-100 transition-none"
                   aria-label="Previous Image"
                 >
-                  <ChevronLeft className="size-6" />
+                  <ChevronLeft className="size-6 text-white" />
                 </button>
 
                 {/* Current image */}
@@ -326,19 +344,34 @@ const CarDetails = () => {
                 <button
                   onClick={nextImage}
                   disabled={images.length <= 1}
-                  className="absolute right-2 top-1/2 -translate-y-1/2 bg-white/50 backdrop-blur-md shadow-lg border-0 rounded-full p-3 hover:scale-100 active:scale-100 transition-none"
+                  className="absolute right-2 top-1/2 -translate-y-1/2 bg-white/10 backdrop-blur-md shadow-lg border-0 rounded-full p-3 hover:scale-100 active:scale-100 transition-none"
                   aria-label="Next Image"
                 >
-                  <ChevronRight className="size-6" />
+                  <ChevronRight className="size-6 text-white" />
                 </button>
+              </div>
+            )}
 
-                {/* Video button */}
-                {/* <button
-                  className="absolute left-4 bottom-4 btn rounded-full shadow-lg bg-black text-white border-0"
-                  aria-label="Play Video"
-                >
-                  <Video className="size-5" /> Video
-                </button> */}
+            {/* Thumbnail Strip - Mobile */}
+            {car?.imageUrls && car?.imageUrls.length > 1 && (
+              <div className="flex gap-2 overflow-x-auto mt-3 p-1 scrollbar-hide">
+                {car.imageUrls.map((img, idx) => (
+                  <button
+                    key={idx}
+                    onClick={() => setCurrentIndex(idx)}
+                    className={`flex-shrink-0 w-20 h-16 rounded-xl overflow-hidden border-2 transition-all ${
+                      currentIndex === idx
+                        ? 'border-primary shadow-md scale-105'
+                        : 'border-gray-200 hover:border-gray-300'
+                    }`}
+                  >
+                    <img 
+                      src={img} 
+                      alt={`Thumbnail ${idx + 1}`} 
+                      className="w-full h-full object-cover"
+                    />
+                  </button>
+                ))}
               </div>
             )}
 
@@ -348,14 +381,14 @@ const CarDetails = () => {
                 <h1 className="text-xl sm:text-5xl font-medium">{car?.make}</h1>
                 <span className="text-3xl font-bold">{car?.model} </span>
                 <span className="text-3xl font-bold">{car?.year}</span>
-                <h1 className="text-2xl sm:text-3xl font-medium mt-2">
-                  N{car?.price?.toLocaleString()}{' '}
+                <h1 className="text-2xl sm:text-3xl font-medium mt-2 text-primary">
+                 {formatPrice(car?.price)}
                 </h1>
               </div>
 
-              <div className="flex flex-col sm:flex-row sm:space-x-4 space-y-4 sm:space-y-0 mt-6">
+              <div className="flex flex-col sm:flex-row sm:space-x-4 space-y-4 sm:space-y-0 mt-4">
                 <button
-                  className="btn btn-primary w-full h-15 rounded-full font-bold text-lg"
+                  className="btn btn-primary w-full h-15 rounded-xl font-bold text-lg"
                   onClick={() =>
                     document.getElementById('test_drive_modal').showModal()
                   }
@@ -363,7 +396,7 @@ const CarDetails = () => {
                   Schedule a Test Drive
                 </button>
                 <dialog id="test_drive_modal" className="modal">
-                  <div className="modal-box bg-white p-6 py-8 rounded-2xl shadow-xl">
+                  <div className="modal-box bg-white p-6 py-8 rounded-xl shadow-xl">
                     <button
                       className="btn btn-circle bg-transparent border-0 shadow-none btn-sm absolute right-2 top-2"
                       onClick={() =>
@@ -443,13 +476,13 @@ const CarDetails = () => {
                   </div>
                 </dialog>
                 <button
-                  className="btn btn-outline w-full h-15 rounded-full font-bold text-lg"
+                  className="btn btn-secondary w-full h-15 rounded-xl font-bold text-lg"
                   onClick={() => document.getElementById('Contact').showModal()}
                 >
                   Contact Us
                 </button>
                 <dialog id="Contact" className="modal">
-                  <div className="modal-box bg-white p-6 py-8 rounded-2xl shadow-xl">
+                  <div className="modal-box bg-white p-6 py-8 rounded-xl shadow-xl">
                     <button
                       className="btn btn-circle bg-transparent border-0 shadow-none btn-sm absolute right-2 top-2"
                       onClick={() => document.getElementById('Contact').close()}
@@ -539,61 +572,45 @@ const CarDetails = () => {
                 </dialog>
               </div>
 
-              <div className="flex justify-around items-center space-x-2 mt-6">
-                <button
-                  className="flex-1 btn rounded-full border-2 border-gray-300 bg-transparent text-gray-700 hover:bg-gray-200"
-                  onClick={() => handleShare()}
-                >
-                  <Share className="size-5" /> Share
-                </button>
-                <button
-                  onClick={handleCompareClick}
-                  className="flex-1 btn rounded-full border-2 border-gray-300 bg-transparent text-gray-700 hover:bg-gray-200"
-                >
-                  <ArrowUpDown className="size-5" /> Compare
-                </button>
-                <button className="flex-1 btn rounded-full border-2 border-gray-300 bg-transparent text-gray-700 hover:bg-gray-200">
-                  <Bookmark className="size-5" /> Save
-                </button>
-              </div>
+      
             </div>
           </section>
 
           {/* Specs and Tabs Section */}
-          <section className="w-full my-8">
+          <section className="w-full">
             {/* Key Specs */}
             <div className="grid grid-cols-3 gap-4 text-center">
-              <div className="p-4 rounded-xl bg-white shadow-sm flex flex-col items-center">
-                <img src={mileage} alt="Mileage" className="size-8 mb-2" />
-                <span className="text-sm md:text-base">{car?.mileage} Km</span>
+              <div className="p-2 space-x-2 rounded-xl bg-white shadow-sm flex items-center justify-center">
+                <img src={mileage} alt="Mileage" className="size-6" />
+                <span className="text-xs md:text-base text-primary">{car?.mileage} Km</span>
               </div>
-              <div className="p-4 rounded-xl bg-white shadow-sm flex flex-col items-center">
-                <img src={gas} alt="Gas" className="size-8 mb-2" />
-                <span className="text-sm md:text-base capitalize">
+              <div className="p-2 space-x-2 rounded-xl bg-white shadow-sm flex justify-center items-center">
+                <img src={gas} alt="Gas" className="size-6" />
+                <span className="text-xs md:text-base capitalize text-primary">
                   {car?.fuelType}
                 </span>
               </div>
-              <div className="p-4 rounded-xl bg-white shadow-sm flex flex-col items-center">
+              <div className="p-2 space-x-2 rounded-xl bg-white shadow-sm flex justify-center items-center">
                 <img
                   src={transmission}
                   alt="Transmission"
-                  className="size-8 mb-2"
+                  className="size-6"
                 />
-                <span className="text-sm md:text-base capitalize">
+                <span className="text-xs md:text-base capitalize text-primary">
                   {car?.transmission}
                 </span>
               </div>
             </div>
 
             {/* Tab Selectors */}
-            <div className="relative flex gap-6 mb-4 items-center justify-center w-full mt-8">
+            <div className="relative bg-base-100 shadow-xs p-2 rounded-xl flex gap-6 mb-4 items-center justify-center w-full mt-8">
               {tabs.map((tab) => (
                 <button
                   key={tab}
                   onClick={() => setActiveTab(tab)}
-                  className={`flex-1 relative p-2 text-sm md:text-base font-medium transition-colors ${
+                  className={`flex-1 relative rounded-xl p-2 text-sm md:text-base font-medium transition-colors ${
                     activeTab === tab
-                      ? 'text-secondary bg-primary/50 rounded-full'
+                      ? 'text-white bg-secondary'
                       : 'text-gray-500 hover:text-primary'
                   }`}
                 >
@@ -795,98 +812,6 @@ const CarDetails = () => {
           </section>
 
           {/* Consolidated Forms Section */}
-          <section
-            id="forms"
-            className="grid grid-cols-1 lg:grid-cols-2 gap-8 my-8"
-          >
-            {/* Installment Calculator */}
-            <div className="bg-white p-6 py-8 rounded-2xl shadow-xl">
-              <h2 className="text-2xl font-semibold mb-4">
-                Installment Calculator
-              </h2>
-              <form action="" className="space-y-4">
-                <div className="relative">
-                  <input
-                    type="number"
-                    name="price"
-                    value={car?.price}
-                    // onChange={handleCalcChange}
-                    className="peer w-full px-3 pt-6 pb-2 text-lg font-medium border border-gray-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-primary focus:border-primary transition-all duration-200"
-                    placeholder=" "
-                  />
-                  <label
-                    htmlFor="price"
-                    className={`absolute left-3 transition-all duration-300  peer-placeholder-shown:top-4 peer-placeholder-shown:text-base peer-focus:top-2 peer-focus:text-xs peer-focus:text-primary top-2 text-xs text-primary`}
-                  >
-                    Car Price (N)
-                  </label>
-                </div>
-                <div className="relative">
-                  <input
-                    type="number"
-                    name="years"
-                    value={calcFormData.years}
-                    onChange={handleCalcChange}
-                    className="peer w-full px-3 pt-6 pb-2 text-lg font-medium border border-gray-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-primary focus:border-primary transition-all duration-200"
-                    placeholder=" "
-                  />
-                  <label
-                    htmlFor="years"
-                    className={`absolute left-3 transition-all duration-300 text-gray-400 peer-placeholder-shown:top-4 peer-placeholder-shown:text-base peer-focus:top-2 peer-focus:text-xs peer-focus:text-primary ${
-                      calcFormData.years && 'top-2 text-xs text-primary'
-                    }`}
-                  >
-                    Payment Period (Years)
-                  </label>
-                </div>
-                <div className="relative">
-                  <input
-                    type="number"
-                    name="downPayment"
-                    value={calcFormData.downPayment}
-                    onChange={handleCalcChange}
-                    className="peer w-full px-3 pt-6 pb-2 text-lg font-medium border border-gray-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-primary focus:border-primary transition-all duration-200"
-                    placeholder=" "
-                  />
-                  <label
-                    htmlFor="downPayment"
-                    className={`absolute left-3 transition-all duration-300 text-gray-400 peer-placeholder-shown:top-4 peer-placeholder-shown:text-base peer-focus:top-2 peer-focus:text-xs peer-focus:text-primary ${
-                      calcFormData.downPayment && 'top-2 text-xs text-primary'
-                    }`}
-                  >
-                    Down Payment (N)
-                  </label>
-                </div>
-                {monthlyPayment !== null && (
-                  <div className="mt-6 p-4 bg-primary/10 rounded-2xl">
-                    <p className="text-sm text-gray-600">
-                      Estimated Monthly Payment
-                    </p>
-                    <p className="text-3xl font-bold">
-                      N
-                      {monthlyPayment.toLocaleString('en-NG', {
-                        maximumFractionDigits: 2,
-                      })}
-                    </p>
-                    <p className="text-xs text-gray-500 mt-2">
-                      Based on {formData.term} years with{' '}
-                      {(0.05 * 100).toFixed(1)}% annual interest
-                    </p>
-                  </div>
-                )}
-                <button
-                  onClick={(e) => {
-                    e.preventDefault();
-                    calculateInstallment();
-                  }}
-                  type="button"
-                  className="w-full h-15 mt-2 text-white btn-primary btn-lg text-lg rounded-xl font-semibold"
-                >
-                  Calculate
-                </button>
-              </form>
-            </div>
-          </section>
 
           <section id="dimensions" className="w-full my-8">
             <div className="bg-white p-6 py-8 rounded-2xl shadow-xl">
@@ -1080,7 +1005,7 @@ const CarDetails = () => {
       </div>
 
       <div id="main-content desktop" className="hidden sm:block w-full">
-        <div className="bg-secondary h-16 w-full sticky top-0 z-50"></div>
+        {/* <div className="bg-secondary h-16 w-full sticky top-0 z-50"></div> */}
         <div className="w-full max-w-5xl mx-auto px-4 mt-2">
           {/* <Breadcrumbs /> */}
 
@@ -1092,8 +1017,8 @@ const CarDetails = () => {
                 </h1>
                 <span className="text-gray-500">{car?.year}</span>
 
-                <h1 className="text-2xl font-medium text-secondary">
-                  N{car?.price?.toLocaleString()}
+                <h1 className="text-2xl font-medium text-primary">
+                  {formatPrice(car?.price)}
                 </h1>
               </div>
 
@@ -1102,26 +1027,26 @@ const CarDetails = () => {
                   className="flex-1 btn rounded-full border-2 border-gray-300 bg-transparent text-gray-700 hover:bg-gray-200"
                   onClick={() => handleShare()}
                 >
-                  <Share className="size-5" /> Share
+                  <Share className="size-5 text-primary" /> Share
                 </button>
                 <button
                   onClick={handleCompareClick}
                   className="flex-1 btn rounded-full border-2 border-gray-300 bg-transparent text-gray-700 hover:bg-gray-200"
                 >
-                  <ArrowUpDown className="size-5" /> Compare
+                  <ArrowUpDown className="size-5 text-primary " /> Compare
                 </button>
                 <button className="flex-1 btn rounded-full border-2 border-gray-300 bg-transparent text-gray-700 hover:bg-gray-200">
-                  <Bookmark className="size-5" /> Save
+                  <Bookmark className="size-5 text-primary" /> Save
                 </button>
               </div>
             </div>
             <div className="relative flex justify-center items-center my-4 h-[70vh]">
               <button
-                className="absolute left-2 top-1/2 -translate-y-1/2 bg-white/50 backdrop-blur-md shadow-lg border-0 rounded-full p-3 hover:scale-100 active:scale-100 transition-none"
+                className="absolute left-2 top-1/2 -translate-y-1/2 bg-white/10 backdrop-blur-md shadow-lg border-0 rounded-full p-3 hover:scale-100 active:scale-100 transition-none"
                 aria-label="Previous Image"
                 onClick={prevImage}
               >
-                <ChevronLeft className="size-6" />
+                <ChevronLeft className="size-6 text-white" />
               </button>
 
               <img
@@ -1131,136 +1056,82 @@ const CarDetails = () => {
               />
 
               <button
-                className="absolute right-2 top-1/2 -translate-y-1/2 bg-white/50 backdrop-blur-md shadow-lg border-0 rounded-full p-3 hover:scale-100 active:scale-100 transition-none"
+                className="absolute right-2 top-1/2 -translate-y-1/2 bg-white/10 backdrop-blur-md shadow-lg border-0 rounded-full p-3 hover:scale-100 active:scale-100 transition-none"
                 aria-label="Next Image"
                 onClick={nextImage}
               >
-                <ChevronRight className="size-6" />
+                <ChevronRight className="size-6 text-white" />
               </button>
             </div>
+
+            {/* Thumbnail Strip - Desktop */}
+            {car?.imageUrls && car?.imageUrls.length > 1 && (
+              <div className="flex gap-3 overflow-x-auto mt-4 p-2 scrollbar-hide">
+                {car.imageUrls.map((img, idx) => (
+                  <button
+                    key={idx}
+                    onClick={() => setCurrentIndex(idx)}
+                    className={`flex-shrink-0 w-24 h-20 rounded-xl overflow-hidden border-2 transition-all ${
+                      currentIndex === idx
+                        ? 'border-primary shadow-lg scale-105'
+                        : 'border-gray-200 hover:border-gray-300'
+                    }`}
+                  >
+                    <img 
+                      src={img} 
+                      alt={`Thumbnail ${idx + 1}`} 
+                      className="w-full h-full object-cover"
+                    />
+                  </button>
+                ))}
+              </div>
+            )}
           </section>
           <section id="key-specs" className="w-full my-8">
             {/* Key Specs */}
             <div className="grid grid-cols-3 gap-4 text-center">
-              <div className="p-4 rounded-xl bg-white shadow-sm flex flex-col items-center">
-                <img src={mileage} alt="Mileage" className="size-8 mb-2" />
-                <span className="text-sm md:text-base">{car?.mileage} Km</span>
+              <div className="p-2 space-x-2 rounded-xl bg-white  shadow-sm flex justify-center items-center">
+                <img src={mileage} alt="Mileage" className="size-6" />
+                <span className="text-sm md:text-base text-primary">{car?.mileage} Km</span>
               </div>
-              <div className="p-4 rounded-xl bg-white shadow-sm flex flex-col items-center">
-                <img src={gas} alt="Gas" className="size-8 mb-2" />
-                <span className="text-sm md:text-base capitalize">
+              <div className="p-2 space-x-2 rounded-xl bg-white  shadow-sm flex justify-center items-center">
+                <img src={gas} alt="Gas" className="size-6" />
+                <span className="text-sm md:text-base capitalize text-primary">
                   {car?.fuelType}
                 </span>
               </div>
-              <div className="p-4 rounded-xl bg-white shadow-sm flex flex-col items-center">
+              <div className="p-2 space-x-2 rounded-xl bg-white  shadow-sm flex justify-center items-center">
                 <img
                   src={transmission}
                   alt="Transmission"
-                  className="size-8 mb-2"
+                  className="size-6"
                 />
-                <span className="text-sm md:text-base capitalize">
+                <span className="text-sm md:text-base capitalize text-primary">
                   {car?.transmission}
                 </span>
               </div>
             </div>
 
-            <button
-              className="mt-6 btn btn-primary w-full h-15 rounded-full font-bold text-lg"
-              onClick={() => document.getElementById('Contact-1').showModal()}
-            >
-              Contact Us
-            </button>
-
-            <dialog id="Contact-1" className="modal">
-              <div className="modal-box bg-white p-6 py-8 rounded-2xl shadow-xl">
-                <button
-                  className="btn btn-circle bg-transparent border-0 shadow-none btn-sm absolute right-2 top-2"
-                  onClick={() => document.getElementById('Contact-1').close()}
-                >
-                  <X className="size-5" />
-                </button>
-                <h2 className="text-2xl font-semibold mb-4">Contact Us Now!</h2>
-                <div className="w-full flex justify-between my-4 space-x-2">
-                  <button className="btn btn-lg bg-blue-500 rounded-full w-full flex-1 shadow-none border-none">
-                    <Phone className="size-6 fill-white stroke-white" />
-                  </button>
-                  <button className="text-white btn btn-lg bg-green-500 rounded-full w-full flex-1 shadow-none border-none">
-                    <img
-                      src={whatsapp}
-                      alt="WhatsApp"
-                      className="size-6 fill-white stroke-white"
-                    />
-                  </button>
-                </div>
-                <form action="" className="space-y-4">
-                  <div className="relative">
-                    <input
-                      type="email"
-                      name="email"
-                      value={testDriveFormData.email}
-                      onChange={handleTestDriveChange}
-                      className="peer w-full px-3 pt-6 pb-2 text-lg font-medium border border-gray-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-primary focus:border-primary transition-all duration-200"
-                      placeholder=" "
-                    />
-                    <label
-                      htmlFor="name"
-                      className={`absolute left-3 transition-all duration-300 text-gray-400 peer-placeholder-shown:top-4 peer-placeholder-shown:text-base peer-focus:top-2 peer-focus:text-xs peer-focus:text-primary ${
-                        testDriveFormData.name && 'top-2 text-xs text-primary'
-                      }`}
-                    >
-                      Email
-                    </label>
-                  </div>
-                  <div className="relative">
-                    <input
-                      type="email"
-                      name="subject"
-                      value={testDriveFormData.subject}
-                      onChange={handleTestDriveChange}
-                      className="peer w-full px-3 pt-6 pb-2 text-lg font-medium border border-gray-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-primary focus:border-primary transition-all duration-200"
-                      placeholder=" "
-                    />
-                    <label
-                      htmlFor="email"
-                      className={`absolute left-3 transition-all duration-300 text-gray-400 peer-placeholder-shown:top-4 peer-placeholder-shown:text-base peer-focus:top-2 peer-focus:text-xs peer-focus:text-primary ${
-                        testDriveFormData.email && 'top-2 text-xs text-primary'
-                      }`}
-                    >
-                      Subject
-                    </label>
-                  </div>
-                  <div className="relative">
-                    <textarea
-                      name="message"
-                      value={testDriveFormData.message}
-                      onChange={handleTestDriveChange}
-                      className="peer w-full px-3 pt-6 pb-2 text-lg font-medium border border-gray-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-primary focus:border-primary transition-all duration-200"
-                      placeholder=" "
-                    />
-                    <label
-                      htmlFor="message"
-                      className={`absolute left-3 transition-all duration-300 text-gray-400 peer-placeholder-shown:top-4 peer-placeholder-shown:text-base peer-focus:top-2 peer-focus:text-xs peer-focus:text-primary ${
-                        testDriveFormData.message &&
-                        'top-2 text-xs text-primary'
-                      }`}
-                    >
-                      Message
-                    </label>
-                  </div>
+            <div className="mt-4 space-x-4 flex">
+              <button
+                className="btn btn-primary flex-1 h-15 rounded-xl font-bold text-lg"
+                onClick={() =>
+                  document.getElementById('test_drive_modal_1').showModal()
+                }
+              >
+                Schedule a Test Drive
+              </button>
+              <dialog id="test_drive_modal_1" className="modal">
+                <div className="modal-box bg-white p-6 py-8 rounded-xl shadow-xl">
                   <button
-                    type="submit"
-                    className="w-full h-15 mt-2 text-white btn-primary btn-lg text-lg rounded-xl font-semibold"
+                    className="btn btn-circle bg-transparent border-0 shadow-none btn-sm absolute right-2 top-2"
+                    onClick={() =>
+                      document.getElementById('test_drive_modal_1').close()
+                    }
                   >
-                    Send Us a Message
+                    <X className="size-5" />
                   </button>
-                </form>
-              </div>
-            </dialog>
-
-            <div className="my-4">
-              <div className="w-full flex justify-between space-x-4">
-                <div className="bg-white p-6 rounded-2xl shadow-xl w-full">
-                  <h2 className="text-xl md:text-2xl font-semibold mb-4">
+                  <h2 className="text-2xl font-semibold mb-4">
                     Schedule a Test Drive
                   </h2>
                   <form action="" className="space-y-4">
@@ -1327,122 +1198,114 @@ const CarDetails = () => {
                     </button>
                   </form>
                 </div>
-                <div className="bg-white p-6 rounded-2xl shadow-xl w-full">
-                  <h2 className="text-xl md:text-2xl font-semibold mb-4">
-                    Installment Calculator
+              </dialog>
+              <button
+                className="flex-1 btn btn-secondary w-full h-15 rounded-xl font-bold text-lg"
+                onClick={() => document.getElementById('Contact-1').showModal()}
+              >
+                Contact Us
+              </button>
+
+              <dialog id="Contact-1" className="modal">
+                <div className="modal-box bg-white p-6 py-8 rounded-xl shadow-xl">
+                  <button
+                    className="btn btn-circle bg-transparent border-0 shadow-none btn-sm absolute right-2 top-2"
+                    onClick={() => document.getElementById('Contact-1').close()}
+                  >
+                    <X className="size-5" />
+                  </button>
+                  <h2 className="text-2xl font-semibold mb-4">
+                    Contact Us Now!
                   </h2>
+                  <div className="w-full flex justify-between my-4 space-x-2">
+                    <button className="btn btn-lg bg-blue-500 rounded-full w-full flex-1 shadow-none border-none">
+                      <Phone className="size-6 fill-white stroke-white" />
+                    </button>
+                    <button className="text-white btn btn-lg bg-green-500 rounded-full w-full flex-1 shadow-none border-none">
+                      <img
+                        src={whatsapp}
+                        alt="WhatsApp"
+                        className="size-6 fill-white stroke-white"
+                      />
+                    </button>
+                  </div>
                   <form action="" className="space-y-4">
                     <div className="relative">
                       <input
-                        type="number"
-                        name="price"
-                        value={car?.price}
-                        // onChange={handleCalcChange}
+                        type="email"
+                        name="email"
+                        value={testDriveFormData.email}
+                        onChange={handleTestDriveChange}
                         className="peer w-full px-3 pt-6 pb-2 text-lg font-medium border border-gray-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-primary focus:border-primary transition-all duration-200"
                         placeholder=" "
                       />
                       <label
-                        htmlFor="price"
-                        className={`absolute left-3 transition-all duration-300 peer-placeholder-shown:top-4 peer-placeholder-shown:text-base peer-focus:top-2 peer-focus:text-xs peer-focus:text-primary top-2 text-xs text-primary`}
-                      >
-                        Car Price (N)
-                      </label>
-                    </div>
-                    <div className="relative">
-                      <input
-                        type="number"
-                        name="years"
-                        value={calcFormData.years}
-                        onChange={handleCalcChange}
-                        className="peer w-full px-3 pt-6 pb-2 text-lg font-medium border border-gray-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-primary focus:border-primary transition-all duration-200"
-                        placeholder=" "
-                      />
-                      <label
-                        htmlFor="years"
+                        htmlFor="name"
                         className={`absolute left-3 transition-all duration-300 text-gray-400 peer-placeholder-shown:top-4 peer-placeholder-shown:text-base peer-focus:top-2 peer-focus:text-xs peer-focus:text-primary ${
-                          calcFormData.years && 'top-2 text-xs text-primary'
+                          testDriveFormData.name && 'top-2 text-xs text-primary'
                         }`}
                       >
-                        Payment Period (Years)
+                        Email
                       </label>
                     </div>
                     <div className="relative">
                       <input
-                        type="number"
-                        name="downPayment"
-                        value={calcFormData.downPayment}
-                        onChange={handleCalcChange}
+                        type="email"
+                        name="subject"
+                        value={testDriveFormData.subject}
+                        onChange={handleTestDriveChange}
                         className="peer w-full px-3 pt-6 pb-2 text-lg font-medium border border-gray-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-primary focus:border-primary transition-all duration-200"
                         placeholder=" "
                       />
                       <label
-                        htmlFor="downPayment"
+                        htmlFor="email"
                         className={`absolute left-3 transition-all duration-300 text-gray-400 peer-placeholder-shown:top-4 peer-placeholder-shown:text-base peer-focus:top-2 peer-focus:text-xs peer-focus:text-primary ${
-                          calcFormData.downPayment &&
+                          testDriveFormData.email &&
                           'top-2 text-xs text-primary'
                         }`}
                       >
-                        Down Payment (N)
+                        Subject
                       </label>
                     </div>
-                    {/* {monthlyPayment !== null && (
-                      <div className="mt-6 p-4 bg-primary/10 rounded-2xl">
-                        <p className="text-sm text-gray-600">
-                          Estimated Monthly Payment
-                        </p>
-                        <p className="text-3xl font-bold text-primary">
-                          N
-                          {monthlyPayment.toLocaleString('en-NG', {
-                            maximumFractionDigits: 2,
-                          })}
-                        </p>
-                        <p className="text-xs text-gray-500 mt-2">
-                          Based on {formData.term} years with{' '}
-                          {(0.05 * 100).toFixed(1)}% annual interest
-                        </p>
-                      </div>
-                    )} */}
+                    <div className="relative">
+                      <textarea
+                        name="message"
+                        value={testDriveFormData.message}
+                        onChange={handleTestDriveChange}
+                        className="peer w-full px-3 pt-6 pb-2 text-lg font-medium border border-gray-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-primary focus:border-primary transition-all duration-200"
+                        placeholder=" "
+                      />
+                      <label
+                        htmlFor="message"
+                        className={`absolute left-3 transition-all duration-300 text-gray-400 peer-placeholder-shown:top-4 peer-placeholder-shown:text-base peer-focus:top-2 peer-focus:text-xs peer-focus:text-primary ${
+                          testDriveFormData.message &&
+                          'top-2 text-xs text-primary'
+                        }`}
+                      >
+                        Message
+                      </label>
+                    </div>
                     <button
-                      onClick={(e) => {
-                        e.preventDefault();
-                        calculateInstallment();
-                      }}
-                      type="button"
+                      type="submit"
                       className="w-full h-15 mt-2 text-white btn-primary btn-lg text-lg rounded-xl font-semibold"
                     >
-                      Calculate
+                      Send Us a Message
                     </button>
                   </form>
                 </div>
-              </div>
-              {monthlyPayment !== null && (
-                <div className="mt-6 p-4 bg-base-100 shadow-xl rounded-2xl">
-                  <p className="text-sm text-gray-600">
-                    Estimated Monthly Payment
-                  </p>
-                  <p className="text-3xl font-bold">
-                    N
-                    {monthlyPayment.toLocaleString('en-NG', {
-                      maximumFractionDigits: 2,
-                    })}
-                  </p>
-                  <p className="text-xs text-gray-500 mt-2">
-                    Based on {formData.term} years with{' '}
-                    {(0.05 * 100).toFixed(1)}% annual interest
-                  </p>
-                </div>
-              )}
+              </dialog>
             </div>
+
             <div className="md:hidden block">
               {/* Tab Selectors */}
-              <div className="relative flex gap-6 mb-4 items-center justify-center w-full mt-8">
+              <div className="shadow-xs rounded-xl p-2 bg-base-100 flex gap-6 mb-4 items-center justify-center w-full mt-8">
                 {tabs.map((tab) => (
                   <button
                     key={tab}
                     onClick={() => setActiveTab(tab)}
-                    className={`flex-1 relative p-2 text-sm md:text-base font-medium transition-colors ${
+                    className={`flex-1 relative rounded-xl p-2 text-sm md:text-base font-medium transition-colors ${
                       activeTab === tab
-                        ? 'text-secondary bg-primary/50 rounded-full'
+                        ? 'text-white bg-secondary'
                         : 'text-gray-500 hover:text-primary'
                     }`}
                   >
@@ -2026,13 +1889,13 @@ const OverallRatingDisplay = ({ overallRating }) => {
 
   if (overallRating > 0) {
     if (overallRating >= 4) {
-      strokeColor = '#f0c710'; // Green-500
+      strokeColor = '#ff0000'; // Green-500
       textColor = '#f0c710';
     } else if (overallRating >= 3) {
-      strokeColor = '#f0c710'; // Yellow-400
+      strokeColor = '#ff0000'; // Yellow-400
       textColor = '#f0c710';
     } else {
-      strokeColor = 'primary'; // Rose-400
+      strokeColor = '#ff0000'; // Rose-400
       // eslint-disable-next-line no-unused-vars
       textColor = '#f0c710';
     }

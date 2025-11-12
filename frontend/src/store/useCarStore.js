@@ -1,6 +1,12 @@
 import { create } from 'zustand';
 import { axiosInstance } from '../lib/axios.js';
 import toast from 'react-hot-toast';
+import {
+  buildCacheConfig,
+  buildAxiosCacheOptions,
+  hasCachedResponse,
+  createAxiosRequestConfig,
+} from './cacheHelpers.js';
 
 export const useCarStore = create((set) => ({
   // State
@@ -22,10 +28,17 @@ export const useCarStore = create((set) => ({
    * @param {Object} params - An object containing query parameters for filtering and pagination.
    * e.g., { page: 2, limit: 10, make: 'Toyota', year: 2023 }
    */
-  getCars: async (params = {}) => {
-    set({ isLoading: true, error: null });
+  getCars: async (params = {}, options = {}) => {
+    const cacheConfig = buildCacheConfig('cars/get-all', params);
+    const cacheOptions = buildAxiosCacheOptions(options);
+    const hasCachedData = hasCachedResponse(cacheConfig, cacheOptions);
+
+    set({ isLoading: !hasCachedData, error: null });
     try {
-      const res = await axiosInstance.get('cars/get-all', { params });
+      const res = await axiosInstance.get(
+        'cars/get-all',
+        createAxiosRequestConfig(cacheOptions, { params })
+      );
 
       // Update state with the cars and pagination data from the response
       set({
@@ -50,8 +63,8 @@ export const useCarStore = create((set) => ({
    * Searches for cars based on a single query string.
    * @param {string} query - The search term.
    */
-  search: async (params = {}) => {
-    set({ isSearching: true, error: null });
+  search: async (params = {}, options = {}) => {
+    const cacheOptions = buildAxiosCacheOptions(options);
 
     try {
       // Convert params object to URL search params
@@ -62,7 +75,16 @@ export const useCarStore = create((set) => ({
         }
       });
 
-      const response = await axiosInstance.get(`/cars/search?${searchParams.toString()}`);
+      const url = `/cars/search?${searchParams.toString()}`;
+      const cacheConfig = buildCacheConfig(url);
+      const hasCachedData = hasCachedResponse(cacheConfig, cacheOptions);
+
+      set({ isSearching: !hasCachedData, error: null });
+
+      const response = await axiosInstance.get(
+        url,
+        createAxiosRequestConfig(cacheOptions)
+      );
       const data = response.data;
 
       if (response.status === 200) {
@@ -93,10 +115,17 @@ export const useCarStore = create((set) => ({
    * Fetches a single car by its ID.
    * @param {string} id - The ID of the car to fetch.
    */
-  getCarById: async (id) => {
-    set({ isLoading: true, error: null });
+  getCarById: async (id, options = {}) => {
+    const cacheOptions = buildAxiosCacheOptions(options);
+    const cacheConfig = buildCacheConfig(`cars/get/${id}`);
+    const hasCachedData = hasCachedResponse(cacheConfig, cacheOptions);
+
+    set({ isLoading: !hasCachedData, error: null });
     try {
-      const res = await axiosInstance.get(`cars/get/${id}`);
+      const res = await axiosInstance.get(
+        `cars/get/${id}`,
+        createAxiosRequestConfig(cacheOptions)
+      );
       set({ car: res.data }); // Updated to match API response format
       return res.data;
     } catch (error) {
@@ -111,4 +140,8 @@ export const useCarStore = create((set) => ({
   },
 
   clearSearchResults: () => set({ searchResults: [] }),
+
+  invalidateCache: () => {
+    axiosInstance.cache?.invalidateByUrl?.('cars/');
+  },
 }));

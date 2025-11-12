@@ -1,5 +1,8 @@
 // lib/zohoMailService.js
 import nodemailer from 'nodemailer';
+import brandingConfig from '../config/branding.js';
+
+const primaryBrandColor = brandingConfig?.branding?.colors?.primary ?? '#FF1A1A';
 
 class ZohoMailService {
     constructor() {
@@ -13,8 +16,9 @@ class ZohoMailService {
             },
         });
 
-        this.fromEmail = process.env.ZOHO_MAIL_FROM || process.env.ZOHO_MAIL_USER;
-        this.fromName = process.env.ZOHO_MAIL_FROM_NAME || 'Your Company Name';
+    this.fromEmail = process.env.ZOHO_MAIL_FROM || process.env.ZOHO_MAIL_USER;
+    this.fromName =
+      process.env.ZOHO_MAIL_FROM_NAME || brandingConfig?.company?.name || 'Your Company Name';
     }
 
     /**
@@ -243,7 +247,7 @@ class ZohoMailService {
         <table width="600" cellpadding="0" cellspacing="0" style="background-color: #ffffff; border-radius: 8px; overflow: hidden; box-shadow: 0 2px 8px rgba(0,0,0,0.1);">
           <!-- Header -->
           <tr>
-            <td style="background-color: #FF1A1A; padding: 30px; text-align: center;">
+            <td style="background-color: ${primaryBrandColor}; padding: 30px; text-align: center;">
               <h1 style="color: #ffffff; margin: 0; font-size: 28px;">${this.fromName}</h1>
             </td>
           </tr>
@@ -283,8 +287,8 @@ class ZohoMailService {
                 You're receiving this email because you subscribed to our newsletter.
               </p>
               <p style="margin: 0; font-size: 12px; color: #999;">
-                <a href="${unsubscribeLink}" style="color: #FF1A1A; text-decoration: none;">Unsubscribe</a> | 
-                <a href="${process.env.FRONTEND_URL}" style="color: #FF1A1A; text-decoration: none;">Visit Website</a>
+                <a href="${unsubscribeLink}" style="color: ${primaryBrandColor}; text-decoration: none;">Unsubscribe</a> | 
+                <a href="${process.env.FRONTEND_URL}" style="color: ${primaryBrandColor}; text-decoration: none;">Visit Website</a>
               </p>
               <p style="margin: 15px 0 0; font-size: 12px; color: #999;">
                 © ${new Date().getFullYear()} ${this.fromName}. All rights reserved.
@@ -317,7 +321,7 @@ class ZohoMailService {
       <td align="center">
         <table width="600" cellpadding="0" cellspacing="0" style="background-color: #ffffff; border-radius: 8px; overflow: hidden;">
           <tr>
-            <td style="background-color: #FF1A1A; padding: 40px; text-align: center;">
+            <td style="background-color: ${primaryBrandColor}; padding: 40px; text-align: center;">
               <h1 style="color: #ffffff; margin: 0;">Welcome to ${this.fromName}!</h1>
             </td>
           </tr>
@@ -328,7 +332,7 @@ class ZohoMailService {
                 You're now part of our community. Get ready to receive the latest updates, 
                 exclusive content, and special offers directly to your inbox.
               </p>
-              <a href="${process.env.FRONTEND_URL}" style="display: inline-block; margin: 20px 0; padding: 15px 30px; background-color: #FF1A1A; color: #ffffff; text-decoration: none; border-radius: 5px; font-weight: bold;">
+              <a href="${process.env.FRONTEND_URL}" style="display: inline-block; margin: 20px 0; padding: 15px 30px; background-color: ${primaryBrandColor}; color: #ffffff; text-decoration: none; border-radius: 5px; font-weight: bold;">
                 Visit Our Website
               </a>
             </td>
@@ -336,7 +340,7 @@ class ZohoMailService {
           <tr>
             <td style="background-color: #f8f8f8; padding: 20px; text-align: center;">
               <p style="margin: 0; font-size: 12px; color: #999;">
-                <a href="${unsubscribeLink}" style="color: #FF1A1A;">Unsubscribe</a>
+                <a href="${unsubscribeLink}" style="color: ${primaryBrandColor};">Unsubscribe</a>
               </p>
             </td>
           </tr>
@@ -361,7 +365,7 @@ class ZohoMailService {
     <h2>Verify Your Email</h2>
     <p>Hi ${name},</p>
     <p>Please click the button below to verify your email address:</p>
-    <a href="${verificationLink}" style="display: inline-block; padding: 12px 24px; background: #FF1A1A; color: white; text-decoration: none; border-radius: 5px; margin: 20px 0;">
+  <a href="${verificationLink}" style="display: inline-block; padding: 12px 24px; background: ${primaryBrandColor}; color: white; text-decoration: none; border-radius: 5px; margin: 20px 0;">
       Verify Email
     </a>
     <p style="color: #666; font-size: 14px;">This link will expire in 24 hours.</p>
@@ -383,7 +387,7 @@ class ZohoMailService {
     <h2>Reset Your Password</h2>
     <p>Hi ${name},</p>
     <p>We received a request to reset your password. Click the button below to create a new password:</p>
-    <a href="${resetLink}" style="display: inline-block; padding: 12px 24px; background: #FF1A1A; color: white; text-decoration: none; border-radius: 5px; margin: 20px 0;">
+  <a href="${resetLink}" style="display: inline-block; padding: 12px 24px; background: ${primaryBrandColor}; color: white; text-decoration: none; border-radius: 5px; margin: 20px 0;">
       Reset Password
     </a>
     <p style="color: #666; font-size: 14px;">This link will expire in 1 hour. If you didn't request this, please ignore this email.</p>
@@ -402,13 +406,13 @@ class ZohoMailService {
 <html>
 <body style="font-family: Arial, sans-serif; background-color: #f4f4f4; padding: 20px;">
   <div style="max-width: 600px; margin: 0 auto; background: white; padding: 30px; border-radius: 8px;">
-    <h2 style="color: #FF1A1A;">Great News, ${name}!</h2>
+  <h2 style="color: ${primaryBrandColor};">Great News, ${name}!</h2>
     <p>We've reviewed your ${carDetails} and we're excited to make you an offer:</p>
     <div style="background: #f8f8f8; padding: 20px; border-radius: 5px; margin: 20px 0; text-align: center;">
-      <h1 style="color: #FF1A1A; margin: 0;">₦${offerAmount.toLocaleString()}</h1>
+  <h1 style="color: ${primaryBrandColor}; margin: 0;">₦${offerAmount.toLocaleString()}</h1>
     </div>
     <p>This is a no-obligation offer. To accept or discuss further, please contact us at your earliest convenience.</p>
-    <a href="${process.env.FRONTEND_URL}/contact" style="display: inline-block; padding: 12px 24px; background: #FF1A1A; color: white; text-decoration: none; border-radius: 5px; margin: 20px 0;">
+  <a href="${process.env.FRONTEND_URL}/contact" style="display: inline-block; padding: 12px 24px; background: ${primaryBrandColor}; color: white; text-decoration: none; border-radius: 5px; margin: 20px 0;">
       Contact Us
     </a>
   </div>

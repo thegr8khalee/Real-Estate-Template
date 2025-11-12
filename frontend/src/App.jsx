@@ -30,6 +30,8 @@ import AddStaffPage from './pages/addStaffPage';
 import EditStaffPage from './pages/editStaffPage';
 import NewBroadcastPage from './pages/newBroadcast';
 import Makes from './pages/Makes';
+import MergedNavbar from './components/MergedNav';
+import Categories from './pages/Categories';
 
 function App() {
   const { checkAuth, authUser } = useUserAuthStore();
@@ -47,7 +49,8 @@ function App() {
   return (
     <div className="flex flex-col min-h-screen">
       <ScrollToTop />
-      <Navbar className="z-100" />
+      {/* <Navbar className="z-100" /> */}
+      <MergedNavbar className="z-100" />
       <main className="flex-grow">
         <Routes>
           <Route path="/" element={<Home />} />
@@ -63,6 +66,7 @@ function App() {
           <Route path="/car/:id" element={<CarDetails />} />
           <Route path="/compare" element={<CompareCars />} />
           <Route path="/makes" element={<Makes />} />
+          <Route path="/categories" element={<Categories />} />
           <Route path="/blogs" element={<Blogs />} />
           <Route path="/blog/:id" element={<BlogDetail />} />
           <Route path="/contact" element={<Contact />} />

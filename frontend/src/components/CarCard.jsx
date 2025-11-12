@@ -1,9 +1,8 @@
 import { Link } from 'react-router-dom';
 import { ArrowUpRight } from 'lucide-react';
 
-import electric from '../images/electric.png';
-import gas from '../images/gas.png';
-import hybrid from '../images/hybrid.png';
+import { electric, gas, hybrid } from '../config/images';
+import { formatPrice } from '../lib/utils';
 
 const CarCard = ({
   image,
@@ -32,27 +31,27 @@ const CarCard = ({
   };
 
   return (
-    <Link to={link} className="card rounded-2xl bg-base-100 min-w-70 shadow-lg my-4">
+    <Link to={link} className="card rounded-none w-full bg-base-100 min-w-70 shadow-lg my-4">
       <figure>
-        <img src={image} alt={title} className="w-full h-40 object-cover" />
+        <img src={image} alt={title} className="w-full h-60 object-cover" />
       </figure>
       <div className="px-5 py-4">
-        <h2 className="card-title">{title}</h2>
-        <p className="text-gray-600 text-sm truncate whitespace-nowrap overflow-hidden">
+        <h2 className="card-title">{title} {year.value}</h2>
+        {/* <p className="text-gray-600 text-sm truncate whitespace-nowrap overflow-hidden">
           {description}
-        </p>
+        </p> */}
 
         {/* Info Grid */}
-        <div className="grid grid-cols-2 gap-4 my-4 text-sm">
+        <div className="flex w-full justify-between items-center my-4 text-xs">
           <div className="flex items-center">
-            <img src={mileage.icon} alt="Mileage" className="mr-2 size-5" />
+            <img src={mileage.icon} alt="Mileage" className="mr-2 size-4" />
             <span>{mileage.value}</span>
           </div>
           <div className="flex items-center">
             <img
               src={transmission.icon}
               alt="Transmission"
-              className="mr-2 size-5"
+              className="mr-2 size-4"
             />
             <span className="capitalize">{transmission.value}</span>
           </div>
@@ -60,21 +59,21 @@ const CarCard = ({
             <img
               src={returnFuelIcon(fuel.value)}
               alt="Fuel"
-              className="mr-2 size-5"
+              className="mr-2 size-4"
             />
             <span className="capitalize">{fuel.value}</span>
           </div>
-          <div className="flex items-center">
+          {/* <div className="flex items-center">
             <img src={year.icon} alt="Year" className="mr-2 size-5" />
             <span className="capitalize">{year.value}</span>
-          </div>
+          </div> */}
         </div>
 
         <hr className="border-t border-gray-300 my-2" />
 
         {/* Price + Link */}
         <div className="flex justify-between items-center">
-          <h1 className="font-semibold">N{price}</h1>
+          <h1 className="font-semibold text-primary">{formatPrice(price)}</h1>
           <div className="flex items-center">
             {/* <Link to={link} className="text-primary text-sm">
               View Details

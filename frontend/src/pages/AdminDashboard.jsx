@@ -71,7 +71,7 @@ const AdminDashboard = () => {
   };
 
   return (
-    <div className="pt-13 flex h-screen bg-base-300 rounded-none overflow-x-hidden font-[poppins]">
+    <div className="pt-13 flex h-screen bg-base-300 rounded-none overflow-x-hidden font-inter">
       {isSidebarOpen && (
         <div
           className="fixed inset-0 bg-black opacity-20 z-40 lg:hidden"

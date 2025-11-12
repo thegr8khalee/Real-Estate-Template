@@ -1,10 +1,13 @@
-import gas from '../images/gas.png';
 import { ChevronLeft, Loader2 } from 'lucide-react';
 import { useLocation } from 'react-router-dom'; // Add this import
-import m4 from '../images/m4.jpg';
-import mileage from '../images/mileage.png';
-import transmission from '../images/transmission.png';
-import date from '../images/date.png';
+import { motion } from 'framer-motion';
+import {
+  date,
+  gas,
+  m4,
+  mileage,
+  transmission,
+} from '../config/images';
 import CarCard2 from '../components/CarCard2';
 import { useCarStore } from '../store/useCarStore';
 import { useEffect } from 'react';
@@ -30,6 +33,8 @@ const Listings = () => {
     if (navigationState?.bodyType) {
       // Call getCars with the body type filter
       getCars({ bodyType: navigationState.bodyType });
+    } else if (navigationState?.category) {
+      getCars({ category: navigationState.category });
     } else if (navigationState?.make) {
       // Call getCars with the make filter
       getCars({ make: navigationState.make });
@@ -53,14 +58,16 @@ const Listings = () => {
     const params = { page };
     if (location.state?.bodyType) {
       params.bodyType = location.state.bodyType;
+    } else if (location.state?.category) {
+      params.category = location.state.category;
     } else if (location.state?.make) {
       params.make = location.state.make;
     }
     getCars(params);
   };
 
-  // Clear body type filter and show all cars
-  const clearBodyTypeFilter = () => {
+  // Clear navigation-applied filter and show all cars
+  const clearNavigationFilter = () => {
     // Clear the navigation state
     window.history.replaceState({}, document.title, '/listings');
     location.state = {};
@@ -84,6 +91,8 @@ const Listings = () => {
       return `Search Results (${searchResults.length})`;
     } else if (location.state?.bodyType) {
       return `${location.state.bodyType} Cars (${cars.length})`;
+    } else if (location.state?.category) {
+      return `${location.state.category} Cars (${cars.length})`;
     } else if (location.state?.make) {
       return `${location.state.make} Cars (${cars.length})`;
     } else {
@@ -102,6 +111,8 @@ const Listings = () => {
             <p className="text-gray-500 mt-2">
               {location.state?.bodyType
                 ? `No ${location.state.bodyType} cars available.`
+                : location.state?.category
+                ? `No ${location.state.category} cars available.`
                 : 'Try adjusting your search criteria.'}
             </p>
           </div>
@@ -115,23 +126,29 @@ const Listings = () => {
           {isLoading ? (
             <p>Loading cars...</p>
           ) : (
-            carsToRender.map((car) => (
-              <CarCard2
+            carsToRender.map((car, index) => (
+              <motion.div
                 key={car.id}
-                image={
-                  car.imageUrls && car.imageUrls.length > 0
-                    ? car.imageUrls[0]
-                    : m4
-                }
-                title={`${car.make} ${car.model}`}
-                description={car.description}
-                mileage={{ icon: mileage, value: `${car.mileage}km` }}
-                transmission={{ icon: transmission, value: car.transmission }}
-                fuel={{ icon: gas, value: car.fuelType }}
-                year={{ icon: date, value: car.year }}
-                price={formatPrice(car.price)}
-                link={`/car/${car.id}`}
-              />
+                initial={{ opacity: 0, y: 20 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ duration: 0.5, delay: index * 0.05 }}
+              >
+                <CarCard2
+                  image={
+                    car.imageUrls && car.imageUrls.length > 0
+                      ? car.imageUrls[0]
+                      : m4
+                  }
+                  title={`${car.make} ${car.model}`}
+                  description={car.description}
+                  mileage={{ icon: mileage, value: `${car.mileage}km` }}
+                  transmission={{ icon: transmission, value: car.transmission }}
+                  fuel={{ icon: gas, value: car.fuelType }}
+                  year={{ icon: date, value: car.year }}
+                  price={formatPrice(car.price)}
+                  link={`/car/${car.id}`}
+                />
+              </motion.div>
             ))
           )}
         </div>
@@ -140,13 +157,18 @@ const Listings = () => {
   };
 
   return (
-    <div className="font-[poppins] bg-base-200">
+    <div className="pt-26 font-inter bg-base-200">
       <div id="mobile" className="w-full">
-        <section className="w-full bg-secondary pt-16 px-4 h-40 sticky top-0 z-50">
+        {/* <section className="w-full bg-secondary pt-16 px-4 h-40 sticky top-0 z-50">
           <hr className="border-t border-gray-500" />
           <CarSearchBar />
-        </section>
-        <section className="w-full p-4">
+        </section> */}
+        <motion.section
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.6 }}
+          className="w-full p-4"
+        >
           <div className="w-full max-w-6xl mx-auto">
             <div className="w-full flex justify-between items-end">
               <h1 className="text-xl sm:text-3xl font-bold">
@@ -175,17 +197,23 @@ const Listings = () => {
                   Clear Search
                 </button>
               )}
-              {location.state?.bodyType || location.state?.make ? (
+              {location.state?.bodyType ||
+              location.state?.make ||
+              location.state?.category ? (
                 <button
-                  onClick={clearBodyTypeFilter}
+                  onClick={clearNavigationFilter}
                   className="text-primary hover:text-primary/80 font-medium text-sm"
                 >
-                  Clear {location.state.bodyType || location.state.make} Filter
+                  Clear{' '}
+                  {location.state.bodyType ||
+                    location.state.make ||
+                    location.state.category}{' '}
+                  Filter
                 </button>
               ) : null}
             </div>
           </div>
-        </section>
+        </motion.section>
         {renderCars()}
         <section className="w-full py-8 flex justify-center">
           {/* Pagination Controls */}

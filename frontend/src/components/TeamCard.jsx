@@ -34,10 +34,10 @@ const TeamCard = ({ image, name, title, description }) => {
       <div className="absolute bottom-4 left-4 z-10 w-full pr-8">
         <div className="flex w-full justify-between items-end">
           <div>
-            <h1 className="text-white font-bold text-xl font-[poppins]">
+            <h1 className="text-white font-bold text-xl font-inter">
               {name}
             </h1>
-            <p className="text-white font-medium font-[poppins]">{title}</p>
+            <p className="text-white font-medium font-inter">{title}</p>
           </div>
           <div>
             <ChevronUp className="text-white sm:hidden" />
@@ -67,11 +67,11 @@ const TeamCard = ({ image, name, title, description }) => {
             }`}
         >
           <div>
-            <h1 className="text-white font-bold text-xl font-[poppins]">
+            <h1 className="text-white font-bold text-xl font-inter">
               {name}
             </h1>
-            <p className="text-white font-medium font-[poppins]">{title}</p>
-            <p className="text-white text-sm font-[poppins] mt-2 font-light">
+            <p className="text-white font-medium font-inter">{title}</p>
+            <p className="text-white text-sm font-inter mt-2 font-light">
               {description}
             </p>
           </div>

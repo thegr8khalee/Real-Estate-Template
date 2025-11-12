@@ -18,6 +18,16 @@ export const getAllCars = async (req, res) => {
     if (req.query.engineSize)
       where.engineSize = parseFloat(req.query.engineSize);
     if (req.query.drivetrain) where.drivetrain = req.query.drivetrain;
+    if (req.query.category) {
+      const categories = req.query.category
+        .split(',')
+        .map((c) => c.trim())
+        .filter(Boolean);
+      if (categories.length > 0) {
+        where.category =
+          categories.length > 1 ? { [Op.in]: categories } : categories[0];
+      }
+    }
 
     // Now filter directly on the `condition` field
     if (req.query.condition) where.condition = req.query.condition;
@@ -76,6 +86,7 @@ export const getCarById = async (req, res) => {
           { bodyType: car.bodyType },
           { year: car.year },
           { fuelType: car.fuelType },
+          { category: car.category },
         ],
       },
       limit: 4, // Limit the number of related cars
@@ -157,6 +168,7 @@ export const Search = async (req, res) => {
       year,
       transmission,
       drivetrain,
+      category,
       page = 1,
       limit = 50,
     } = req.query;
@@ -175,6 +187,7 @@ export const Search = async (req, res) => {
         { model: { [Op.like]: `%${searchQuery}%` } },
         { description: { [Op.like]: `%${searchQuery}%` } },
         { color: { [Op.like]: `%${searchQuery}%` } },
+        { category: { [Op.like]: `%${searchQuery}%` } },
       ];
 
       if (isYear) {
@@ -218,6 +231,15 @@ export const Search = async (req, res) => {
       const drivetrains = drivetrain.split(',').map((d) => d.trim());
       whereClause.drivetrain = { [Op.in]: drivetrains };
     }
+    if (category) {
+      const categories = category
+        .split(',')
+        .map((c) => c.trim())
+        .filter(Boolean);
+      if (categories.length > 0) {
+        whereClause.category = { [Op.in]: categories };
+      }
+    }
 
     // Get all matching cars first (without limit for proper sorting)
     const { count, rows: allCars } = await Car.findAndCountAll({
@@ -234,6 +256,7 @@ export const Search = async (req, res) => {
       const model = (car.model || '').toLowerCase();
       const description = (car.description || '').toLowerCase();
       const color = (car.color || '').toLowerCase();
+  const category = (car.category || '').toLowerCase();
       const year = car.year ? car.year.toString() : '';
 
       let score = 1000; // Base score (lower is better)
@@ -256,6 +279,8 @@ export const Search = async (req, res) => {
 
       // Color relevance
       if (color.includes(term)) score -= 30;
+
+  if (category.includes(term)) score -= 40;
 
       // Boost score for newer cars (tie-breaker)
       const currentYear = new Date().getFullYear();
@@ -316,6 +341,11 @@ export const Search = async (req, res) => {
     if (year) activeFilters.year = year.split(',').map((y) => parseInt(y));
     if (transmission) activeFilters.transmission = transmission.split(',');
     if (drivetrain) activeFilters.drivetrain = drivetrain.split(',');
+    if (category)
+      activeFilters.category = category
+        .split(',')
+        .map((c) => c.trim())
+        .filter(Boolean);
 
     if (Object.keys(activeFilters).length > 0) {
       response.activeFilters = activeFilters;
@@ -340,8 +370,15 @@ export const Search = async (req, res) => {
 // Optional: Add a separate endpoint for getting filter options
 export const getFilterOptions = async (req, res) => {
   try {
-    const [makes, bodyTypes, fuelTypes, transmissions, drivetrains, years] =
-      await Promise.all([
+    const [
+      makes,
+      bodyTypes,
+      fuelTypes,
+      transmissions,
+      drivetrains,
+      years,
+      categories,
+    ] = await Promise.all([
         Car.findAll({
           attributes: ['make'],
           group: ['make'],
@@ -377,6 +414,12 @@ export const getFilterOptions = async (req, res) => {
           order: [['year', 'DESC']],
           raw: true,
         }),
+        Car.findAll({
+          attributes: ['category'],
+          group: ['category'],
+          where: { category: { [Op.not]: null } },
+          raw: true,
+        }),
       ]);
 
     // Get price range
@@ -401,6 +444,7 @@ export const getFilterOptions = async (req, res) => {
         transmissions: transmissions.map((t) => t.transmission).sort(),
         drivetrains: drivetrains.map((d) => d.drivetrain).sort(),
         years: years.map((y) => y.year),
+        categories: categories.map((c) => c.category).sort(),
         priceRange: priceRange[0] || { minPrice: 0, maxPrice: 0 },
       },
     });

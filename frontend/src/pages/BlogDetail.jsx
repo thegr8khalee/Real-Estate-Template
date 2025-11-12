@@ -16,19 +16,18 @@ import {
   MessageCircle,
 } from 'lucide-react';
 import CarCard from '../components/CarCard';
-import mileage from '../images/mileage.png';
-import transmission from '../images/transmission.png';
-import date from '../images/date.png';
-import electric from '../images/electric.png';
-import gas from '../images/gas.png';
-import hybrid from '../images/hybrid.png';
-
-// Default images - replace with your actual imports
-import ceo from '../images/ceo.jpg';
-import bmwm4 from '../images/BMWM4.png';
-import m4 from '../images/m4.jpg';
+import {
+  bmwm4,
+  ceo,
+  date,
+  gas,
+  m4,
+  mileage,
+  transmission,
+} from '../config/images';
 import { useUserAuthStore } from '../store/useUserAuthStore';
 import { useInteractStore } from '../store/useInteractStore';
+import Blog from '../components/Blog';
 
 const BlogDetail = () => {
   const { id } = useParams();
@@ -182,9 +181,9 @@ const BlogDetail = () => {
   }
 
   return (
-    <div className="font-[poppins] bg-base-200 min-h-screen">
+    <div className="pt-16 font-inter bg-base-200 min-h-screen">
       {/* Sticky Header */}
-      <section className="w-full bg-secondary pt-16 px-4 h-16 sticky top-0 z-50 shadow-sm"></section>
+      {/* <section className="w-full bg-secondary pt-16 px-4 h-16 sticky top-0 z-50 shadow-sm"></section> */}
 
       {/* Main Content */}
       <div className="w-full max-w-6xl mx-auto px-4">
@@ -445,7 +444,7 @@ const BlogDetail = () => {
                     value={commentForm.name}
                     onChange={handleCommentChange}
                     required
-                    className="peer w-full px-4 pt-6 pb-3 text-base border border-gray-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-primary focus:border-primary transition-all duration-200"
+                    className="peer w-full px-4 pt-6 pb-3 text-base border border-gray-300 rounded-none focus:outline-none focus:ring-2 focus:ring-primary focus:border-primary transition-all duration-200"
                     placeholder=" "
                   />
                   <label className="absolute left-4 text-gray-500 transition-all duration-300 pointer-events-none peer-placeholder-shown:top-4 peer-placeholder-shown:text-base peer-focus:top-2 peer-focus:text-sm peer-focus:text-primary peer-[:not(:placeholder-shown)]:top-2 peer-[:not(:placeholder-shown)]:text-sm">
@@ -461,7 +460,7 @@ const BlogDetail = () => {
                     value={commentForm.email}
                     onChange={handleCommentChange}
                     required
-                    className="peer w-full px-4 pt-6 pb-3 text-base border border-gray-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-primary focus:border-primary transition-all duration-200"
+                    className="peer w-full px-4 pt-6 pb-3 text-base border border-gray-300 rounded-none focus:outline-none focus:ring-2 focus:ring-primary focus:border-primary transition-all duration-200"
                     placeholder=" "
                   />
                   <label className="absolute left-4 text-gray-500 transition-all duration-300 pointer-events-none peer-placeholder-shown:top-4 peer-placeholder-shown:text-base peer-focus:top-2 peer-focus:text-sm peer-focus:text-primary peer-[:not(:placeholder-shown)]:top-2 peer-[:not(:placeholder-shown)]:text-sm">
@@ -477,7 +476,7 @@ const BlogDetail = () => {
                     onChange={handleCommentChange}
                     required
                     rows="4"
-                    className="peer w-full px-4 pt-6 pb-3 text-base border border-gray-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-primary focus:border-primary transition-all duration-200 resize-vertical"
+                    className="peer w-full px-4 pt-6 pb-3 text-base border border-gray-300 rounded-none focus:outline-none focus:ring-2 focus:ring-primary focus:border-primary transition-all duration-200 resize-vertical"
                     placeholder=" "
                   />
                   <label className="absolute left-4 text-gray-500 transition-all duration-300 pointer-events-none peer-placeholder-shown:top-4 peer-placeholder-shown:text-base peer-focus:top-2 peer-focus:text-sm peer-focus:text-primary peer-[:not(:placeholder-shown)]:top-2 peer-[:not(:placeholder-shown)]:text-sm">
@@ -489,7 +488,7 @@ const BlogDetail = () => {
                 <button
                   type="submit"
                   disabled={isSubmittingComment}
-                  className="btn btn-primary w-full h-12 flex items-center justify-center gap-2 text-white bg-primary hover:bg-primary/90 disabled:opacity-50 disabled:cursor-not-allowed transition rounded-xl font-semibold"
+                  className="btn btn-primary w-full h-12 flex items-center justify-center gap-2 text-white bg-primary hover:bg-primary/90 disabled:opacity-50 disabled:cursor-not-allowed transition rounded-none font-semibold"
                 >
                   {isSubmittingComment ? (
                     <>
@@ -513,14 +512,8 @@ const BlogDetail = () => {
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 overflow-x-auto">
               {relatedBlogs && relatedBlogs.length > 0 ? (
                 relatedBlogs.map((blog) => (
-                  <BlogCard
-                    key={blog.id}
-                    publisher={blog.author?.name || 'Unknown'}
-                    date={new Date(blog.createdAt).toLocaleDateString()}
-                    title={blog.title}
-                    tagline={blog.tagline}
-                    image={blog.featuredImage || m4}
-                    link={`/blog/${blog.id}`}
+                  <Blog
+                   key={blog.title} item={{ ...blog }}
                   />
                 ))
               ) : (
