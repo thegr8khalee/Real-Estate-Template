@@ -7,9 +7,9 @@ import {
   comfort,
   sport1 as sport,
   suv1 as suv,
-  pickup,
-  electric as ev,
-  sedan as budget, // Using sedan as a placeholder for budget
+  pickup1 as pickup,
+  ev,
+  budget, // Using sedan as a placeholder for budget
 } from '../config/images';
 
 const Categories = () => {
@@ -78,7 +78,8 @@ const Categories = () => {
             Explore Our Car Categories
           </h1>
           <p className="text-xl text-gray-600 max-w-2xl mx-auto">
-            Find the perfect vehicle that fits your lifestyle from our diverse range of categories.
+            Find the perfect vehicle that fits your lifestyle from our diverse
+            range of categories.
           </p>
         </motion.div>
       </section>

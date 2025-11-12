@@ -5,12 +5,12 @@ import { Search, Filter, ArrowRight, ArrowUpRight } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 import MakeCard from '../components/MakeCard';
 import {
-  audi,
+  audi1 as audi,
   benz,
-  bmw,
-  honda,
-  mercedes,
-  toyota,
+  bmw1 as bmw,
+  honda1 as honda,
+  benz1 as mercedes,
+  toyota1 as toyota,
 } from '../config/images';
 
 const Makes = () => {
@@ -150,7 +150,7 @@ const Makes = () => {
               </p>
             </div>
           ) : (
-            <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
+            <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-2 sm:gap-4">
               {filteredMakes.map((make, index) => (
                 <motion.button
                 onClick={() => selectMake(make.slug)}

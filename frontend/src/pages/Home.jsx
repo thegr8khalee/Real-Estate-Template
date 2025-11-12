@@ -344,14 +344,14 @@ const Home = () => {
             </button>
           </div>
 
-          <div className="sm:hidden grid grid-cols-2 gap-2">
+          <div className="md:hidden grid grid-cols-2 gap-2">
             <MakeCard img={benz1} label="Mercedes" />
             <MakeCard img={bmw1} label="BMW" />
             <MakeCard img={toyota1} label="Toyota" />
             <MakeCard img={honda1} label="Honda" />
           </div>
           <div
-            className="hidden sm:flex w-full overflow-x-auto flex-nowrap gap-4 snap-x snap-mandatory scrollbar-none"
+            className="hidden md:flex w-full overflow-x-auto flex-nowrap gap-4 snap-x snap-mandatory scrollbar-none"
             style={{ scrollbarWidth: 'none' }}
           >
             <MakeCard img={benz1} label="Mercedes" />
@@ -431,14 +431,14 @@ const Home = () => {
             </button>
           </div>
 
-          <div className="sm:hidden grid grid-cols-2 gap-2">
+          <div className="md:hidden grid grid-cols-2 gap-2">
             <CategoryCard img={luxury} label="Luxury" />
             <CategoryCard img={comfort} label="Comfort" />
             <CategoryCard img={sport1} label="Sport" />
             <CategoryCard img={suv1} label="SUV" />
           </div>
           <div
-            className="hidden sm:flex w-full overflow-x-auto flex-nowrap gap-4 snap-x snap-mandatory scrollbar-none"
+            className="hidden md:flex w-full overflow-x-auto flex-nowrap gap-4 snap-x snap-mandatory scrollbar-none"
             style={{ scrollbarWidth: 'none' }}
           >
             <CategoryCard img={luxury} label="Luxury" />

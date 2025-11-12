@@ -48,5 +48,8 @@ export const suv1 = `${IMAGE_BASE_PATH}/suv.jpg`;
 export const sport1 = `${IMAGE_BASE_PATH}/sport.jpg`;
 export const luxury = `${IMAGE_BASE_PATH}/luxury.webp`;
 export const comfort = `${IMAGE_BASE_PATH}/comfort.webp`;
+export const ev = `${IMAGE_BASE_PATH}/ev.webp`;
+export const budget = `${IMAGE_BASE_PATH}/budget.webp`;
+export const pickup1 = `${IMAGE_BASE_PATH}/pickup.webp`;
 
 export const imagePath = (fileName = '') => `${IMAGE_BASE_PATH}/${fileName}`;

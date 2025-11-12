@@ -3,7 +3,7 @@ import React from 'react';
 
 const MakeCard = ({ img, label }) => {
   return (
-    <div className="relative h-90 w-full aspect-4/5">
+    <div className="relative aspect-9/12 w-full">
       <img
         src={img}
         alt={label}
