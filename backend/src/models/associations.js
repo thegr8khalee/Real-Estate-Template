@@ -3,7 +3,7 @@ import { DataTypes } from 'sequelize';
 import sequelize from '../lib/db.js';
 import User from './user.model.js';
 import Admin from './admin.model.js';
-import Car from './car.model.js';
+import Property from './property.model.js';
 import Blog from './blog.model.js';
 import Comment from './comment.model.js';
 import Newsletter from './news.model.js';
@@ -35,9 +35,9 @@ Admin.hasMany(Blog, {
   onUpdate: 'CASCADE',
 });
 
-// Many-to-Many association between Blog and Car (using carIds array)
-const BlogCar = sequelize.define(
-  'BlogCar',
+// Many-to-Many association between Blog and Property (using propertyIds array)
+const BlogProperty = sequelize.define(
+  'BlogProperty',
   {
     id: {
       type: DataTypes.UUID,
@@ -51,10 +51,10 @@ const BlogCar = sequelize.define(
         key: 'id',
       },
     },
-    carId: {
+    propertyId: {
       type: DataTypes.UUID,
       references: {
-        model: 'Cars',
+        model: 'Properties',
         key: 'id',
       },
     },
@@ -64,24 +64,24 @@ const BlogCar = sequelize.define(
     indexes: [
       {
         unique: true,
-        fields: ['blogId', 'carId'],
+        fields: ['blogId', 'propertyId'],
       },
     ],
   }
 );
 
-Blog.belongsToMany(Car, {
-  through: BlogCar,
+Blog.belongsToMany(Property, {
+  through: BlogProperty,
   foreignKey: 'blogId',
-  otherKey: 'carId',
-  as: 'cars',
+  otherKey: 'propertyId',
+  as: 'properties',
   onDelete: 'CASCADE',
   onUpdate: 'CASCADE',
 });
 
-Car.belongsToMany(Blog, {
-  through: BlogCar,
-  foreignKey: 'carId',
+Property.belongsToMany(Blog, {
+  through: BlogProperty,
+  foreignKey: 'propertyId',
   otherKey: 'blogId',
   as: 'blogs',
   onDelete: 'CASCADE',
@@ -117,17 +117,17 @@ User.hasMany(Comment, {
   onUpdate: 'CASCADE',
 });
 
-// Car and Review associations
-Car.hasMany(Review, {
-  foreignKey: 'carId',
-  as: 'reviews', // This alias allows us to include reviews when querying a Car
-  onDelete: 'CASCADE', // Optional: if a Car is deleted, all its Reviews are also deleted
+// Property and Review associations
+Property.hasMany(Review, {
+  foreignKey: 'propertyId',
+  as: 'reviews', // This alias allows us to include reviews when querying a Property
+  onDelete: 'CASCADE', // Optional: if a Property is deleted, all its Reviews are also deleted
 });
 
-// A Review belongs to a Car
-Review.belongsTo(Car, {
-  foreignKey: 'carId',
-  as: 'car', // This alias allows us to include the car when querying a Review
+// A Review belongs to a Property
+Review.belongsTo(Property, {
+  foreignKey: 'propertyId',
+  as: 'property', // This alias allows us to include the property when querying a Review
 });
 
 // User and Review associations (added for dashboard functionality)
@@ -148,9 +148,9 @@ Review.belongsTo(User, {
 // Additional associations for dashboard analytics
 
 // Admin activity tracking associations (if you want to track which admin created what)
-Admin.hasMany(Car, {
-  foreignKey: 'createdBy', // You might want to add this field to Car model
-  as: 'createdCars',
+Admin.hasMany(Property, {
+  foreignKey: 'createdBy', // You might want to add this field to Property model
+  as: 'createdProperties',
   onDelete: 'SET NULL',
   onUpdate: 'CASCADE',
 });
@@ -159,7 +159,7 @@ Admin.hasMany(Car, {
 // Newsletter doesn't need direct associations since it's standalone
 
 // Export all models and the junction table
-export { User, Admin, Car, Blog, Comment, Newsletter, Review, BlogCar };
+export { User, Admin, Property, Blog, Comment, Newsletter, Review, BlogProperty };
 
 // Export a function to initialize all associations
 export const initializeAssociations = () => {
@@ -168,35 +168,35 @@ export const initializeAssociations = () => {
   // Log association summary for debugging
   console.log('Association Summary:');
   console.log('- Admin hasMany Blogs, Blogs belongsTo Admin');
-  console.log('- Blog belongsToMany Car through BlogCar');
+  console.log('- Blog belongsToMany Property through BlogProperty');
   console.log('- Blog hasMany Comments, Comment belongsTo Blog');
   console.log('- User hasMany Comments, Comment belongsTo User');
-  console.log('- Car hasMany Reviews, Review belongsTo Car');
+  console.log('- Property hasMany Reviews, Review belongsTo Property');
   console.log('- User hasMany Reviews, Review belongsTo User');
-  console.log('- Admin hasMany Cars (for tracking creator)');
+  console.log('- Admin hasMany Properties (for tracking creator)');
 };
 
 // Export models with their associations for easy access
 export const Models = {
   User,
   Admin,
-  Car,
+  Property,
   Blog,
   Comment,
   Newsletter,
   Review,
-  BlogCar,
+  BlogProperty,
 };
 
 export default {
   User,
   Admin,
-  Car,
+  Property,
   Blog,
   Comment,
   Newsletter,
   Review,
-  BlogCar,
+  BlogProperty,
   initializeAssociations,
   Models,
 };

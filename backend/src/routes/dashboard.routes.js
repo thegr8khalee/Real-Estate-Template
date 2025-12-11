@@ -1,7 +1,7 @@
 import express from 'express';
 import {
   getDashboardStats,
-  getCarStats,
+  getPropertyStats,
   getBlogStats,
   getUserStats,
   getContentModerationStats,
@@ -33,7 +33,7 @@ router.get(
 );
 
 // Detailed stats endpoints - role-based access
-router.get('/cars/stats', protectAdminRoute, requireRole(['super_admin', 'editor']), getCarStats);
+router.get('/properties/stats', protectAdminRoute, requireRole(['super_admin', 'editor']), getPropertyStats);
 router.get(
   '/blogs/stats',
   protectAdminRoute,

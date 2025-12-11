@@ -25,7 +25,7 @@ const Review = sequelize.define(
         notEmpty: true,
       },
     },
-    interiorRating: {
+    locationRating: {
       type: DataTypes.INTEGER,
       allowNull: true,
       validate: {
@@ -33,7 +33,7 @@ const Review = sequelize.define(
         max: 5,
       },
     },
-    exteriorRating: {
+    conditionRating: {
       type: DataTypes.INTEGER,
       allowNull: true,
       validate: {
@@ -41,7 +41,7 @@ const Review = sequelize.define(
         max: 5,
       },
     },
-    comfortRating: {
+    valueRating: {
       type: DataTypes.INTEGER,
       allowNull: true,
       validate: {
@@ -49,7 +49,7 @@ const Review = sequelize.define(
         max: 5,
       },
     },
-    performanceRating: {
+    amenitiesRating: {
       type: DataTypes.INTEGER,
       allowNull: true,
       validate: {
@@ -57,11 +57,11 @@ const Review = sequelize.define(
         max: 5,
       },
     },
-    carId: {
+    propertyId: {
       type: DataTypes.UUID,
       allowNull: false,
       references: {
-        model: 'Cars',
+        model: 'Properties',
         key: 'id',
       },
     },
@@ -90,7 +90,7 @@ const Review = sequelize.define(
     timestamps: true,
     indexes: [
       {
-        fields: ['carId'],
+        fields: ['propertyId'],
       },
       {
         fields: ['userId'],

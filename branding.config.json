@@ -37,6 +37,15 @@
       }
     }
   },
+  "features": {
+    "blog": true,
+    "reviews": true,
+    "sell": true,
+    "neighborhoods": true,
+    "comparison": true,
+    "mortgageCalculator": true,
+    "newsletter": true
+  },
   "contact": {
     "emails": {
       "info": "info@demodealership.com",

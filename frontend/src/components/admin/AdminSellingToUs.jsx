@@ -9,11 +9,15 @@ import {
   ChevronLeft,
   Phone,
   Mail,
-  Car,
+  Home,
   Calendar,
-  Gauge,
+  Ruler,
   Image,
   ImageIcon,
+  MapPin,
+  DollarSign,
+  Bed,
+  Bath,
 } from 'lucide-react';
 import { useDashboardStore } from '../../store/useDasboardStore';
 
@@ -64,7 +68,7 @@ const AdminSellingToUs = () => {
         <StatCard
           title="Total Submissions"
           value={sellSubmissionsStats?.totalSubmissions || 0}
-          icon={<Car className="size-6" />}
+          icon={<Home className="size-6" />}
           color="bg-blue-500"
         />
         <StatCard
@@ -270,7 +274,7 @@ const SubmissionCard = ({ submission }) => {
   };
 
   const statusBadge = getStatusBadge(submission.offerStatus);
-  const photos = submission.uploadPhotos || '[]';
+  const photos = submission.images || [];
 
   return (
     <div className="bg-base-100 rounded-lg shadow-sm">
@@ -284,8 +288,8 @@ const SubmissionCard = ({ submission }) => {
               </span>
             </div>
             <p className="text-sm text-gray-500 flex items-center gap-1">
-              <Car className="size-4" />
-              {submission.carMake} {submission.carModel} ({submission.yearOfManufacture})
+              <Home className="size-4" />
+              {submission.propertyType} - {submission.address}, {submission.city}, {submission.state} {submission.zipCode}
             </p>
             <div className="flex gap-4 mt-2 text-xs text-gray-500">
               <span className="flex items-center gap-1">
@@ -317,20 +321,34 @@ const SubmissionCard = ({ submission }) => {
           </button>
         </div>
 
-        {/* Car Details */}
-        <div className="grid grid-cols-2 md:grid-cols-4 gap-2 my-3 p-3 bg-base-200 rounded-lg">
+        {/* Property Details */}
+        <div className="grid grid-cols-2 md:grid-cols-5 gap-2 my-3 p-3 bg-base-200 rounded-lg">
           <div className="flex items-center gap-2">
-            <Gauge className="size-4 text-gray-500" />
+            <DollarSign className="size-4 text-gray-500" />
             <div>
-              <p className="text-xs text-gray-500">Mileage</p>
-              <p className="text-sm font-medium">{submission.mileageKm} km</p>
+              <p className="text-xs text-gray-500">Asking Price</p>
+              <p className="text-sm font-medium">${submission.askingPrice?.toLocaleString()}</p>
             </div>
           </div>
           <div className="flex items-center gap-2">
-            <Calendar className="size-4 text-gray-500" />
+            <Bed className="size-4 text-gray-500" />
             <div>
-              <p className="text-xs text-gray-500">Year</p>
-              <p className="text-sm font-medium">{submission.yearOfManufacture}</p>
+              <p className="text-xs text-gray-500">Beds</p>
+              <p className="text-sm font-medium">{submission.bedrooms}</p>
+            </div>
+          </div>
+          <div className="flex items-center gap-2">
+            <Bath className="size-4 text-gray-500" />
+            <div>
+              <p className="text-xs text-gray-500">Baths</p>
+              <p className="text-sm font-medium">{submission.bathrooms}</p>
+            </div>
+          </div>
+          <div className="flex items-center gap-2">
+            <Ruler className="size-4 text-gray-500" />
+            <div>
+              <p className="text-xs text-gray-500">Sqft</p>
+              <p className="text-sm font-medium">{submission.sqft?.toLocaleString()}</p>
             </div>
           </div>
           <div className="flex items-center gap-2">
@@ -338,13 +356,6 @@ const SubmissionCard = ({ submission }) => {
             <div>
               <p className="text-xs text-gray-500">Condition</p>
               <p className="text-sm font-medium">{submission.condition}</p>
-            </div>
-          </div>
-          <div className="flex items-center gap-2">
-            <ImageIcon className="size-4 text-gray-500" />
-            <div>
-              <p className="text-xs text-gray-500">Photos</p>
-              <p className="text-sm font-medium">{photos.length}</p>
             </div>
           </div>
         </div>
@@ -360,7 +371,7 @@ const SubmissionCard = ({ submission }) => {
           <div className="mt-2 p-3 bg-success/10 rounded-lg">
             <p className="text-xs text-gray-500 mb-1">Offer Amount:</p>
             <p className="text-lg font-bold text-success">
-              N{parseFloat(submission.offerAmount).toLocaleString()}
+              ${parseFloat(submission.offerAmount).toLocaleString()}
             </p>
             {submission.offerSentDate && (
               <p className="text-xs text-gray-500 mt-1">
@@ -441,7 +452,7 @@ const SubmissionCard = ({ submission }) => {
                   >
                     <img
                       src={photo}
-                      alt={`Car ${index + 1}`}
+                      alt={`Property ${index + 1}`}
                       className="w-full h-20 object-cover rounded-lg hover:opacity-80 transition-opacity"
                     />
                   </a>

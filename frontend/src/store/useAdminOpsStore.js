@@ -2,8 +2,8 @@ import { create } from 'zustand';
 import { axiosInstance } from '../lib/axios.js';
 import toast from 'react-hot-toast';
 
-const invalidateCarsCache = () => {
-  axiosInstance.cache?.invalidateByUrl?.('cars/');
+const invalidatePropertiesCache = () => {
+  axiosInstance.cache?.invalidateByUrl?.('properties/');
 };
 
 const invalidateBlogsCache = () => {
@@ -22,13 +22,13 @@ export const useAdminOpsStore = create((set, get) => ({
   newsletterError: null,
   isSendingNewsletter: false,
 
-  addCar: async (data) => {
-    console.log('Adding car with data:', data); // Debug log
+  addProperty: async (data) => {
+    console.log('Adding property with data:', data); // Debug log
     set({ isLoading: true });
     try {
-      const res = await axiosInstance.post('/admin/ops/add-car', data);
-      toast.success('Car added successfully');
-      invalidateCarsCache();
+      const res = await axiosInstance.post('/admin/ops/add-property', data);
+      toast.success('Property added successfully');
+      invalidatePropertiesCache();
       return res.data;
     } catch (error) {
       toast.error(error.response?.data?.message || error.message);
@@ -39,13 +39,13 @@ export const useAdminOpsStore = create((set, get) => ({
     }
   },
 
-  updateCar: async (id, data) => {
-    console.log('Updating car with ID:', id, 'and data:', data); // Debug log
+  updateProperty: async (id, data) => {
+    console.log('Updating property with ID:', id, 'and data:', data); // Debug log
     set({ isLoading: true });
     try {
-      const res = await axiosInstance.put(`/admin/ops/update-car/${id}`, data);
-      toast.success('Car updated successfully');
-      invalidateCarsCache();
+      const res = await axiosInstance.put(`/admin/ops/update-property/${id}`, data);
+      toast.success('Property updated successfully');
+      invalidatePropertiesCache();
       return res.data;
     } catch (error) {
       toast.error(error.response?.data?.message || error.message);
@@ -56,13 +56,13 @@ export const useAdminOpsStore = create((set, get) => ({
     }
   },
 
-  deleteCar: async (id) => {
-    console.log('Deleting car with ID:', id); // Debug log
+  deleteProperty: async (id) => {
+    console.log('Deleting property with ID:', id); // Debug log
     set({ isLoading: true });
     try {
-      const res = await axiosInstance.delete(`/admin/ops/delete-car/${id}`);
-      toast.success('Car deleted successfully');
-      invalidateCarsCache();
+      const res = await axiosInstance.delete(`/admin/ops/delete-property/${id}`);
+      toast.success('Property deleted successfully');
+      invalidatePropertiesCache();
       return res.data;
     } catch (error) {
       toast.error(error.response?.data?.message || error.message);

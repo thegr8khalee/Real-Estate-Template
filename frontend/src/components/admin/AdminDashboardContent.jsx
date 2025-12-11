@@ -443,11 +443,11 @@ const AdminDashboardContent = () => {
             })) || [],
         },
         {
-          title: 'Top Car Makes',
+          title: 'Top Cities',
           items:
-            topPerformers.topSellingMakes?.slice(0, 3).map((make) => ({
-              name: make.make,
-              value: make.soldCount,
+            topPerformers.topSellingCities?.slice(0, 3).map((city) => ({
+              name: city.city,
+              value: city.soldCount,
               subtitle: 'sold',
             })) || [],
         },

@@ -39,12 +39,11 @@ const Footer = () => {
           <a href="/" className="hover:text-primary transition-colors">
             Home
           </a>
-          <a href="/about" className="hover:text-primary transition-colors">
-            About
-          </a>
-          <a href="/blogs" className="hover:text-primary transition-colors">
-            Blogs
-          </a>
+          {branding.features.blog && (
+            <a href="/blogs" className="hover:text-primary transition-colors">
+              Blogs
+            </a>
+          )}
           <a href="/listings" className="hover:text-primary transition-colors">
             Listings
           </a>

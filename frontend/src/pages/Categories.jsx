@@ -3,64 +3,50 @@ import { useNavigate } from 'react-router-dom';
 import CategoryCard from '../components/CategoryCard';
 import { motion } from 'framer-motion';
 import {
-  luxury,
-  comfort,
-  sport1 as sport,
-  suv1 as suv,
-  pickup1 as pickup,
-  ev,
-  budget, // Using sedan as a placeholder for budget
-} from '../config/images';
+  Home,
+  Building,
+  Building2,
+  LandPlot,
+  Store,
+} from 'lucide-react';
 
 const Categories = () => {
   const navigate = useNavigate();
 
-  const selectCategory = (category) => {
-    navigate('/listings', { state: { category } });
+  const selectCategory = (type) => {
+    navigate('/listings', { state: { type } });
   };
 
   const categories = [
     {
-      name: 'Luxury',
-      slug: 'luxury',
-      src: luxury,
-      description: 'Premium vehicles with the finest features',
+      name: 'House',
+      slug: 'House',
+      icon: Home,
+      description: 'Find your dream home for you and your family',
     },
     {
-      name: 'Comfort',
-      slug: 'comfort',
-      src: comfort,
-      description: 'Smooth rides and spacious interiors',
+      name: 'Apartment',
+      slug: 'Apartment',
+      icon: Building,
+      description: 'Modern apartments in the heart of the city',
     },
     {
-      name: 'Sport',
-      slug: 'sport',
-      src: sport,
-      description: 'High-performance cars for an exhilarating drive',
+      name: 'Condo',
+      slug: 'Condo',
+      icon: Building2,
+      description: 'Luxury condos with premium amenities',
     },
     {
-      name: 'SUV',
-      slug: 'suv',
-      src: suv,
-      description: 'Versatile and spacious for any adventure',
+      name: 'Land',
+      slug: 'Land',
+      icon: LandPlot,
+      description: 'Build your own legacy on our prime lots',
     },
     {
-      name: 'Pickup',
-      slug: 'pickup',
-      src: pickup,
-      description: 'Rugged trucks for work and play',
-    },
-    {
-      name: 'Budget',
-      slug: 'budget',
-      src: budget,
-      description: 'Affordable and reliable cars',
-    },
-    {
-      name: 'EV',
-      slug: 'ev',
-      src: ev,
-      description: 'Eco-friendly electric vehicles',
+      name: 'Commercial',
+      slug: 'Commercial',
+      icon: Store,
+      description: 'Spaces for your business to grow',
     },
   ];
 
@@ -75,10 +61,10 @@ const Categories = () => {
           className="max-w-6xl mx-auto px-4 text-center"
         >
           <h1 className="text-4xl md:text-5xl lg:text-6xl font-medium mb-6">
-            Explore Our Car Categories
+            Explore Our Property Categories
           </h1>
           <p className="text-xl text-gray-600 max-w-2xl mx-auto">
-            Find the perfect vehicle that fits your lifestyle from our diverse
+            Find the perfect property that fits your lifestyle from our diverse
             range of categories.
           </p>
         </motion.div>
@@ -97,35 +83,11 @@ const Categories = () => {
                 transition={{ duration: 0.5, delay: index * 0.1 }}
                 className=""
               >
-                <CategoryCard label={category.name} img={category.src} />
+                <CategoryCard label={category.name} icon={category.icon} />
               </motion.button>
             ))}
           </div>
         </div>
-      </section>
-
-      {/* CTA Section */}
-      <section className="w-full py-20">
-        <motion.div
-          initial={{ opacity: 0, y: 20 }}
-          whileInView={{ opacity: 1, y: 0 }}
-          viewport={{ once: true }}
-          transition={{ duration: 0.6 }}
-          className="max-w-4xl mx-auto px-4 text-center"
-        >
-          <h2 className="text-3xl md:text-4xl font-bold mb-4">
-            Ready to Find Your Next Car?
-          </h2>
-          <p className="text-xl text-gray-600 mb-8">
-            Browse our full inventory and filter by your favorite category.
-          </p>
-          <button
-            onClick={() => navigate('/listings')}
-            className="btn btn-lg btn-primary rounded-full text-white px-8 py-4 font-medium hover:bg-primary/90 transition inline-flex items-center gap-2"
-          >
-            View All Listings
-          </button>
-        </motion.div>
       </section>
     </div>
   );

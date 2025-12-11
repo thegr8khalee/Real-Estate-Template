@@ -14,67 +14,46 @@ import {
   FilterIcon,
   MailIcon,
   Star,
+  Home as HomeIcon,
+  Building,
+  Building2,
+  LandPlot,
+  Store,
 } from 'lucide-react';
 import { Link, useNavigate } from 'react-router-dom';
-import CarCard from '../components/CarCard';
+import PropertyCard from '../components/PropertyCard';
 import TeamCard from '../components/TeamCard';
 import BlogCard from '../components/BlogCard';
 import {
   Hero,
   Heromobile,
-  audi,
-  benz,
-  bmw,
   calc,
   ceo,
-  convertible,
-  coupe,
-  date,
   discount,
-  engine,
-  gas,
-  honda,
-  mercedes,
-  mileage,
-  pickup,
   price,
-  sedan,
   sell,
   service,
-  sport,
-  suv,
-  toyota,
-  transmission,
   trusted,
-  benz1,
-  bmw1,
-  toyota1,
-  honda1,
-  luxury,
-  comfort,
-  sport1,
-  suv1,
 } from '../config/images';
 // import CarSearchBar from '../components/Searchbar';
-import { useCarStore } from '../store/useCarStore';
+import { usePropertyStore } from '../store/usePropertyStore';
 import { useBlogStore } from '../store/useBlogStore';
 import { useInteractStore } from '../store/useInteractStore';
 import toast from 'react-hot-toast';
 import branding from '../config/branding';
-import MakeCard from '../components/MakeCard';
+import CategoryCard from '../components/CategoryCard';
 import { Datepicker } from 'flowbite-react';
 import Blog from '../components/Blog';
-import CategoryCard from '../components/CategoryCard';
 
 const Home = () => {
-  const [isFocusedCarPrice, setIsFocusedCarPrice] = useState(false);
+  const [isFocusedPropertyPrice, setIsFocusedPropertyPrice] = useState(false);
   const [isFocusedTerm, setIsFocusedTerm] = useState(false);
   const [isFocusedDownPayment, setIsFocusedDownPayment] = useState(false);
-  const { cars, isLoading, getCars } = useCarStore();
+  const { properties, isLoading, getProperties } = usePropertyStore();
   const { blogs, fetchBlogs, isLoading: isLoadingBlogs } = useBlogStore();
   const { reviews, getAllReviews, isFetchingReviews } = useInteractStore();
   const [formData, setFormData] = useState({
-    carPrice: '',
+    propertyPrice: '',
     term: '',
     downPayment: '',
   });
@@ -83,12 +62,12 @@ const Home = () => {
 
   const calculateInstallment = () => {
     // Validate all required fields are filled
-    if (!formData.carPrice || !formData.term || !formData.downPayment) {
+    if (!formData.propertyPrice || !formData.term || !formData.downPayment) {
       toast.error('Please fill in all fields');
       return;
     }
 
-    const price = parseFloat(formData.carPrice);
+    const price = parseFloat(formData.propertyPrice);
     const down = parseFloat(formData.downPayment);
     const years = parseFloat(formData.term);
 
@@ -98,9 +77,9 @@ const Home = () => {
       return;
     }
 
-    // Check if down payment is not greater than car price
+    // Check if down payment is not greater than property price
     if (down >= price) {
-      toast.error('Down payment cannot be greater than or equal to car price');
+      toast.error('Down payment cannot be greater than or equal to property price');
       return;
     }
 
@@ -128,24 +107,24 @@ const Home = () => {
   };
 
   useEffect(() => {
-    getCars();
+    getProperties();
     fetchBlogs();
     getAllReviews();
-  }, [getCars, fetchBlogs, getAllReviews]);
+  }, [getProperties, fetchBlogs, getAllReviews]);
 
   // console.log(reviews);
 
-  const selectBodyType = (bodyType) => {
-    navigate('/listings', { state: { bodyType } });
+  const selectType = (type) => {
+    navigate('/listings', { state: { type } });
   };
 
-  const selectMake = (make) => {
-    navigate('/listings', { state: { make } });
+  const selectCity = (city) => {
+    navigate('/listings', { state: { city } });
   };
 
   const [activeTab, setActiveTab] = useState('Latest');
 
-  const tabs = ['Latest Cars', 'Featured Cars', 'Popular Cars'];
+  const tabs = ['Latest Properties', 'Featured Properties', 'Popular Properties'];
 
   const navigate = useNavigate();
 
@@ -153,13 +132,12 @@ const Home = () => {
     navigate('/listings');
   };
 
-  const bodyTypes = [
-    { label: 'SUV', img: suv },
-    { label: 'Sedan', img: sedan },
-    { label: 'Coupe', img: coupe },
-    { label: 'Truck', img: pickup },
-    { label: 'Convertible', img: convertible },
-    { label: 'Sport', img: sport },
+  const propertyTypes = [
+    { label: 'House', icon: HomeIcon },
+    { label: 'Apartment', icon: Building },
+    { label: 'Condo', icon: Building2 },
+    { label: 'Land', icon: LandPlot },
+    { label: 'Commercial', icon: Store },
   ];
 
   const [currentIndex, setCurrentIndex] = useState(0);
@@ -191,14 +169,14 @@ const Home = () => {
           {/* Middle Content */}
           <div className="relative pt-25 z-10 text-white text-left">
             <h1 className="text-2xl font-medium font-inter drop-shadow-lg">
-              Lamborghini
+              Luxury Villa
             </h1>
             <h1 className="text-5xl font-bold font-inter drop-shadow-lg">
-              Aventador 2020
+              Beverly Hills
             </h1>
             <p className="text-xs mt-2 max-w-xs">
-              Experience the thrill of the 2020 Aventador. Unmatched
-              performance, breathtaking design, and pure adrenaline.
+              Experience the pinnacle of luxury living. Unmatched
+              elegance, breathtaking views, and pure comfort.
             </p>
           </div>
 
@@ -206,41 +184,37 @@ const Home = () => {
           <div className="relative z-10 w-full">
             <div className="bg-white/3 backdrop-blur-sm rounded-none p-1 flex justify-around items-center text-white text-xs mb-2">
               <div className="flex items-center space-x-2 p-2">
-                <img src={mileage} alt="mileage" className="w-5 h-5 invert" />
-                <span className="text-lg">2,000km</span>
+                {/* <img src={mileage} alt="mileage" className="w-5 h-5 invert" /> */}
+                <span className="text-lg">5 Beds</span>
               </div>
               <div className="flex items-center space-x-2 p-2">
-                <img
+                {/* <img
                   src={transmission}
                   alt="transmission"
                   className="w-5 h-5 invert"
-                />
-                <span className="text-lg">Auto</span>
+                /> */}
+                <span className="text-lg">6 Baths</span>
               </div>
               <div className="flex items-center space-x-2 p-2">
-                <img src={gas} alt="fuel" className="w-5 h-5 invert" />
-                <span className="text-lg">Gas</span>
-              </div>
-              <div className="hidden items-center space-x-2 p-2">
-                <img src={engine} alt="engine" className="w-5 h-5" />
-                <span>6.5L V12</span>
+                {/* <img src={gas} alt="fuel" className="w-5 h-5 invert" /> */}
+                <span className="text-lg">5000 sqft</span>
               </div>
             </div>
             <div className="bg-white/3 backdrop-blur-sm rounded-none p-3">
               <div className="flex justify-between items-center">
                 <div className="text-white">
                   <span className="text-sm text-gray-400">Price</span>
-                  <p className="font-bold text-2xl">N500M</p>
+                  <p className="font-bold text-2xl">$5.5M</p>
                 </div>
                 <div className="h-10 border-l border-white/50"></div>
                 <div className="text-white text-center">
-                  <span className="text-sm text-gray-400">Engine</span>
-                  <p className="font-bold text-lg">6.5L V12</p>
+                  <span className="text-sm text-gray-400">Type</span>
+                  <p className="font-bold text-lg">Villa</p>
                 </div>
                 <div className="h-10 border-l border-white/50"></div>
                 <div className="text-white text-center">
-                  <span className="text-sm text-gray-400">Year</span>
-                  <p className="font-bold text-lg">2020</p>
+                  <span className="text-sm text-gray-400">Status</span>
+                  <p className="font-bold text-lg">For Sale</p>
                 </div>
               </div>
               <div className="flex flex-col sm:flex-row sm:space-x-2 space-y-2 mt-3">
@@ -248,7 +222,7 @@ const Home = () => {
                   View Details
                 </button>
                 <button className="btn btn-primary sm:flex-1 rounded-none">
-                  Browse Cars
+                  Browse Properties
                 </button>
               </div>
             </div>
@@ -263,15 +237,15 @@ const Home = () => {
           <div className="pt-25 relative z-10 w-full max-w-7xl mx-auto text-white">
             <div className="max-w-2xl">
               <h2 className="text-4xl font-medium font-inter drop-shadow-lg">
-                Lamborghini
+                Luxury Villa
               </h2>
               <h1 className="text-7xl font-bold font-inter drop-shadow-lg">
-                Aventador 2020
+                Beverly Hills
               </h1>
               <p className="text-base mt-4 max-w-lg">
-                Experience the thrill of the 2020 Aventador. Unmatched
-                performance, breathtaking design, and pure adrenaline await.
-                Discover the legend.
+                Experience the pinnacle of luxury living. Unmatched
+                elegance, breathtaking views, and pure comfort await.
+                Discover your dream home.
               </p>
             </div>
           </div>
@@ -282,43 +256,28 @@ const Home = () => {
               {/* Price */}
               <div className="text-white">
                 <span className="text-sm text-gray-400">Price</span>
-                <p className="font-bold text-4xl">N500M</p>
+                <p className="font-bold text-4xl">$5.5M</p>
               </div>
               <div className="h-16 border-l border-white/30"></div>
 
               {/* Specs */}
               <div className="flex items-center space-x-8 text-white">
                 <div className="flex items-center space-x-3">
-                  {/* <img
-                    src={mileage}
-                    alt="mileage"
-                    className="w-8 h-8 filter invert"
-                  /> */}
                   <div>
-                    <span className="text-xs text-gray-400">Mileage</span>
-                    <p className="font-semibold text-lg">2,000 km</p>
+                    <span className="text-xs text-gray-400">Bedrooms</span>
+                    <p className="font-semibold text-lg">5 Beds</p>
                   </div>
                 </div>
                 <div className="flex items-center space-x-3">
-                  {/* <img
-                    src={transmission}
-                    alt="transmission"
-                    className="w-8 h-8 filter invert"
-                  /> */}
                   <div>
-                    <span className="text-xs text-gray-400">Transmission</span>
-                    <p className="font-semibold text-lg">Automatic</p>
+                    <span className="text-xs text-gray-400">Bathrooms</span>
+                    <p className="font-semibold text-lg">6 Baths</p>
                   </div>
                 </div>
                 <div className="flex items-center space-x-3">
-                  {/* <img
-                    src={engine}
-                    alt="engine"
-                    className="w-8 h-8 filter invert"
-                  /> */}
                   <div>
-                    <span className="text-xs text-gray-400">Engine</span>
-                    <p className="font-semibold text-lg">6.5L V12</p>
+                    <span className="text-xs text-gray-400">Area</span>
+                    <p className="font-semibold text-lg">5000 sqft</p>
                   </div>
                 </div>
               </div>
@@ -330,34 +289,46 @@ const Home = () => {
                   View Details
                 </button>
                 <button className="btn btn-primary btn-lg rounded-none px-8">
-                  Browse Cars
+                  Browse Properties
                 </button>
               </div>
             </div>
           </div>
         </section>
-        <section id="top makes" className="w-full max-w-7xl mx-auto py-8 px-4">
+        <section id="top categories" className="w-full max-w-7xl mx-auto py-8 px-4">
           <div className="flex justify-between items-end mb-4">
-            <h1 className="text-3xl font-medium font-inter mb-2">Top Makes</h1>
+            <h1 className="text-3xl font-medium font-inter mb-2">Top Categories</h1>
             <button className="hidden sm:block btn btn-primary rounded-full">
               View all
             </button>
           </div>
 
           <div className="md:hidden grid grid-cols-2 gap-2">
-            <MakeCard img={benz1} label="Mercedes" />
-            <MakeCard img={bmw1} label="BMW" />
-            <MakeCard img={toyota1} label="Toyota" />
-            <MakeCard img={honda1} label="Honda" />
+            {propertyTypes.slice(0, 4).map((type) => (
+              <div
+                key={type.label}
+                className="flex flex-col items-center justify-center p-4 bg-white rounded-xl shadow-sm cursor-pointer hover:shadow-md transition-shadow"
+                onClick={() => selectType(type.label)}
+              >
+                <type.icon className="w-10 h-10 text-primary mb-2" />
+                <span className="text-sm font-medium">{type.label}</span>
+              </div>
+            ))}
           </div>
           <div
             className="hidden md:flex w-full overflow-x-auto flex-nowrap gap-4 snap-x snap-mandatory scrollbar-none"
             style={{ scrollbarWidth: 'none' }}
           >
-            <MakeCard img={benz1} label="Mercedes" />
-            <MakeCard img={bmw1} label="BMW" />
-            <MakeCard img={toyota1} label="Toyota" />
-            <MakeCard img={honda1} label="Honda" />
+            {propertyTypes.map((type) => (
+              <div
+                key={type.label}
+                className="flex-shrink-0 w-40 flex flex-col items-center justify-center p-6 bg-white rounded-xl shadow-sm cursor-pointer hover:shadow-md transition-shadow"
+                onClick={() => selectType(type.label)}
+              >
+                <type.icon className="w-12 h-12 text-primary mb-3" />
+                <span className="text-base font-medium">{type.label}</span>
+              </div>
+            ))}
           </div>
           <div className="mt-4 w-full flex justify-end">
             <button className="sm:hidden btn btn-primary rounded-full">
@@ -384,26 +355,23 @@ const Home = () => {
           >
             <div className="w-4"></div>
             {isLoading ? (
-              <p>Loading cars...</p>
-            ) : cars?.length === 0 ? (
-              <p>No cars found</p>
+              <p>Loading properties...</p>
+            ) : properties?.length === 0 ? (
+              <p>No properties found</p>
             ) : (
-              cars?.slice(0, 4).map((car) => (
-                <CarCard
-                  key={car.id}
+              properties?.slice(0, 4).map((property) => (
+                <PropertyCard
+                  key={property.id}
                   className="flex-shrink-0"
-                  image={car.imageUrls[0]}
-                  title={`${car.make} ${car.model}`}
-                  description={car.description}
-                  mileage={{ icon: mileage, value: car.mileage }}
-                  transmission={{
-                    icon: transmission,
-                    value: car.transmission,
-                  }}
-                  fuel={{ icon: gas, value: car.fuelType }}
-                  year={{ icon: date, value: car.year }}
-                  price={car.price}
-                  link={`/car/${car.id}`}
+                  image={property.imageUrls[0]}
+                  title={property.title}
+                  address={property.address}
+                  bedrooms={property.bedrooms}
+                  bathrooms={property.bathrooms}
+                  sqft={property.sqft}
+                  price={property.price}
+                  type={property.type}
+                  link={`/property/${property.id}`}
                 />
               ))
             )}
@@ -415,40 +383,6 @@ const Home = () => {
               onClick={handleListingsClick}
             >
               View All
-            </button>
-          </div>
-        </section>
-        <section
-          id="top categories"
-          className="w-full max-w-7xl mx-auto py-8 px-4"
-        >
-          <div className="flex justify-between items-end mb-4">
-            <h1 className="text-3xl font-medium font-inter mb-2">
-              Top Categories
-            </h1>
-            <button className="hidden sm:block btn btn-primary rounded-full">
-              View all
-            </button>
-          </div>
-
-          <div className="md:hidden grid grid-cols-2 gap-2">
-            <CategoryCard img={luxury} label="Luxury" />
-            <CategoryCard img={comfort} label="Comfort" />
-            <CategoryCard img={sport1} label="Sport" />
-            <CategoryCard img={suv1} label="SUV" />
-          </div>
-          <div
-            className="hidden md:flex w-full overflow-x-auto flex-nowrap gap-4 snap-x snap-mandatory scrollbar-none"
-            style={{ scrollbarWidth: 'none' }}
-          >
-            <CategoryCard img={luxury} label="Luxury" />
-            <CategoryCard img={comfort} label="Comfort" />
-            <CategoryCard img={sport1} label="Sport" />
-            <CategoryCard img={suv1} label="SUV" />
-          </div>
-          <div className="mt-4 w-full flex justify-end">
-            <button className="sm:hidden btn btn-primary rounded-full">
-              View all
             </button>
           </div>
         </section>
@@ -571,116 +505,7 @@ const Home = () => {
             {/* <div className="w-20"></div> */}
           </div>
         </section>
-      </div>
-
-      <div id="desktop view" className="hidden">
-        <section
-          id="hero"
-          className="relative w-full h-screen bg-cover bg-center f1lex flex-col justify-between p-12"
-          style={{ backgroundImage: `url(${Heromobile})` }}
-        >
-          {/* Middle Content - Hero Text */}
-          <div className="pt-25 relative z-10 w-full max-w-7xl mx-auto text-white">
-            <div className="max-w-2xl">
-              <h2 className="text-4xl font-medium font-inter drop-shadow-lg">
-                Lamborghini
-              </h2>
-              <h1 className="text-7xl font-bold font-inter drop-shadow-lg">
-                Aventador 2020
-              </h1>
-              <p className="text-base mt-4 max-w-lg">
-                Experience the thrill of the 2020 Aventador. Unmatched
-                performance, breathtaking design, and pure adrenaline await.
-                Discover the legend.
-              </p>
-            </div>
-          </div>
-
-          {/* Bottom Content - Details Card */}
-          <div className="relative z-10 w-full max-w-7xl mx-auto">
-            <div className="bg-white/2 backdrop-blur-sm rounded-none p-6 flex items-center justify-between">
-              {/* Price */}
-              <div className="text-white">
-                <span className="text-sm text-gray-400">Price</span>
-                <p className="font-bold text-4xl">N500M</p>
-              </div>
-              <div className="h-16 border-l border-white/30"></div>
-
-              {/* Specs */}
-              <div className="flex items-center space-x-8 text-white">
-                <div className="flex items-center space-x-3">
-                  {/* <img
-                    src={mileage}
-                    alt="mileage"
-                    className="w-8 h-8 filter invert"
-                  /> */}
-                  <div>
-                    <span className="text-xs text-gray-400">Mileage</span>
-                    <p className="font-semibold text-lg">2,000 km</p>
-                  </div>
-                </div>
-                <div className="flex items-center space-x-3">
-                  {/* <img
-                    src={transmission}
-                    alt="transmission"
-                    className="w-8 h-8 filter invert"
-                  /> */}
-                  <div>
-                    <span className="text-xs text-gray-400">Transmission</span>
-                    <p className="font-semibold text-lg">Automatic</p>
-                  </div>
-                </div>
-                <div className="flex items-center space-x-3">
-                  {/* <img
-                    src={engine}
-                    alt="engine"
-                    className="w-8 h-8 filter invert"
-                  /> */}
-                  <div>
-                    <span className="text-xs text-gray-400">Engine</span>
-                    <p className="font-semibold text-lg">6.5L V12</p>
-                  </div>
-                </div>
-              </div>
-              <div className="h-16 border-l border-white/30"></div>
-
-              {/* Buttons */}
-              <div className="flex space-x-4">
-                <button className="btn btn-secondary btn-lg rounded-none px-8">
-                  View Details
-                </button>
-                <button className="btn btn-primary btn-lg rounded-none px-8">
-                  Browse Cars
-                </button>
-              </div>
-            </div>
-          </div>
-        </section>
-
-        <section
-          id="Body Type"
-          className="w-full py-8 px-4 items-center justify-center flex"
-        >
-          <div className="w-full max-w-6xl">
-            <h1 className="text-xl font-semibold font-inter mb-2">Body Type</h1>
-            <div className="flex overflow-x-auto space-x-4">
-              {bodyTypes.map(({ label, img }) => {
-                // const isSelected = selectedBodyType.includes(label);
-
-                return (
-                  <div
-                    key={label}
-                    className={`rounded-xl border border-gray-400 p-1 px-10 flex flex-col items-center text-xs transition cursor-pointer`}
-                    onClick={() => selectBodyType(label)}
-                  >
-                    <img src={img} alt={label} className={`max-w-20`} />
-                    <h1 className={`text-xs`}>{label}</h1>
-                  </div>
-                );
-              })}
-            </div>
-          </div>
-        </section>
+        
         <section
           id="Sell"
           className="relative w-full bg-black flex justify-center p-4"
@@ -695,10 +520,10 @@ const Home = () => {
             </div>
             <div className="relative z-10 w-[50vw] px-4">
               <h1 className="text-white text-xl md:text-2xl lg:text-3xl font-bold font-inter">
-                Get A Fair Price For Your Car, Sell To Us Today.
+                Get A Fair Price For Your Property, Sell To Us Today.
               </h1>
               <p className="text-white text-xs lg:text-sm font-inter mt-2">
-                Skip the endless negotiations — we’ll value your car honestly
+                Skip the endless negotiations — we’ll value your property honestly
                 and pay you on the spot.
               </p>
               <div className="flex flex-col space-y-2 mt-2 text-xs md:text-base">
@@ -712,7 +537,7 @@ const Home = () => {
                 </div>
                 <div className="flex space-x-2 text-white">
                   <CircleCheck className="stroke-white mr-2" />
-                  Trusted by thousands of car owners across Nigeria
+                  Trusted by thousands of property owners
                 </div>
               </div>
 
@@ -737,7 +562,7 @@ const Home = () => {
           <div className="w-full max-w-6xl mx-auto">
             <div className="flex w-full justify-between items-center">
               <h1 className="text-xl font-semibold font-inter mb-2">
-                Explore All Cars
+                Explore All Properties
               </h1>
               <button
                 className="btn btn-primary rounded-full"
@@ -755,66 +580,54 @@ const Home = () => {
 
             <div className="flex overflow-x-auto w-full space-x-2 pl-1">
               {isLoading ? (
-                <p>Loading cars...</p>
-              ) : cars?.length === 0 ? (
-                <p>No cars found</p>
+                <p>Loading properties...</p>
+              ) : properties?.length === 0 ? (
+                <p>No properties found</p>
               ) : (
-                cars?.slice(0, 10).map((car) => (
-                  <CarCard
-                    key={car.id}
+                properties?.slice(0, 10).map((property) => (
+                  <PropertyCard
+                    key={property.id}
                     className="flex-shrink-0"
-                    image={car.imageUrls[0]}
-                    title={`${car.make} ${car.model}`}
-                    description={car.description}
-                    mileage={{ icon: mileage, value: car.mileage }}
-                    transmission={{
-                      icon: transmission,
-                      value: car.transmission,
-                    }}
-                    fuel={{ icon: gas, value: car.fuelType }}
-                    year={{ icon: date, value: car.year }}
-                    price={car.price}
-                    link={`/car/${car.id}`}
+                    image={property.imageUrls[0]}
+                    title={property.title}
+                    address={property.address}
+                    bedrooms={property.bedrooms}
+                    bathrooms={property.bathrooms}
+                    sqft={property.sqft}
+                    price={property.price}
+                    type={property.type}
+                    link={`/property/${property.id}`}
                   />
                 ))
               )}
             </div>
           </div>
         </section>
-        <section id="makes" className="w-full p-4 items-start justify-center">
+        <section id="categories" className="w-full p-4 items-start justify-center">
           <div className="w-full max-w-6xl mx-auto">
-            {/* <h6 className="text-primary font-inter">Top Makes</h6> */}
+            {/* <h6 className="text-primary font-inter">Top Categories</h6> */}
             <div className="flex w-full justify-between">
               <div>
                 <h1 className="font-bold text-xl font-inter">
-                  Explore Our Top Makes
+                  Explore Our Top Categories
                 </h1>
               </div>
               <button
-                onClick={() => navigate('/makes')}
+                onClick={() => navigate('/listings')}
                 className="btn btn-primary rounded-full"
               >
                 View All <ArrowUpRight className="size-5" />
               </button>
             </div>
             <div className="mt-2 flex overflow-x-auto w-full space-x-10">
-              {[
-                { name: 'mercedes', src: benz },
-                { name: 'bmw', src: bmw },
-                { name: 'audi', src: audi },
-                { name: 'toyota', src: toyota },
-                { name: 'honda', src: honda },
-              ].map(({ name, src }) => (
+              {propertyTypes.map(({ label, icon: Icon }) => (
                 <div
-                  key={name}
-                  className={`rounded-xl flex-shrink-0 p-2 flex flex-col justify-center items-center text-xs transition `}
-                  onClick={() => selectMake(name)}
+                  key={label}
+                  className={`rounded-xl flex-shrink-0 p-2 flex flex-col justify-center items-center text-xs transition cursor-pointer`}
+                  onClick={() => selectType(label)}
                 >
-                  <img
-                    src={src}
-                    alt={name}
-                    className="w-30 md:w-40 h-auto object-contain"
-                  />
+                  <Icon className="w-20 h-20 text-primary mb-2" />
+                  <span className="text-sm font-medium">{label}</span>
                 </div>
               ))}
             </div>
@@ -845,34 +658,34 @@ const Home = () => {
               </div>
               <div className="flex flex-col space-y-2 items-center my-8  w-full">
                 <img src={service} alt="service" className="size-13" />
-                <h1 className="text-white font-medium">Expert Car Service</h1>
+                <h1 className="text-white font-medium">Expert Property Management</h1>
               </div>
             </div>
 
             <div className="flex justify-between items-center text-center">
               <div className="flex flex-col items-center w-full ">
                 <h1 className="text-primary font-bold font-inter text-4xl">
-                  100k
+                  100+
                 </h1>
-                <p className="text-white">Cars Sold</p>
+                <p className="text-white">Properties Sold</p>
               </div>
               <div className="flex flex-col items-center w-full ">
                 <h1 className="text-primary font-bold font-inter text-4xl">
-                  100k
+                  500+
                 </h1>
-                <p className="text-white">Cars Sold</p>
+                <p className="text-white">Happy Clients</p>
               </div>
               <div className="flex flex-col items-center w-full ">
                 <h1 className="text-primary font-bold font-inter text-4xl">
-                  100k
+                  10+
                 </h1>
-                <p className="text-white">Cars Sold</p>
+                <p className="text-white">Years Experience</p>
               </div>
               <div className="flex flex-col items-center w-full ">
                 <h1 className="text-primary font-bold font-inter text-4xl">
-                  100k
+                  50+
                 </h1>
-                <p className="text-white">Cars Sold</p>
+                <p className="text-white">Awards Won</p>
               </div>
             </div>
           </div>
@@ -913,7 +726,8 @@ const Home = () => {
             </div>
           </div>
         </section>
-        {reviews &&
+        {branding.features.reviews &&
+          reviews &&
           !isFetchingReviews &&
           reviews.reviews &&
           reviews.reviews.length > 0 && (
@@ -977,9 +791,7 @@ const Home = () => {
                         {reviews.reviews[currentIndex]?.name}
                       </h1>
                       <p className="text-gray-400 text-sm">
-                        {reviews.reviews[currentIndex]?.car.make}{' '}
-                        {reviews.reviews[currentIndex]?.car.model} (
-                        {reviews.reviews[currentIndex]?.car.year})
+                        {reviews.reviews[currentIndex]?.property?.title}
                       </p>
                     </div>
 
@@ -1009,173 +821,176 @@ const Home = () => {
               </div>
             </section>
           )}
-        <section
-          id="blogs"
-          className="w-full flex justify-center items-center p-4 py-8"
-        >
-          <div className="w-full max-w-6xl">
-            <div className="flex w-full justify-between items-center">
-              <h1 className="font-inter text-2xl font-bold">Recent Blogs</h1>
-              <div>
-                <button
-                  onClick={() => navigate('/blogs')}
-                  className="btn btn-primary rounded-full flex"
-                >
-                  View All <ArrowUpRight />
-                </button>
-              </div>
-            </div>
-
-            <div className="w-full flex space-x-4 overflow-x-auto ">
-              {isLoadingBlogs ? (
-                <p>Loading...</p>
-              ) : (
-                blogs
-                  ?.slice(0, 10)
-                  .map((blog) => (
-                    <BlogCard
-                      key={blog.id}
-                      publisher={blog.publisher}
-                      date={blog.date}
-                      title={blog.title}
-                      tagline={blog.tagline}
-                      image={blog.featuredImage}
-                      link={`/blog/${blog.id}`}
-                    />
-                  ))
-              )}
-            </div>
-          </div>
-        </section>
-        <section id="Calc" className="relative w-full flex justify-end">
-          <div className="flex items-center justify-center h-150 space-x-4  bg-black w-full">
-            <img
-              src={calc}
-              alt="Sell"
-              className="absolute inset-0 w-full h-full object-cover"
-            />
-            <div className="relative max-w-6xl  z-10 h-full w-full p-8 items-center flex justify-end">
-              <div className="bg-white max-w-2xl shadow-lg rounded-3xl w-full p-8 items-center justify-center">
-                <h1 className="font-inter text-3xl font-bold">
-                  Installment Plan Calculator
-                </h1>
-                <p className="text-sm font-inter mt-1">
-                  Use this calculator to know how much would pay in intallment
-                  for a full car purchase over a period of time.
-                </p>
-                <form action="" className="my-2">
-                  <div className="relative w-full">
-                    <input
-                      type="number"
-                      value={formData.carPrice}
-                      onChange={(e) =>
-                        setFormData({
-                          ...formData,
-                          carPrice: e.target.value,
-                        })
-                      }
-                      onFocus={() => setIsFocusedCarPrice(true)}
-                      onBlur={() => setIsFocusedCarPrice(false)}
-                      className="peer w-full px-3 pt-6 pb-2 text-lg font-medium border border-gray-300 rounded-2xl focus:outline-none focus:ring-2 focus:ring-primary focus:border-primary"
-                      placeholder=" " // Trick for floating label
-                    />
-                    <label
-                      className={`absolute left-3 transition-all duration-300 
-          ${
-            isFocusedCarPrice || formData.carPrice
-              ? 'text-xs top-2 text-gray-500'
-              : 'text-gray-400 top-5 text-sm'
-          } 
-        `}
-                    >
-                      Car Price (N)
-                    </label>
-                  </div>
-                  <div className="flex space-x-2 mt-2">
-                    <div className="relative w-80">
-                      <input
-                        type="number"
-                        value={formData.term}
-                        onChange={(e) =>
-                          setFormData({
-                            ...formData,
-                            term: e.target.value,
-                          })
-                        }
-                        onFocus={() => setIsFocusedTerm(true)}
-                        onBlur={() => setIsFocusedTerm(false)}
-                        className="peer w-full px-3 pt-6 pb-2 text-lg font-medium border border-gray-300 rounded-2xl focus:outline-none focus:ring-2 focus:ring-primary focus:border-primary"
-                        placeholder=" " // Trick for floating label
-                      />
-                      <label
-                        className={`absolute left-3 transition-all duration-300 
-          ${
-            isFocusedTerm || formData.term
-              ? 'text-xs top-2 text-gray-500'
-              : 'text-gray-400 top-5 text-sm'
-          } 
-        `}
-                      >
-                        Installment Term (years)
-                      </label>
-                    </div>
-                    <div className="relative w-80">
-                      <input
-                        type="number"
-                        value={formData.downPayment}
-                        onChange={(e) =>
-                          setFormData({
-                            ...formData,
-                            downPayment: e.target.value,
-                          })
-                        }
-                        onFocus={() => setIsFocusedDownPayment(true)}
-                        onBlur={() => setIsFocusedDownPayment(false)}
-                        className="peer w-full px-3 pt-6 pb-2 text-lg font-medium border border-gray-300 rounded-2xl focus:outline-none focus:ring-2 focus:ring-primary focus:border-primary"
-                        placeholder=" " // Trick for floating label
-                      />
-                      <label
-                        className={`absolute left-3 transition-all duration-300 
-          ${
-            isFocusedDownPayment || formData.downPayment
-              ? 'text-xs top-2 text-gray-500'
-              : 'text-gray-400 top-5 text-sm'
-          } 
-        `}
-                      >
-                        Down Payment (N)
-                      </label>
-                    </div>
-                  </div>
-                  {monthlyPayment !== null && (
-                    <div className="mt-6 p-4 bg-primary/10 rounded-2xl">
-                      <p className="text-sm text-gray-600">
-                        Estimated Monthly Payment
-                      </p>
-                      <p className="text-3xl font-bold text-primary">
-                        N
-                        {monthlyPayment.toLocaleString('en-NG', {
-                          maximumFractionDigits: 2,
-                        })}
-                      </p>
-                      <p className="text-xs text-gray-500 mt-2">
-                        Based on {formData.term} years with{' '}
-                        {(0.05 * 100).toFixed(1)}% annual interest
-                      </p>
-                    </div>
-                  )}
+        {branding.features.blog && (
+          <section
+            id="blogs"
+            className="w-full flex justify-center items-center p-4 py-8"
+          >
+            <div className="w-full max-w-6xl">
+              <div className="flex w-full justify-between items-center">
+                <h1 className="font-inter text-2xl font-bold">Recent Blogs</h1>
+                <div>
                   <button
-                    type="button"
-                    onClick={calculateInstallment}
-                    className="w-full h-15 mt-2 text-white btn-primary btn-lg rounded-full"
+                    onClick={() => navigate('/blogs')}
+                    className="btn btn-primary rounded-full flex"
                   >
-                    Calculate
+                    View All <ArrowUpRight />
                   </button>
-                </form>
+                </div>
+              </div>
+
+              <div className="w-full flex space-x-4 overflow-x-auto ">
+                {isLoadingBlogs ? (
+                  <p>Loading...</p>
+                ) : (
+                  blogs
+                    ?.slice(0, 10)
+                    .map((blog) => (
+                      <BlogCard
+                        key={blog.id}
+                        publisher={blog.publisher}
+                        date={blog.date}
+                        title={blog.title}
+                        tagline={blog.tagline}
+                        image={blog.featuredImage}
+                        link={`/blog/${blog.id}`}
+                      />
+                    ))
+                )}
               </div>
             </div>
-          </div>
-        </section>
+          </section>
+        )}
+        {branding.features.mortgageCalculator && (
+          <section id="Calc" className="relative w-full flex justify-end">
+            <div className="flex items-center justify-center h-150 space-x-4  bg-black w-full">
+              <img
+                src={calc}
+                alt="Sell"
+                className="absolute inset-0 w-full h-full object-cover"
+              />
+              <div className="relative max-w-6xl  z-10 h-full w-full p-8 items-center flex justify-end">
+                <div className="bg-white max-w-2xl shadow-lg rounded-3xl w-full p-8 items-center justify-center">
+                  <h1 className="font-inter text-3xl font-bold">
+                    Mortgage Calculator
+                  </h1>
+                  <p className="text-sm font-inter mt-1">
+                    Use this calculator to estimate your monthly mortgage payments.
+                  </p>
+                  <form action="" className="my-2">
+                    <div className="relative w-full">
+                      <input
+                        type="number"
+                        value={formData.propertyPrice}
+                        onChange={(e) =>
+                          setFormData({
+                            ...formData,
+                            propertyPrice: e.target.value,
+                          })
+                        }
+                        onFocus={() => setIsFocusedPropertyPrice(true)}
+                        onBlur={() => setIsFocusedPropertyPrice(false)}
+                        className="peer w-full px-3 pt-6 pb-2 text-lg font-medium border border-gray-300 rounded-2xl focus:outline-none focus:ring-2 focus:ring-primary focus:border-primary"
+                        placeholder=" " // Trick for floating label
+                      />
+                      <label
+                        className={`absolute left-3 transition-all duration-300 
+            ${
+              isFocusedPropertyPrice || formData.propertyPrice
+                ? 'text-xs top-2 text-gray-500'
+                : 'text-gray-400 top-5 text-sm'
+            } 
+          `}
+                      >
+                        Property Price ($)
+                      </label>
+                    </div>
+                    <div className="flex space-x-2 mt-2">
+                      <div className="relative w-80">
+                        <input
+                          type="number"
+                          value={formData.term}
+                          onChange={(e) =>
+                            setFormData({
+                              ...formData,
+                              term: e.target.value,
+                            })
+                          }
+                          onFocus={() => setIsFocusedTerm(true)}
+                          onBlur={() => setIsFocusedTerm(false)}
+                          className="peer w-full px-3 pt-6 pb-2 text-lg font-medium border border-gray-300 rounded-2xl focus:outline-none focus:ring-2 focus:ring-primary focus:border-primary"
+                          placeholder=" " // Trick for floating label
+                        />
+                        <label
+                          className={`absolute left-3 transition-all duration-300 
+            ${
+              isFocusedTerm || formData.term
+                ? 'text-xs top-2 text-gray-500'
+                : 'text-gray-400 top-5 text-sm'
+            } 
+          `}
+                        >
+                          Loan Term (years)
+                        </label>
+                      </div>
+                      <div className="relative w-80">
+                        <input
+                          type="number"
+                          value={formData.downPayment}
+                          onChange={(e) =>
+                            setFormData({
+                              ...formData,
+                              downPayment: e.target.value,
+                            })
+                          }
+                          onFocus={() => setIsFocusedDownPayment(true)}
+                          onBlur={() => setIsFocusedDownPayment(false)}
+                          className="peer w-full px-3 pt-6 pb-2 text-lg font-medium border border-gray-300 rounded-2xl focus:outline-none focus:ring-2 focus:ring-primary focus:border-primary"
+                          placeholder=" " // Trick for floating label
+                        />
+                        <label
+                          className={`absolute left-3 transition-all duration-300 
+            ${
+              isFocusedDownPayment || formData.downPayment
+                ? 'text-xs top-2 text-gray-500'
+                : 'text-gray-400 top-5 text-sm'
+            } 
+          `}
+                        >
+                          Down Payment ($)
+                        </label>
+                      </div>
+                    </div>
+                    {monthlyPayment !== null && (
+                      <div className="mt-6 p-4 bg-primary/10 rounded-2xl">
+                        <p className="text-sm text-gray-600">
+                          Estimated Monthly Payment
+                        </p>
+                        <p className="text-3xl font-bold text-primary">
+                          $
+                          {monthlyPayment.toLocaleString('en-US', {
+                            maximumFractionDigits: 2,
+                          })}
+                        </p>
+                        <p className="text-xs text-gray-500 mt-2">
+                          Based on {formData.term} years with{' '}
+                          {(0.05 * 100).toFixed(1)}% annual interest
+                        </p>
+                      </div>
+                    )}
+                    <button
+                      type="button"
+                      onClick={calculateInstallment}
+                      className="w-full h-15 mt-2 text-white btn-primary btn-lg rounded-full"
+                    >
+                      Calculate
+                    </button>
+                  </form>
+                </div>
+              </div>
+            </div>
+          </section>
+        )}
       </div>
     </div>
   );

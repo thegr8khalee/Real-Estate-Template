@@ -168,18 +168,18 @@ class ZohoMailService {
     }
 
     /**
-     * Send offer email (for car selling submissions)
+     * Send offer email (for property selling submissions)
      * @param {Object} options
      * @param {string} options.to - Recipient email
      * @param {string} options.name - Customer's name
-     * @param {string} options.carDetails - Car information
+     * @param {string} options.propertyDetails - Property information
      * @param {number} options.offerAmount - Offer amount
      */
-    async sendOfferEmail({ to, name, carDetails, offerAmount }) {
-        const subject = `We Have an Offer for Your ${carDetails}`;
+    async sendOfferEmail({ to, name, propertyDetails, offerAmount }) {
+        const subject = `We Have an Offer for Your ${propertyDetails}`;
         const html = this.createOfferTemplate({
             name,
-            carDetails,
+            propertyDetails,
             offerAmount,
         });
 
@@ -400,14 +400,14 @@ class ZohoMailService {
     /**
      * Create offer email template
      */
-    createOfferTemplate({ name, carDetails, offerAmount }) {
+    createOfferTemplate({ name, propertyDetails, offerAmount }) {
         return `
 <!DOCTYPE html>
 <html>
 <body style="font-family: Arial, sans-serif; background-color: #f4f4f4; padding: 20px;">
   <div style="max-width: 600px; margin: 0 auto; background: white; padding: 30px; border-radius: 8px;">
   <h2 style="color: ${primaryBrandColor};">Great News, ${name}!</h2>
-    <p>We've reviewed your ${carDetails} and we're excited to make you an offer:</p>
+    <p>We've reviewed your ${propertyDetails} and we're excited to make you an offer:</p>
     <div style="background: #f8f8f8; padding: 20px; border-radius: 5px; margin: 20px 0; text-align: center;">
   <h1 style="color: ${primaryBrandColor}; margin: 0;">₦${offerAmount.toLocaleString()}</h1>
     </div>

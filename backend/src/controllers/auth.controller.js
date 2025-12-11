@@ -3,6 +3,7 @@ import User from '../models/user.model.js';
 import Admin from '../models/admin.model.js';
 import { supabase } from '../lib/supabase.js';
 import { Op } from 'sequelize';
+import jwt from 'jsonwebtoken';
 
 export const signup = async (req, res) => {
   const { fullName, email, password, phoneNumber } = req.body;

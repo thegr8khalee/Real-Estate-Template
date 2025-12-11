@@ -2,7 +2,7 @@ import Blog from '../models/blog.model.js';
 import { Op } from 'sequelize';
 import sequelize from '../lib/db.js';
 import Comment from '../models/comment.model.js';
-import Car from '../models/car.model.js';
+import Property from '../models/property.model.js';
 
 export const getAllBlogs = async (req, res) => {
   try {

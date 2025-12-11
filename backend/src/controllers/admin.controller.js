@@ -2,6 +2,8 @@ import Admin from '../models/admin.model.js';
 import { supabase } from '../lib/supabase.js';
 import { Op } from 'sequelize';
 import cloudinary from '../lib/cloudinary.js';
+import { hasPermission, sanitizeQueryParams } from '../lib/dashboard.utils.js';
+import bcrypt from 'bcryptjs';
 
 export const adminSignup = async (req, res) => {
   const { username, email, password, position, role, avatar, bio } = req.body;

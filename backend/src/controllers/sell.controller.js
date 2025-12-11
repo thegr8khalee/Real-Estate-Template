@@ -1,5 +1,5 @@
 import SellNow from "../models/sell.model.js";
-import cloudinary from '../lib/cloudinary.js'; // ADD THIS LINE
+import cloudinary from '../lib/cloudinary.js';
 
 export const submitSellForm = async (req, res) => {
     try {
@@ -7,19 +7,24 @@ export const submitSellForm = async (req, res) => {
             fullName,
             phoneNumber,
             emailAddress,
-            carMake,
-            carModel,
-            yearOfManufacture,
-            mileageKm,
+            propertyType,
+            address,
+            city,
+            state,
+            zipCode,
+            bedrooms,
+            bathrooms,
+            sqft,
+            askingPrice,
             condition,
             uploadPhotos,
             additionalNotes,
         } = req.body;
 
-        if (!fullName || !phoneNumber || !emailAddress || !carMake || !carModel || !yearOfManufacture || !mileageKm || !condition) {
+        if (!fullName || !phoneNumber || !emailAddress || !propertyType || !address || !condition) {
             return res.status(400).json({
                 success: false,
-                message: 'Missing essential required fields for car submission.',
+                message: 'Missing essential required fields for property submission.',
             });
         }
 
@@ -33,12 +38,17 @@ export const submitSellForm = async (req, res) => {
             fullName,
             phoneNumber,
             emailAddress,
-            carMake,
-            carModel,
-            yearOfManufacture: Number(yearOfManufacture),
-            mileageKm: Number(mileageKm),
+            propertyType,
+            address,
+            city,
+            state,
+            zipCode,
+            bedrooms: bedrooms ? Number(bedrooms) : null,
+            bathrooms: bathrooms ? Number(bathrooms) : null,
+            sqft: sqft ? Number(sqft) : null,
+            askingPrice: askingPrice ? parseFloat(askingPrice) : null,
             condition,
-            uploadPhotos: imageUrls,
+            images: imageUrls,
             additionalNotes: additionalNotes || null,
         };
 
@@ -46,12 +56,12 @@ export const submitSellForm = async (req, res) => {
 
         return res.status(201).json({
             success: true,
-            message: 'Your car submission has been received successfully and photos uploaded!',
+            message: 'Your property submission has been received successfully and photos uploaded!',
             data: {
                 id: newSubmission.id,
                 email: newSubmission.emailAddress,
-                make: newSubmission.carMake,
-                model: newSubmission.carModel,
+                propertyType: newSubmission.propertyType,
+                address: newSubmission.address,
                 condition: newSubmission.condition,
                 photoCount: imageUrls.length,
             },
@@ -84,7 +94,7 @@ const uploadImagesToCloudinary = async (base64Images) => {
 
     const uploadPromises = base64Images.map((base64Image) => {
         return cloudinary.uploader.upload(base64Image, {
-            folder: 'car-dealership/sell-submissions',
+            folder: 'real-estate/sell-submissions',
         });
     });
 

@@ -54,17 +54,17 @@ export const useInteractStore = create((set, get) => ({
     }
   },
 
-  reviewCar: async (id, content) => {
+  reviewProperty: async (id, content) => {
     try {
-      console.log('Reviewing car with ID:', id, 'and content:', content);
-      const res = await axiosInstance.put(`/interactions/reviewCar/${id}`, {
+      console.log('Reviewing property with ID:', id, 'and content:', content);
+      const res = await axiosInstance.put(`/interactions/reviewProperty/${id}`, {
         content,
       });
       return res; // Return the response for further handling
     } catch (error) {
-      console.error('Error reviewing car:', error);
+      console.error('Error reviewing property:', error);
       const errorMessage =
-        error.response?.data?.message || 'Failed to review car.';
+        error.response?.data?.message || 'Failed to review property.';
       toast.error(errorMessage);
     }
   },
@@ -86,14 +86,14 @@ export const useInteractStore = create((set, get) => ({
     }
   },
 
-  getAllReviews: async (carId) => {
+  getAllReviews: async (propertyId) => {
     set({ isFetchingReviews: true, reviewError: null });
     try {
       const page = get().reviewCurrentPage;
       const limit = 10; // You can make this a customizable state variable
 
       const res = await axiosInstance.get('/interactions/reviews/getAll', {
-        params: { carId, page, limit },
+        params: { propertyId, page, limit },
       });
 
       set({
@@ -103,7 +103,7 @@ export const useInteractStore = create((set, get) => ({
         reviewError: null,
       });
 
-      // toast.success(`Successfully loaded reviews for this car.`);
+      // toast.success(`Successfully loaded reviews for this property.`);
     } catch (error) {
       const errorMessage =
         error.response?.data?.message ||

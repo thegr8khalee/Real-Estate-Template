@@ -17,10 +17,15 @@ export const useSellStore = create((set) => ({
                 fullName: formData.fullName,
                 phoneNumber: formData.phoneNumber,
                 emailAddress: formData.email, // Backend expects 'emailAddress'
-                carMake: formData.make, // Backend expects 'carMake'
-                carModel: formData.model, // Backend expects 'carModel'
-                yearOfManufacture: formData.year, // Backend expects 'yearOfManufacture'
-                mileageKm: formData.mileage, // Backend expects 'mileageKm'
+                propertyType: formData.propertyType,
+                address: formData.address,
+                city: formData.city,
+                state: formData.state,
+                zipCode: formData.zipCode,
+                bedrooms: formData.bedrooms,
+                bathrooms: formData.bathrooms,
+                sqft: formData.sqft,
+                askingPrice: formData.askingPrice,
                 condition: formData.condition,
                 uploadPhotos: formData.images, // Backend expects 'uploadPhotos'
                 additionalNotes: formData.additionalNotes,

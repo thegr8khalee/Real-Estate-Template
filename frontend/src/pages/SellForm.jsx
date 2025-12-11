@@ -5,21 +5,26 @@ import {
   ArrowLeft,
   Send,
   CheckCircle,
-  File,
+  FileText,
   DollarSign,
-  Zap,
+  Home,
 } from 'lucide-react';
 import { useSellStore } from '../store/useSellStore';
 
-const SellCarPage = () => {
+const SellPropertyPage = () => {
   const [formData, setFormData] = useState({
     fullName: '',
     phoneNumber: '',
     email: '',
-    make: '',
-    model: '',
-    year: '',
-    mileage: '',
+    propertyType: '',
+    address: '',
+    city: '',
+    state: '',
+    zipCode: '',
+    bedrooms: '',
+    bathrooms: '',
+    sqft: '',
+    askingPrice: '',
     condition: '',
     additionalNotes: '',
   });
@@ -31,7 +36,8 @@ const SellCarPage = () => {
   const [imagePreview, setImagePreview] = useState([]);
   const [isSubmitted, setIsSubmitted] = useState(false);
 
-  const conditionOptions = ['Excellent', 'Good', 'Needs Work'];
+  const conditionOptions = ['Excellent', 'Good', 'Fair', 'Needs Work'];
+  const propertyTypeOptions = ['House', 'Apartment', 'Condo', 'Townhouse', 'Land', 'Commercial'];
 
   const handleInputChange = (e) => {
     const { name, value } = e.target;
@@ -73,10 +79,12 @@ const SellCarPage = () => {
       !formData.fullName ||
       !formData.phoneNumber ||
       !formData.email ||
-      !formData.make ||
-      !formData.model ||
-      !formData.year ||
-      !formData.mileage ||
+      !formData.propertyType ||
+      !formData.address ||
+      !formData.city ||
+      !formData.state ||
+      !formData.zipCode ||
+      !formData.askingPrice ||
       !formData.condition
     ) {
       alert('Please fill in all required fields');
@@ -86,8 +94,10 @@ const SellCarPage = () => {
     const sellData = {
       ...formData,
       images: images, // base64 images array
-      year: parseInt(formData.year),
-      mileage: parseInt(formData.mileage),
+      bedrooms: formData.bedrooms ? parseInt(formData.bedrooms) : 0,
+      bathrooms: formData.bathrooms ? parseFloat(formData.bathrooms) : 0,
+      sqft: formData.sqft ? parseInt(formData.sqft) : 0,
+      askingPrice: parseFloat(formData.askingPrice),
     };
 
     const success = await submitSellForm(sellData);
@@ -102,10 +112,15 @@ const SellCarPage = () => {
           fullName: '',
           phoneNumber: '',
           email: '',
-          make: '',
-          model: '',
-          year: '',
-          mileage: '',
+          propertyType: '',
+          address: '',
+          city: '',
+          state: '',
+          zipCode: '',
+          bedrooms: '',
+          bathrooms: '',
+          sqft: '',
+          askingPrice: '',
           condition: '',
           additionalNotes: '',
         });
@@ -123,7 +138,7 @@ const SellCarPage = () => {
             <CheckCircle className="h-20 w-20 text-success mx-auto mb-4" />
             <h2 className="text-3xl font-bold mb-2">Thank You!</h2>
             <p className="text-gray-600 mb-4">
-              Your car details have been submitted successfully. Our team will
+              Your property details have been submitted successfully. Our team will
               review your submission and get back to you within 24 hours with a
               fair, no-obligation offer.
             </p>
@@ -152,7 +167,7 @@ const SellCarPage = () => {
             </button>
             <div>
               <h1 className="text-3xl md:text-4xl font-bold">
-                Sell Your Car Today
+                Sell Your Property
               </h1>
               <p className="text-gray-600 mt-1">
                 Get Instant Valuation – Fill out the form below
@@ -166,7 +181,7 @@ const SellCarPage = () => {
               <p className="text-sm mt-1">
                 Our team will get back to you within 24 hours with a fair,
                 no-obligation offer. We handle all the paperwork and make
-                selling your car hassle-free!
+                selling your property hassle-free!
               </p>
             </div>
           </div>
@@ -209,7 +224,7 @@ const SellCarPage = () => {
                       value={formData.phoneNumber}
                       onChange={handleInputChange}
                       className="input input-bordered w-full rounded-full"
-                      placeholder="+234 800 000 0000"
+                      placeholder="+1 555 000 0000"
                       required
                     />
                   </div>
@@ -234,72 +249,152 @@ const SellCarPage = () => {
               <div className="divider"></div>
 
               <div className="mb-8">
-                <h2 className="text-2xl font-bold mb-6">Car Information</h2>
+                <h2 className="text-2xl font-bold mb-6">Property Information</h2>
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                  <div>
+                  
+                  <div className="md:col-span-2">
                     <label className="label font-medium">
-                      <span className="label-text">Car Make *</span>
+                      <span className="label-text">Property Type *</span>
+                    </label>
+                    <select
+                      name="propertyType"
+                      value={formData.propertyType}
+                      onChange={handleInputChange}
+                      className="select select-bordered w-full rounded-full"
+                      required
+                    >
+                      <option value="">Select Property Type</option>
+                      {propertyTypeOptions.map((option) => (
+                        <option key={option} value={option}>
+                          {option}
+                        </option>
+                      ))}
+                    </select>
+                  </div>
+
+                  <div className="md:col-span-2">
+                    <label className="label font-medium">
+                      <span className="label-text">Address *</span>
                     </label>
                     <input
                       type="text"
-                      name="make"
-                      value={formData.make}
+                      name="address"
+                      value={formData.address}
                       onChange={handleInputChange}
                       className="input input-bordered w-full rounded-full"
-                      placeholder="e.g., Toyota, Honda, Mercedes"
+                      placeholder="123 Main St"
                       required
                     />
                   </div>
 
                   <div>
                     <label className="label font-medium">
-                      <span className="label-text">Car Model *</span>
+                      <span className="label-text">City *</span>
                     </label>
                     <input
                       type="text"
-                      name="model"
-                      value={formData.model}
+                      name="city"
+                      value={formData.city}
                       onChange={handleInputChange}
                       className="input input-bordered w-full rounded-full"
-                      placeholder="e.g., Corolla, Civic, C-Class"
+                      placeholder="New York"
                       required
                     />
                   </div>
 
                   <div>
                     <label className="label font-medium">
-                      <span className="label-text">Year of Manufacture *</span>
+                      <span className="label-text">State *</span>
                     </label>
                     <input
-                      type="number"
-                      name="year"
-                      value={formData.year}
+                      type="text"
+                      name="state"
+                      value={formData.state}
                       onChange={handleInputChange}
                       className="input input-bordered w-full rounded-full"
-                      placeholder="2020"
-                      min="1980"
-                      max={new Date().getFullYear() + 1}
+                      placeholder="NY"
                       required
                     />
                   </div>
 
                   <div>
                     <label className="label font-medium">
-                      <span className="label-text">Mileage (in km) *</span>
+                      <span className="label-text">Zip Code *</span>
+                    </label>
+                    <input
+                      type="text"
+                      name="zipCode"
+                      value={formData.zipCode}
+                      onChange={handleInputChange}
+                      className="input input-bordered w-full rounded-full"
+                      placeholder="10001"
+                      required
+                    />
+                  </div>
+
+                  <div>
+                    <label className="label font-medium">
+                      <span className="label-text">Asking Price ($) *</span>
                     </label>
                     <input
                       type="number"
-                      name="mileage"
-                      value={formData.mileage}
+                      name="askingPrice"
+                      value={formData.askingPrice}
                       onChange={handleInputChange}
                       className="input input-bordered w-full rounded-full"
-                      placeholder="50000"
+                      placeholder="500000"
                       min="0"
                       required
                     />
                   </div>
 
-                  <div className="md:col-span-2">
+                  <div>
+                    <label className="label font-medium">
+                      <span className="label-text">Bedrooms</span>
+                    </label>
+                    <input
+                      type="number"
+                      name="bedrooms"
+                      value={formData.bedrooms}
+                      onChange={handleInputChange}
+                      className="input input-bordered w-full rounded-full"
+                      placeholder="3"
+                      min="0"
+                    />
+                  </div>
+
+                  <div>
+                    <label className="label font-medium">
+                      <span className="label-text">Bathrooms</span>
+                    </label>
+                    <input
+                      type="number"
+                      name="bathrooms"
+                      value={formData.bathrooms}
+                      onChange={handleInputChange}
+                      className="input input-bordered w-full rounded-full"
+                      placeholder="2"
+                      min="0"
+                      step="0.5"
+                    />
+                  </div>
+
+                  <div>
+                    <label className="label font-medium">
+                      <span className="label-text">Square Footage</span>
+                    </label>
+                    <input
+                      type="number"
+                      name="sqft"
+                      value={formData.sqft}
+                      onChange={handleInputChange}
+                      className="input input-bordered w-full rounded-full"
+                      placeholder="2000"
+                      min="0"
+                    />
+                  </div>
+
+                  <div>
                     <label className="label font-medium">
                       <span className="label-text">Condition *</span>
                     </label>
@@ -344,7 +439,7 @@ const SellCarPage = () => {
                   >
                     <Upload className="h-16 w-16 text-gray-400 mb-4" />
                     <span className="text-lg font-medium text-gray-700 mb-2">
-                      Click to upload car photos
+                      Click to upload property photos
                     </span>
                     <span className="text-sm text-gray-500">
                       JPG, PNG or JPEG (Max 10 images)
@@ -385,7 +480,7 @@ const SellCarPage = () => {
                   value={formData.additionalNotes}
                   onChange={handleInputChange}
                   className="textarea textarea-bordered w-full h-32 rounded-3xl"
-                  placeholder="Tell us anything else about your car - special features, service history, recent repairs, etc."
+                  placeholder="Tell us anything else about your property - special features, recent renovations, etc."
                 />
               </div>
 
@@ -425,7 +520,7 @@ const SellCarPage = () => {
           <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mt-12 mb-8">
             <div className="card bg-base-100 shadow-lg">
               <div className="card-body text-center items-center justify-center">
-                <Zap className="text-primary size-10" />
+                <Home className="text-primary size-10" />
                 <h3 className="font-bold text-lg">Quick Response</h3>
                 <p className="text-sm text-gray-600">
                   Get your offer within 24 hours
@@ -445,7 +540,7 @@ const SellCarPage = () => {
 
             <div className="card bg-base-100 shadow-lg">
               <div className="card-body text-center items-center justify-center">
-                <File className="text-primary size-10" />
+                <FileText className="text-primary size-10" />
                 <h3 className="font-bold text-lg">Hassle-Free</h3>
                 <p className="text-sm text-gray-600">
                   We handle all the paperwork
@@ -459,4 +554,4 @@ const SellCarPage = () => {
   );
 };
 
-export default SellCarPage;
+export default SellPropertyPage;

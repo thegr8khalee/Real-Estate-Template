@@ -12,6 +12,7 @@ import {
   Shield,
   FileText,
   Check,
+  Home,
 } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 
@@ -20,28 +21,28 @@ const LearnMoreSell = () => {
 
   const faqs = [
     {
-      question: 'Do I need to bring documents?',
+      question: 'Do I need to provide property documents?',
       answer:
-        "Yes. You'll need your car's proof of ownership, valid ID, and any service history (if available).",
+        "Yes. You'll need proof of ownership (C of O, Deed of Assignment, etc.) and valid ID.",
     },
     {
-      question: 'What if my car is not in perfect condition?',
+      question: 'What if my property needs repairs?',
       answer:
-        "No problem! We buy cars in all conditions. Just be honest about the details and we'll still give you a fair offer.",
+        "No problem! We buy properties in all conditions. Just be honest about the details and we'll still give you a fair offer.",
     },
     {
       question: 'How long does the process take?',
-      answer: 'Usually less than 1 hour once you arrive at our showroom.',
+      answer: 'We typically make an offer within 24-48 hours of inspection.',
     },
     {
-      question: 'Do you buy cars with outstanding loans?',
+      question: 'Do you buy properties with outstanding mortgages?',
       answer:
-        'Yes, we can work with you to settle outstanding loans as part of the purchase process.',
+        'Yes, we can work with you to settle outstanding mortgages as part of the purchase process.',
     },
     {
       question: 'What payment methods do you offer?',
       answer:
-        'We offer instant bank transfer or cash payment on the same day you accept our offer.',
+        'We offer bank transfer or bank draft upon successful closing.',
     },
   ];
 
@@ -50,21 +51,21 @@ const LearnMoreSell = () => {
       number: '1',
       title: 'Get a Free Valuation',
       description:
-        'Tell us a few details about your car — make, model, year, mileage, and condition. Our system and experts will provide an instant, fair market value.',
+        'Tell us a few details about your property — type, location, size, and condition. Our system and experts will provide an initial assessment.',
       icon: DollarSign,
     },
     {
       number: '2',
-      title: 'Book an Appointment',
+      title: 'Schedule an Inspection',
       description:
-        'Bring your car to our showroom for a quick inspection. No hidden fees, no endless negotiations — just a straightforward assessment.',
+        'We will schedule a convenient time to inspect your property. No hidden fees, just a straightforward assessment.',
       icon: Clock,
     },
     {
       number: '3',
-      title: 'Sell & Get Paid Instantly',
+      title: 'Sell & Get Paid',
       description:
-        "If you accept our offer, we'll handle the paperwork and pay you on the spot. Walk in with your car, drive out with cash (or transfer) the same day.",
+        "If you accept our offer, we'll handle the paperwork and close the deal quickly. Walk away with cash for your property.",
       icon: Shield,
     },
   ];
@@ -75,10 +76,10 @@ const LearnMoreSell = () => {
   };
 
   const benefits = [
-    "Nigeria's largest and most trusted car dealership",
-    'Thousands of satisfied customers nationwide',
+    "Trusted Real Estate Agency",
+    'Hundreds of satisfied clients',
     'Quick, transparent, and hassle-free process',
-    'Same-day payment',
+    'Competitive market offers',
     'No middlemen — deal directly with professionals',
   ];
 
@@ -98,10 +99,10 @@ const LearnMoreSell = () => {
             className="text-center"
           >
             <h1 className="text-white text-3xl font-bold font-inter mb-4">
-              How to Sell Your Car with Ease
+              How to Sell Your Property with Ease
             </h1>
             <p className="text-gray-200 text-sm font-inter">
-              At [Dealership Name], we believe selling your car should be fast,
+              At [Agency Name], we believe selling your property should be fast,
               transparent, and stress-free.
             </p>
           </motion.div>
@@ -238,7 +239,7 @@ const LearnMoreSell = () => {
                 onClick={handleSell}
                 className="w-full btn btn-primary btn-lg rounded-full font-medium mt-6"
               >
-                Sell My Car Now
+                Sell My Property Now
               </button>
             </div>
           </div>
@@ -260,10 +261,10 @@ const LearnMoreSell = () => {
               className="text-center"
             >
               <h1 className="text-white text-5xl md:text-6xl font-bold font-inter mb-6">
-                How to Sell Your Car with Ease
+                How to Sell Your Property with Ease
               </h1>
               <p className="text-gray-200 text-lg font-inter max-w-3xl mx-auto">
-                At [Dealership Name], we believe selling your car should be
+                At [Agency Name], we believe selling your property should be
                 fast, transparent, and stress-free. That's why we've simplified
                 the process into three easy steps.
               </p>
@@ -408,7 +409,7 @@ const LearnMoreSell = () => {
               >
                 <MapPin size={24} className="text-primary" />
                 <div className="text-left">
-                  <p className="text-gray-300 text-sm">Visit our showroom</p>
+                  <p className="text-gray-300 text-sm">Visit our office</p>
                   <p className="text-white font-semibold text-lg">
                     123 Main Street, Garki, Abuja
                   </p>
@@ -419,7 +420,7 @@ const LearnMoreSell = () => {
               onClick={handleSell}
               className="btn btn-primary btn-lg rounded-full font-medium text-lg px-12"
             >
-              Sell My Car Now
+              Sell My Property Now
             </button>
           </div>
         </section>

@@ -1,5 +1,4 @@
-// src/controllers/car.controller.js
-import Car from '../models/car.model.js';
+import Property from '../models/property.model.js';
 import Blog from '../models/blog.model.js';
 import { Op } from 'sequelize';
 import cloudinary from '../lib/cloudinary.js';
@@ -14,7 +13,7 @@ const uploadImagesToCloudinary = async (base64Images) => {
 
   const uploadPromises = base64Images.map((base64Image) => {
     return cloudinary.uploader.upload(base64Image, {
-      folder: 'car-dealership',
+      folder: 'real-estate',
     });
   });
 
@@ -47,83 +46,44 @@ const extractPublicIdFromUrl = (url) => {
   }
 };
 
-export const addCar = async (req, res) => {
+export const addProperty = async (req, res) => {
   try {
     const {
-      make,
-      model,
-      price, // Added price
-      condition, // Added condition
-      msrp,
-      mileage,
-      fuelType,
-      transmission,
-      year,
-      bodyType,
-      category,
-      engineSize,
-      horsepower,
-      torque,
-      drivetrain,
+      title,
       description,
+      price,
+      address,
+      city,
+      state,
+      zipCode,
+      type,
+      status,
+      bedrooms,
+      bathrooms,
+      sqft,
+      yearBuilt,
+      features,
       images,
-      sold,
-      interior,
-      exterior,
-      comfort,
-      safety,
-      door,
-      color,
-      cylinder,
-      length,
-      width,
-      trunkCapacity,
-      tireSize,
-      zeroToHundred,
+      condition,
     } = req.body;
 
-    console.log('Received car data:', req.body);
+    console.log('Received property data:', req.body);
 
     // Basic validation for required fields
     const requiredFields = {
-      make,
-      model,
-      price,
-      condition,
-      mileage,
-      fuelType,
-      transmission,
-      year,
-      bodyType,
-      category,
-      engineSize,
-      horsepower,
-      torque,
-      drivetrain,
+      title,
       description,
-      images,
-      interior,
-      exterior,
-      comfort,
-      safety,
-      door,
-      color,
-      cylinder,
-      length,
-      width,
-      trunkCapacity,
-      tireSize,
-      zeroToHundred,
+      price,
+      address,
+      city,
+      state,
+      zipCode,
+      type,
     };
 
     // Loop through required fields
     for (const [field, value] of Object.entries(requiredFields)) {
-      if (
-        value === undefined ||
-        value === null ||
-        (Array.isArray(value) && value.length === 0) ||
-        (field === 'zeroToHundred' && value <= 0)
-      ) {
+      if (value === undefined || value === null || value === '') {
         return res
           .status(400)
           .json({ message: `Missing or invalid field: ${field}` });
@@ -138,44 +98,30 @@ export const addCar = async (req, res) => {
 
     imageUrls = imageUrls.map((img) => img.url); // Store only URLs in the database
 
-    // Use Sequelize's create method to add a new car.
-    const newCar = await Car.create({
-      make,
-      model,
-      price,
-      condition,
-      msrp,
-      mileage,
-      fuelType,
-      transmission,
-      year,
-      bodyType,
-      category,
-      engineSize,
-      horsepower,
-      torque,
-      drivetrain,
+    // Use Sequelize's create method to add a new property.
+    const newProperty = await Property.create({
+      title,
       description,
-      imageUrls,
-      sold,
-      interior,
-      exterior,
-      comfort,
-      safety,
-      door,
-      color,
-      cylinder,
-      length,
-      width,
-      trunkCapacity,
-      tireSize,
-      zeroToHundred,
+      price,
+      address,
+      city,
+      state,
+      zipCode,
+      type,
+      status,
+      bedrooms,
+      bathrooms,
+      sqft,
+      yearBuilt,
+      features,
+      images: imageUrls,
+      condition,
     });
 
-    // Respond with the newly created car object
-    res.status(201).json(newCar);
+    // Respond with the newly created property object
+    res.status(201).json(newProperty);
   } catch (error) {
-    console.error('Error in addCar controller:', error);
+    console.error('Error in addProperty controller:', error);
     const errorMessage =
       error.name === 'SequelizeValidationError'
         ? error.errors[0].message
@@ -185,17 +131,17 @@ export const addCar = async (req, res) => {
   }
 };
 
-export const updateCar = async (req, res) => {
+export const updateProperty = async (req, res) => {
   try {
     const { id } = req.params;
-    const { images, ...carData } = req.body;
-    console.log('Update car data received:', req.body);
+    const { images, ...propertyData } = req.body;
+    console.log('Update property data received:', req.body);
 
-    // Find the car by its primary key
-    const car = await Car.findByPk(id);
+    // Find the property by its primary key
+    const property = await Property.findByPk(id);
 
-    if (!car) {
-      return res.status(404).json({ message: 'Car not found.' });
+    if (!property) {
+      return res.status(404).json({ message: 'Property not found.' });
     }
 
     // Separate new images (base64 strings) from existing images (objects with url/public_id)
@@ -220,6 +166,9 @@ export const updateCar = async (req, res) => {
         ) {
           // Allow raw base64 strings too
           newImageBase64s.push(imageData);
+        } else if (typeof imageData === 'string') {
+            // Existing image URL string
+            existingImages.push({ url: imageData });
         }
       }
     }
@@ -231,24 +180,21 @@ export const updateCar = async (req, res) => {
     const finalImages = [...existingImages, ...newImageUploads];
 
     // Determine which images to delete from Cloudinary
-    const publicIdsToDelete = car.imageUrls
-      ? car.imageUrls
+    // Note: This logic assumes we have public_ids. If we only have URLs, we extract them.
+    const publicIdsToDelete = property.images
+      ? property.images
           .filter((oldImg) => {
-            const oldPublicId =
-              typeof oldImg === 'object' && oldImg.public_id
-                ? oldImg.public_id
-                : extractPublicIdFromUrl(oldImg); // Handle old string-only URLs
+            const oldPublicId = extractPublicIdFromUrl(oldImg); 
 
             return (
               oldPublicId &&
-              !finalImages.some((newImg) => newImg.public_id === oldPublicId)
+              !finalImages.some((newImg) => {
+                  const newPublicId = newImg.public_id || extractPublicIdFromUrl(newImg.url);
+                  return newPublicId === oldPublicId;
+              })
             );
           })
-          .map((oldImg) =>
-            typeof oldImg === 'object'
-              ? oldImg.public_id
-              : extractPublicIdFromUrl(oldImg)
-          )
+          .map((oldImg) => extractPublicIdFromUrl(oldImg))
       : [];
 
     // Delete unused images from Cloudinary in parallel
@@ -262,19 +208,19 @@ export const updateCar = async (req, res) => {
       );
     }
 
-    // Update the car's data in the database
+    // Update the property's data in the database
     const imageUrls = finalImages.map((img) => img.url);
 
     console.log('Extracted URLs:', imageUrls); // Debug log
 
-    // Save only urls to carData
-    carData.imageUrls = imageUrls;
+    // Save only urls to propertyData
+    propertyData.images = imageUrls;
 
-    // Respond with the updated car object
-    await car.update(carData);
-    res.status(200).json(car);
+    // Respond with the updated property object
+    await property.update(propertyData);
+    res.status(200).json(property);
   } catch (error) {
-    console.error('Error in updateCar controller:', error);
+    console.error('Error in updateProperty controller:', error);
     const errorMessage =
       error.name === 'SequelizeValidationError'
         ? error.errors.map((e) => e.message).join(', ')
@@ -283,26 +229,26 @@ export const updateCar = async (req, res) => {
   }
 };
 
-export const deleteCar = async (req, res) => {
+export const deleteProperty = async (req, res) => {
   try {
     const { id } = req.params;
 
-    const deletedRowCount = await Car.destroy({
+    const deletedRowCount = await Property.destroy({
       where: { id },
     });
 
     if (deletedRowCount === 0) {
       return res
         .status(404)
-        .json({ message: 'Car not found or already deleted.' });
+        .json({ message: 'Property not found or already deleted.' });
     }
 
-    res.status(200).json({ message: 'Car deleted successfully.' });
+    res.status(200).json({ message: 'Property deleted successfully.' });
   } catch (error) {
-    console.error('Error in deleteCar controller:', error);
+    console.error('Error in deleteProperty controller:', error);
     res
       .status(500)
-      .json({ message: 'Internal Server Error while deleting the car.' });
+      .json({ message: 'Internal Server Error while deleting the property.' });
   }
 };
 
@@ -318,7 +264,7 @@ export const addBlog = async (req, res) => {
       category,
       status,
       content,
-      carIds,
+      propertyIds, // Changed from carIds
       tags,
       publishedAt,
       seoTitle,
@@ -350,7 +296,7 @@ export const addBlog = async (req, res) => {
       category,
       status,
       content,
-      carIds,
+      propertyIds, // Changed from carIds
       tags,
       publishedAt,
       seoTitle,
@@ -382,7 +328,7 @@ export const updateBlog = async (req, res) => {
       category,
       status,
       content,
-      carIds,
+      propertyIds, // Changed from carIds
       tags,
       publishedAt,
       seoTitle,
@@ -432,7 +378,7 @@ export const updateBlog = async (req, res) => {
       category,
       status,
       content,
-      carIds,
+      propertyIds, // Changed from carIds
       tags,
       publishedAt,
       seoTitle,

@@ -1,6 +1,7 @@
 // controllers/sellSubmission.controller.js
 import SellNow from '../models/sell.model.js';
 import { Op } from 'sequelize';
+import zohoService from '../services/zoho.service.js';
 
 // Get sell submissions stats
 export const getSellSubmissionsStats = async (req, res) => {
@@ -151,12 +152,18 @@ export const sendOffer = async (req, res) => {
     submission.offerSentDate = new Date();
     await submission.save();
 
-    // TODO: Send email to customer with offer details
-    // await sendOfferEmail(submission.emailAddress, {
-    //   name: submission.fullName,
-    //   carDetails: `${submission.carMake} ${submission.carModel} ${submission.yearOfManufacture}`,
-    //   offerAmount: offerAmount
-    // });
+    // Send email to customer with offer details
+    try {
+        await zohoService.sendOfferEmail({
+            to: submission.emailAddress,
+            name: submission.fullName,
+            propertyDetails: `${submission.propertyType} at ${submission.address}`,
+            offerAmount: parseFloat(offerAmount)
+        });
+    } catch (emailError) {
+        console.error('Error sending offer email:', emailError);
+        // Continue execution, don't fail the request if email fails
+    }
 
     return res.status(200).json({
       success: true,

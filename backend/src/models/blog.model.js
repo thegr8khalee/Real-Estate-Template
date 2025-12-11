@@ -69,14 +69,14 @@ const Blog = sequelize.define(
       type: DataTypes.TEXT('long'),
       allowNull: false,
     },
-    carIds: {
+    propertyIds: {
       type: DataTypes.JSON,
       allowNull: true,
       defaultValue: [],
       validate: {
         isArrayOfUUIDs(value) {
           if (value && !Array.isArray(value)) {
-            throw new Error('carIds must be an array');
+            throw new Error('propertyIds must be an array');
           }
           if (value && value.length > 0) {
             const uuidRegex =
@@ -85,7 +85,7 @@ const Blog = sequelize.define(
               (id) => typeof id !== 'string' || !uuidRegex.test(id)
             );
             if (invalidIds.length > 0) {
-              throw new Error('All carIds must be valid UUIDs');
+              throw new Error('All propertyIds must be valid UUIDs');
             }
           }
         },

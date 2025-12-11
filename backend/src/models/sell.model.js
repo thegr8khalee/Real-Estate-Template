@@ -33,25 +33,28 @@ SellNow.init({
         },
     },
 
-    // --- Car Details ---
-    carMake: {
+    // --- Property Details ---
+    propertyType: {
         type: DataTypes.STRING,
         allowNull: false,
     },
-    carModel: {
+    address: {
         type: DataTypes.STRING,
         allowNull: false,
     },
-    yearOfManufacture: {
-        type: DataTypes.INTEGER,
+    city: {
+        type: DataTypes.STRING,
         allowNull: false,
-        validate: {
-            isInt: true,
-            min: 1900,
-            max: new Date().getFullYear() + 1, // Allows for the current or upcoming model year
-        },
     },
-    mileageKm: {
+    state: {
+        type: DataTypes.STRING,
+        allowNull: false,
+    },
+    zipCode: {
+        type: DataTypes.STRING,
+        allowNull: false,
+    },
+    bedrooms: {
         type: DataTypes.INTEGER,
         allowNull: false,
         validate: {
@@ -59,57 +62,54 @@ SellNow.init({
             min: 0,
         },
     },
-    condition: {
-        type: DataTypes.ENUM('Excellent', 'Good', 'Needs Work'),
+    bathrooms: {
+        type: DataTypes.FLOAT,
         allowNull: false,
         validate: {
-            isIn: {
-                args: [['Excellent', 'Good', 'Needs Work']],
-                msg: "Condition must be 'Excellent', 'Good', or 'Needs Work'.",
-            },
+            isFloat: true,
+            min: 0,
         },
     },
-
-    // --- Optional/Additional Fields ---
-    uploadPhotos: {
-        // Use JSONB or TEXT to store an array of URLs/paths.
-        // If your database supports ARRAY (like PostgreSQL), use DataTypes.ARRAY(DataTypes.STRING)
-        type: DataTypes.TEXT, 
-        allowNull: true,
-        get() {
-            // Getter to parse the stored string back into an array (for TEXT type)
-            const photos = this.getDataValue('uploadPhotos');
-            return photos ? JSON.parse(photos) : [];
+    sqft: {
+        type: DataTypes.INTEGER,
+        allowNull: false,
+        validate: {
+            isInt: true,
+            min: 0,
         },
-        set(val) {
-            // Setter to serialize the array into a string before saving (for TEXT type)
-            this.setDataValue('uploadPhotos', JSON.stringify(val));
-        }
+    },
+    askingPrice: {
+        type: DataTypes.DECIMAL(15, 2),
+        allowNull: true,
+    },
+    condition: {
+        type: DataTypes.STRING,
+        allowNull: true,
+    },
+    images: {
+        type: DataTypes.JSON,
+        defaultValue: [],
+        allowNull: true,
     },
     additionalNotes: {
         type: DataTypes.TEXT,
         allowNull: true,
     },
-
-    // --- Internal/Tracking Fields ---
-    offerStatus: {
-        type: DataTypes.ENUM('Pending', 'Offer Sent', 'Accepted', 'Rejected'),
-        allowNull: false,
+    description: {
+        type: DataTypes.TEXT,
+        allowNull: true,
+    },
+    
+    // --- Additional Info ---
+    status: {
+        type: DataTypes.ENUM('Pending', 'Reviewed', 'Contacted', 'Rejected', 'Accepted'),
         defaultValue: 'Pending',
     },
-    offerAmount: {
-        type: DataTypes.DECIMAL(10, 2),
-        allowNull: true,
-    },
-    offerSentDate: {
-        type: DataTypes.DATE,
-        allowNull: true,
-    }
 }, {
     sequelize,
     modelName: 'SellNow',
-    tableName: 'SellNowForms', // Explicitly name the table
-    timestamps: true,
+    tableName: 'SellNowRequests', // Optional: customize table name
+    timestamps: true, // Adds createdAt and updatedAt
 });
 
 export default SellNow;

@@ -80,6 +80,22 @@ let brandingConfig = {
     typography: { ...typographyDefaults },
     borderRadius: { ...borderRadiusDefaults },
   },
+  features: {
+    blog: true,
+    reviews: true,
+    sell: true,
+    neighborhoods: true,
+    comparison: true,
+    mortgageCalculator: true,
+    newsletter: true,
+  },
+  contact: {
+    emails: {},
+    phones: {},
+    address: {},
+    hours: [],
+    location: { latitude: null, longitude: null },
+  },
 };
 
 if (brandingPath) {

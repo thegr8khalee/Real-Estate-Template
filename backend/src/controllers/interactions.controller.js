@@ -1,6 +1,6 @@
 import Blog from '../models/blog.model.js';
 import { Op, fn, col, literal } from 'sequelize';
-import Car from '../models/car.model.js';
+import Property from '../models/property.model.js';
 import Comment from '../models/comment.model.js';
 import Review from '../models/review.model.js';
 import User from '../models/user.model.js';
@@ -105,7 +105,7 @@ export const updateComment = async (req, res) => {
   }
 };
 
-export const reviewCar = async (req, res) => {
+export const reviewProperty = async (req, res) => {
   try {
     // Check for user authentication from the middleware
     if (!req.user || !req.user.id) {
@@ -115,19 +115,19 @@ export const reviewCar = async (req, res) => {
     }
 
     // Get review data from the request body, but not the userId or name
-    const { content, interior, exterior, comfort, performance } =
+    const { content, location, condition, value, amenities } =
       req.body.content;
 
     console.log('Request body:', req.body);
-    const carId = req.params.id;
+    const propertyId = req.params.id;
 
     console.log('Received review data:', {
       content,
-      interior,
-      exterior,
-      comfort,
-      performance,
-      carId,
+      location,
+      condition,
+      value,
+      amenities,
+      propertyId,
     });
 
     // Get the user's ID and name directly from the authenticated request object
@@ -137,12 +137,12 @@ export const reviewCar = async (req, res) => {
     // Check if all required fields are present in the request body
     if (
       !content ||
-      !carId ||
+      !propertyId ||
       !name ||
-      interior === undefined ||
-      exterior === undefined ||
-      comfort === undefined ||
-      performance === undefined
+      location === undefined ||
+      condition === undefined ||
+      value === undefined ||
+      amenities === undefined
     ) {
       return res
         .status(400)
@@ -152,13 +152,13 @@ export const reviewCar = async (req, res) => {
     // Create the new review in the database
     const newReview = await Review.create({
       content,
-      carId,
+      propertyId,
       userId, // Use the userId from the authenticated request
       name, // Use the name from the authenticated request
-      interior,
-      exterior,
-      comfort,
-      performance,
+      locationRating: location,
+      conditionRating: condition,
+      valueRating: value,
+      amenitiesRating: amenities,
     });
 
     // Send a success response with the new review data
@@ -167,7 +167,7 @@ export const reviewCar = async (req, res) => {
       review: newReview,
     });
   } catch (error) {
-    console.error('Error in reviewCar controller:', error);
+    console.error('Error in reviewProperty controller:', error);
     res
       .status(500)
       .json({ message: 'Internal Server Error while submitting review.' });
@@ -177,7 +177,7 @@ export const reviewCar = async (req, res) => {
 export const updateReview = async (req, res) => {
   try {
     const { id } = req.params;
-    const { content, interior, exterior, comfort, performance } =
+    const { content, location, condition, value, amenities } =
       req.body.content;
     const userId = req.user.id;
 
@@ -198,10 +198,10 @@ export const updateReview = async (req, res) => {
 
     // Update the review fields
     review.content = content || review.content;
-    review.interior = interior || review.interior;
-    review.exterior = exterior || review.exterior;
-    review.comfort = comfort || review.comfort;
-    review.performance = performance || review.performance;
+    review.locationRating = location || review.locationRating;
+    review.conditionRating = condition || review.conditionRating;
+    review.valueRating = value || review.valueRating;
+    review.amenitiesRating = amenities || review.amenitiesRating;
     review.isEdited = true;
     review.editedAt = new Date();
 
@@ -223,7 +223,7 @@ export const updateReview = async (req, res) => {
 export const getAllReviews = async (req, res) => {
   try {
     const {
-      carId,
+      propertyId,
       userId,
       page = 1,
       limit = 10,
@@ -235,8 +235,8 @@ export const getAllReviews = async (req, res) => {
     const whereClause = {
       status, // By default, only retrieve 'approved' reviews
     };
-    if (carId) {
-      whereClause.carId = carId;
+    if (propertyId) {
+      whereClause.propertyId = propertyId;
     }
     if (userId) {
       whereClause.userId = userId;
@@ -255,9 +255,9 @@ export const getAllReviews = async (req, res) => {
           attributes: ['id', 'username', 'email'],
         },
         {
-          model: Car,
-          as: 'car',
-          attributes: ['id', 'make', 'model', 'year', 'imageUrls'],
+          model: Property,
+          as: 'property',
+          attributes: ['id', 'title', 'images'],
         },
       ],
     });
@@ -270,7 +270,7 @@ export const getAllReviews = async (req, res) => {
           fn(
             'AVG',
             literal(
-              '("Review"."interiorRating" + "Review"."exteriorRating" + "Review"."comfortRating" + "Review"."performanceRating") / 4'
+              '("Review"."locationRating" + "Review"."conditionRating" + "Review"."valueRating" + "Review"."amenitiesRating") / 4'
             )
           ),
           'averageOverallRating',

@@ -1,9 +1,8 @@
 import React, { useEffect } from 'react';
 import { useDashboardStore } from '../../store/useDasboardStore';
-import { ChevronDown, ChevronUp, User } from 'lucide-react';
+import { ChevronDown, ChevronLeft, User } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 import { useAdminOpsStore } from '../../store/useAdminOpsStore';
-import CarSearchBar from '../Searchbar';
 
 const AdminListings = () => {
   const {
@@ -19,8 +18,6 @@ const AdminListings = () => {
     getListings({ page: 1, limit: 10 });
   }, [getListings]);
 
-  console.log(listings);
-
   const handlePageChange = (page) => {
     const params = { page };
     getListings(params);
@@ -31,14 +28,12 @@ const AdminListings = () => {
   if (listings.length === 0) return <div>No listings found.</div>;
   return (
     <div className="bg-base-200 rounded-lg space-y-2 max-h-[80vh] overflow-y-auto">
-      {/* <CarSearchBar /> */}
       <h1 className='text-primary'>{listings.length} Listings</h1>
       {listings.map((listing) => (
         <ListCard key={listing.id} item={listing} />
       ))}
       {totalPages > 1 && (
         <div className="flex items-center gap-2">
-          {/* Go to Page 1 button */}
           {totalPages > 3 && currentPage > 3 && (
             <button
               onClick={() => handlePageChange(1)}
@@ -47,7 +42,6 @@ const AdminListings = () => {
               1
             </button>
           )}
-          {/* Prev Button */}
           {currentPage > 1 && (
             <button
               onClick={() => handlePageChange(currentPage - 1)}
@@ -56,7 +50,6 @@ const AdminListings = () => {
               <ChevronLeft className="size-5 text-white" />
             </button>
           )}
-          {/* Page Numbers */}
           {[...Array(totalPages)]
             .map((_, index) => index + 1)
             .filter(
@@ -77,7 +70,6 @@ const AdminListings = () => {
                 {page}
               </button>
             ))}
-          {/* Next Button */}
           {currentPage < totalPages && (
             <button
               onClick={() => handlePageChange(currentPage + 1)}
@@ -96,7 +88,7 @@ const ListCard = ({ item }) => {
   const [isDropDownOpen, setIsDropDownOpen] = React.useState(null);
   const [dropdownHeight, setDropdownHeight] = React.useState(0);
   const dropdownRef = React.useRef(null);
-  const { deleteCar } = useAdminOpsStore();
+  const { deleteProperty } = useAdminOpsStore();
   const { getListings } = useDashboardStore();
 
   React.useEffect(() => {
@@ -116,40 +108,47 @@ const ListCard = ({ item }) => {
   const navigate = useNavigate();
 
   const handleEdit = (id) => {
-    navigate(`/admin/cars/update/${id}`);
+    navigate(`/admin/properties/update/${id}`);
   };
   const handleDelete = (id) => {
     window.confirm('Are you sure you want to delete this listing?') &&
-      deleteCar(id).then(() => {
+      deleteProperty(id).then(() => {
         getListings({ page: 1, limit: 10 });
       });
+  };
+
+  // Helper to get image URL safely
+  const getImageUrl = (item) => {
+    if (item.images && item.images.length > 0) {
+      return typeof item.images[0] === 'string' ? item.images[0] : item.images[0].url;
+    }
+    return 'https://via.placeholder.com/150';
   };
 
   return (
     <div className="rounded-xl bg-base-100">
       <div className="w-full flex items-center justify-between p-2">
         <figure>
-          <img src={item.imageUrls[0]} alt="" className="w-24 h-18" />
+          <img src={getImageUrl(item)} alt="" className="w-24 h-18 object-cover rounded" />
         </figure>
-        <div className="h-full flex flex-col space-y-2 p-1 w-full">
+        <div className="h-full flex flex-col space-y-2 p-1 w-full ml-4">
           <h2 className="font-medium text-sm sm:text-base font-[inter] flex flex-col sm:flex-row">
-            {item.make + ' ' + item.model + ' ' + item.year}
+            {item.title}
             <span className="text-gray-400 font-normal capitalize flex items-center sm:ml-2 mt-1 sm:mt-0 text-sm">
-              <User className="size-4" />
+              <User className="size-4 mr-1" />
               {item.condition}
             </span>
           </h2>
-          <p className="text-sm font-[inter]">N{item.price.toLocaleString()}</p>
-          {/* <p className='text-sm font-[inter]'>Mileage: {item.mileage.toLocaleString()} miles</p>
-        <p className='text-sm font-[inter]'>Status: {item.sold ? 'Sold' : 'Available'}</p> */}
+          <p className="text-sm font-[inter]">${item.price?.toLocaleString()}</p>
+          <p className="text-xs text-gray-500">{item.address}, {item.city}</p>
         </div>
         <div>
           <p
             className={`text-sm font-[montserrat] ${
-              !item.sold ? 'text-green-500' : 'text-primary'
+              item.status === 'Sold' ? 'text-red-500' : 'text-green-500'
             }`}
           >
-            {item.sold ? 'Sold' : 'Available'}
+            {item.status}
           </p>
         </div>
         <button

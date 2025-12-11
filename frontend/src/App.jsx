@@ -5,7 +5,7 @@ import { Navigate, Route, Routes, useLocation } from 'react-router-dom';
 import Home from './pages/Home';
 import Footer from './components/Footer';
 import Listings from './pages/Listings';
-import CarDetails from './pages/CarDetails';
+import PropertyDetails from './pages/PropertyDetails';
 import Blogs from './pages/Blogs';
 import BlogDetail from './pages/BlogDetail';
 import AdminLoginProtectedRoute from './components/AdminLoginProtectedRoute';
@@ -17,21 +17,22 @@ import ProfilePage from './pages/ProfilePage';
 import AdminDashboard from './pages/AdminDashboard';
 import { useUserAuthStore } from './store/useUserAuthStore';
 import AdminProtectedRoute from './components/AdminProtectedRoute';
-import AddCarPage from './pages/AddCarPage';
-import UpdateCarPage from './pages/UpdateCarPage';
+import AddPropertyPage from './pages/AddPropertyPage';
+import UpdatePropertyPage from './pages/UpdatePropertyPage';
 import AddBlogPage from './pages/AddBlogPage';
 import UpdateBlogPage from './pages/UpdateBlogPage';
-import CompareCars from './pages/CompareCars';
+import CompareProperties from './pages/CompareProperties';
 import Contact from './pages/Contact';
 import Sell from './pages/Sell';
-import SellCarPage from './pages/SellForm';
+import SellPropertyPage from './pages/SellForm';
 import ScrollToTop from './components/ScrollToTop';
 import AddStaffPage from './pages/addStaffPage';
 import EditStaffPage from './pages/editStaffPage';
 import NewBroadcastPage from './pages/newBroadcast';
-import Makes from './pages/Makes';
+import Neighborhoods from './pages/Neighborhoods';
 import MergedNavbar from './components/MergedNav';
 import Categories from './pages/Categories';
+import branding from './config/branding';
 
 function App() {
   const { checkAuth, authUser } = useUserAuthStore();
@@ -63,15 +64,27 @@ function App() {
             element={authUser ? <ProfilePage /> : <LoginPage />}
           />
           <Route path="/listings" element={<Listings />} />
-          <Route path="/car/:id" element={<CarDetails />} />
-          <Route path="/compare" element={<CompareCars />} />
-          <Route path="/makes" element={<Makes />} />
+          <Route path="/property/:id" element={<PropertyDetails />} />
+          {branding.features.comparison && (
+            <Route path="/compare" element={<CompareProperties />} />
+          )}
+          {branding.features.neighborhoods && (
+            <Route path="/neighborhoods" element={<Neighborhoods />} />
+          )}
           <Route path="/categories" element={<Categories />} />
-          <Route path="/blogs" element={<Blogs />} />
-          <Route path="/blog/:id" element={<BlogDetail />} />
+          {branding.features.blog && (
+            <>
+              <Route path="/blogs" element={<Blogs />} />
+              <Route path="/blog/:id" element={<BlogDetail />} />
+            </>
+          )}
           <Route path="/contact" element={<Contact />} />
-          <Route path="/sell" element={<Sell />} />
-          <Route path="/sell/form" element={<SellCarPage />} />
+          {branding.features.sell && (
+            <>
+              <Route path="/sell" element={<Sell />} />
+              <Route path="/sell/form" element={<SellPropertyPage />} />
+            </>
+          )}
 
           {/** admin routes */}
           <Route element={<AdminLoginProtectedRoute />}>
@@ -80,8 +93,8 @@ function App() {
 
           <Route element={<AdminProtectedRoute />}>
             <Route path="/admin/dashboard" element={<AdminDashboard />} />
-            <Route path="/admin/cars/new" element={<AddCarPage />} />
-            <Route path="/admin/cars/update/:id" element={<UpdateCarPage />} />
+            <Route path="/admin/properties/new" element={<AddPropertyPage />} />
+            <Route path="/admin/properties/update/:id" element={<UpdatePropertyPage />} />
             <Route path="/admin/blogs/new" element={<AddBlogPage />} />
             <Route
               path="/admin/blogs/update/:id"

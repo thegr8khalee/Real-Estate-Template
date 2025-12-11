@@ -1,4 +1,4 @@
-import Car from '../models/car.model.js';
+import Property from '../models/property.model.js';
 import Blog from '../models/blog.model.js';
 import User from '../models/user.model.js';
 import Comment from '../models/comment.model.js';
@@ -63,22 +63,22 @@ export const getDashboardStats = async (req, res) => {
   try {
     const { thisMonth, lastMonth, thisYear, lastYear } = calculateDateRanges();
 
-    // Car inventory stats
-    const totalCars = await Car.count();
-    const soldCars = await Car.count({ where: { sold: true } });
-    const availableCars = totalCars - soldCars;
-    const carsAddedThisMonth = await Car.count({
+    // Property inventory stats
+    const totalProperties = await Property.count();
+    const soldProperties = await Property.count({ where: { status: 'Sold' } });
+    const availableProperties = totalProperties - soldProperties;
+    const propertiesAddedThisMonth = await Property.count({
       where: { createdAt: { [Op.gte]: thisMonth.start } },
     });
-    const carsAddedLastMonth = await Car.count({
+    const propertiesAddedLastMonth = await Property.count({
       where: { createdAt: { [Op.gte]: lastMonth.start } },
     });
-    const inventoryRate = ((availableCars / totalCars) * 100).toFixed(1);
-    const soldThisMonth = await Car.count({
-      where: { createdAt: { [Op.gte]: thisMonth.start }, sold: true },
+    const inventoryRate = ((availableProperties / totalProperties) * 100).toFixed(1);
+    const soldThisMonth = await Property.count({
+      where: { createdAt: { [Op.gte]: thisMonth.start }, status: 'Sold' },
     });
-    const soldLastMonth = await Car.count({
-      where: { createdAt: { [Op.gte]: lastMonth.start }, sold: true },
+    const soldLastMonth = await Property.count({
+      where: { createdAt: { [Op.gte]: lastMonth.start }, status: 'Sold' },
     });
     const salesChange = calculatePercentageChange(soldThisMonth, soldLastMonth);
 
@@ -141,11 +141,11 @@ export const getDashboardStats = async (req, res) => {
     let revenueStats = null;
     if (req.admin.role === 'super_admin') {
       const totalRevenue =
-        (await Car.sum('price', { where: { sold: true } })) || 0;
+        (await Property.sum('price', { where: { status: 'Sold' } })) || 0;
       const monthlyRevenue =
-        (await Car.sum('price', {
+        (await Property.sum('price', {
           where: {
-            sold: true,
+            status: 'Sold',
             updatedAt: { [Op.gte]: thisMonth.start },
           },
         })) || 0;
@@ -153,7 +153,7 @@ export const getDashboardStats = async (req, res) => {
       revenueStats = {
         totalRevenue: formatCurrency(totalRevenue),
         monthlyRevenue: formatCurrency(monthlyRevenue),
-        averageCarPrice: formatCurrency(totalRevenue / (soldCars || 1)),
+        averagePropertyPrice: formatCurrency(totalRevenue / (soldProperties || 1)),
       };
     }
 
@@ -181,12 +181,12 @@ export const getDashboardStats = async (req, res) => {
     res.status(200).json({
       success: true,
       data: {
-        cars: {
-          total: totalCars,
-          available: availableCars,
-          sold: soldCars,
-          addedThisMonth: carsAddedThisMonth,
-          inventoryRate: ((availableCars / totalCars) * 100).toFixed(1),
+        properties: {
+          total: totalProperties,
+          available: availableProperties,
+          sold: soldProperties,
+          addedThisMonth: propertiesAddedThisMonth,
+          inventoryRate: ((availableProperties / totalProperties) * 100).toFixed(1),
           soldThisMonth,
           soldLastMonth,
           salesChange,
@@ -236,54 +236,43 @@ export const getDashboardStats = async (req, res) => {
   }
 };
 
-// Detailed car statistics
-export const getCarStats = async (req, res) => {
+// Detailed property statistics
+export const getPropertyStats = async (req, res) => {
   try {
     const { thisMonth, lastMonth } = calculateDateRanges();
 
-    // Car counts by category
-    const carsByBodyType = await Car.findAll({
+    // Property counts by type
+    const propertiesByType = await Property.findAll({
       attributes: [
-        'bodyType',
+        'type',
         [fn('COUNT', col('id')), 'count'],
         [fn('AVG', col('price')), 'averagePrice'],
       ],
-      where: { bodyType: { [Op.not]: null } },
-      group: ['bodyType'],
+      where: { type: { [Op.not]: null } },
+      group: ['type'],
       order: [[fn('COUNT', col('id')), 'DESC']],
     });
 
-    const carsByCategory = await Car.findAll({
+    // Properties by city
+    const propertiesByCity = await Property.findAll({
       attributes: [
-        'category',
-        [fn('COUNT', col('id')), 'count'],
-        [fn('AVG', col('price')), 'averagePrice'],
-      ],
-      where: { category: { [Op.not]: null } },
-      group: ['category'],
-      order: [[fn('COUNT', col('id')), 'DESC']],
-    });
-
-    // Cars by make
-    const carsByMake = await Car.findAll({
-      attributes: [
-        'make',
+        'city',
         [fn('COUNT', col('id')), 'count'],
         [
-          fn('SUM', literal('CASE WHEN sold = true THEN 1 ELSE 0 END')),
+          fn('SUM', literal("CASE WHEN status = 'Sold' THEN 1 ELSE 0 END")),
           'soldCount',
         ],
       ],
-      group: ['make'],
+      group: ['city'],
       order: [[fn('COUNT', col('id')), 'DESC']],
       limit: 10,
     });
 
     // Monthly trends
-    const thisMonthCars = await Car.count({
+    const thisMonthProperties = await Property.count({
       where: { createdAt: { [Op.gte]: thisMonth.start } },
     });
-    const lastMonthCars = await Car.count({
+    const lastMonthProperties = await Property.count({
       where: {
         createdAt: {
           [Op.between]: [lastMonth.start, lastMonth.end],
@@ -292,16 +281,16 @@ export const getCarStats = async (req, res) => {
     });
 
     // Price range distribution
-    const priceRanges = await Car.findAll({
+    const priceRanges = await Property.findAll({
       attributes: [
         [
           literal(`
           CASE 
-            WHEN price < 20000 THEN 'Under $20K'
-            WHEN price BETWEEN 20000 AND 40000 THEN '$20K-$40K'
-            WHEN price BETWEEN 40000 AND 60000 THEN '$40K-$60K'
-            WHEN price BETWEEN 60000 AND 80000 THEN '$60K-$80K'
-            ELSE 'Over $80K'
+            WHEN price < 500000 THEN 'Under $500K'
+            WHEN price BETWEEN 500000 AND 1000000 THEN '$500K-$1M'
+            WHEN price BETWEEN 1000000 AND 2000000 THEN '$1M-$2M'
+            WHEN price BETWEEN 2000000 AND 5000000 THEN '$2M-$5M'
+            ELSE 'Over $5M'
           END
         `),
           'priceRange',
@@ -312,11 +301,11 @@ export const getCarStats = async (req, res) => {
       group: [
         literal(`
         CASE 
-          WHEN price < 20000 THEN 'Under $20K'
-          WHEN price BETWEEN 20000 AND 40000 THEN '$20K-$40K'
-          WHEN price BETWEEN 40000 AND 60000 THEN '$40K-$60K'
-          WHEN price BETWEEN 60000 AND 80000 THEN '$60K-$80K'
-          ELSE 'Over $80K'
+          WHEN price < 500000 THEN 'Under $500K'
+          WHEN price BETWEEN 500000 AND 1000000 THEN '$500K-$1M'
+          WHEN price BETWEEN 1000000 AND 2000000 THEN '$1M-$2M'
+          WHEN price BETWEEN 2000000 AND 5000000 THEN '$2M-$5M'
+          ELSE 'Over $5M'
         END
       `),
       ],
@@ -325,22 +314,21 @@ export const getCarStats = async (req, res) => {
     res.status(200).json({
       success: true,
       data: {
-        byBodyType: carsByBodyType,
-  byCategory: carsByCategory,
-        byMake: carsByMake,
+        byType: propertiesByType,
+        byCity: propertiesByCity,
         priceDistribution: priceRanges,
         monthlyTrend: {
-          thisMonth: thisMonthCars,
-          lastMonth: lastMonthCars,
-          change: calculatePercentageChange(lastMonthCars, thisMonthCars),
+          thisMonth: thisMonthProperties,
+          lastMonth: lastMonthProperties,
+          change: calculatePercentageChange(lastMonthProperties, thisMonthProperties),
         },
       },
     });
   } catch (error) {
-    console.error('Error in getCarStats:', error);
+    console.error('Error in getPropertyStats:', error);
     res.status(500).json({
       success: false,
-      message: 'Error fetching car statistics',
+      message: 'Error fetching property statistics',
       error: error.message,
     });
   }
@@ -507,7 +495,7 @@ export const getContentModerationStats = async (req, res) => {
 
     // Recent reviews needing moderation
     const pendingReviews = await Review.findAll({
-      attributes: ['id', 'content', 'name', 'createdAt', 'carId'],
+      attributes: ['id', 'content', 'name', 'createdAt', 'propertyId'],
       where: { status: 'pending' },
       order: [['createdAt', 'DESC']],
       limit: 10,
@@ -540,14 +528,14 @@ export const getContentModerationStats = async (req, res) => {
 export const getRevenueStats = async (req, res) => {
   try {
     // Monthly revenue trend
-    const monthlyRevenue = await Car.findAll({
+    const monthlyRevenue = await Property.findAll({
       attributes: [
         [fn('DATE_FORMAT', col('updatedAt'), '%Y-%m'), 'month'],
         [fn('SUM', col('price')), 'revenue'],
-        [fn('COUNT', col('id')), 'carsSold'],
+        [fn('COUNT', col('id')), 'propertiesSold'],
       ],
       where: {
-        sold: true,
+        status: 'Sold',
         updatedAt: {
           [Op.gte]: new Date(Date.now() - 12 * 30 * 24 * 60 * 60 * 1000),
         },
@@ -556,42 +544,42 @@ export const getRevenueStats = async (req, res) => {
       order: [[fn('DATE_FORMAT', col('updatedAt'), '%Y-%m'), 'ASC']],
     });
 
-    // Revenue by car make
-    const revenueByMake = await Car.findAll({
+    // Revenue by city
+    const revenueByCity = await Property.findAll({
       attributes: [
-        'make',
+        'city',
         [fn('SUM', col('price')), 'revenue'],
         [fn('COUNT', col('id')), 'unitsSold'],
         [fn('AVG', col('price')), 'averagePrice'],
       ],
-      where: { sold: true },
-      group: ['make'],
+      where: { status: 'Sold' },
+      group: ['city'],
       order: [[fn('SUM', col('price')), 'DESC']],
       limit: 10,
     });
 
     // Overall revenue metrics
     const totalRevenue =
-      (await Car.sum('price', { where: { sold: true } })) || 0;
-    const totalSoldCars = await Car.count({ where: { sold: true } });
-    const averageCarPrice =
-      totalSoldCars > 0 ? totalRevenue / totalSoldCars : 0;
+      (await Property.sum('price', { where: { status: 'Sold' } })) || 0;
+    const totalSoldProperties = await Property.count({ where: { status: 'Sold' } });
+    const averagePropertyPrice =
+      totalSoldProperties > 0 ? totalRevenue / totalSoldProperties : 0;
 
     res.status(200).json({
       success: true,
       data: {
         overview: {
           totalRevenue: formatCurrency(totalRevenue),
-          totalCarsSold: totalSoldCars,
-          averageCarPrice: formatCurrency(averageCarPrice),
+          totalPropertiesSold: totalSoldProperties,
+          averagePropertyPrice: formatCurrency(averagePropertyPrice),
         },
         monthlyTrend: monthlyRevenue.map((item) => ({
           month: item.dataValues.month,
           revenue: formatCurrency(item.dataValues.revenue),
-          carsSold: item.dataValues.carsSold,
+          propertiesSold: item.dataValues.propertiesSold,
         })),
-        byMake: revenueByMake.map((item) => ({
-          make: item.dataValues.make,
+        byCity: revenueByCity.map((item) => ({
+          city: item.dataValues.city,
           revenue: formatCurrency(item.dataValues.revenue),
           unitsSold: item.dataValues.unitsSold,
           averagePrice: formatCurrency(item.dataValues.averagePrice),
@@ -613,9 +601,9 @@ export const getRecentActivity = async (req, res) => {
   try {
     const limit = parseInt(req.query.limit) || 20;
 
-    // Recent cars added
-    const recentCars = await Car.findAll({
-      attributes: ['id', 'make', 'model', 'year', 'createdAt'],
+    // Recent properties added
+    const recentProperties = await Property.findAll({
+      attributes: ['id', 'title', 'city', 'price', 'createdAt'],
       order: [['createdAt', 'DESC']],
       limit: 5,
     });
@@ -645,7 +633,7 @@ export const getRecentActivity = async (req, res) => {
     res.status(200).json({
       success: true,
       data: {
-        recentCars,
+        recentProperties,
         recentBlogs,
         recentComments,
         recentReviews,
@@ -672,13 +660,13 @@ export const getTopPerformers = async (req, res) => {
       limit: 10,
     });
 
-    // Most reviewed cars
-    const topReviewedCars = await Car.findAll({
+    // Most reviewed properties
+    const topReviewedProperties = await Property.findAll({
       attributes: [
         'id',
-        'make',
-        'model',
-        'year',
+        'title',
+        'city',
+        'price',
         [fn('COUNT', col('Reviews.id')), 'reviewCount'],
       ],
       include: [
@@ -689,20 +677,20 @@ export const getTopPerformers = async (req, res) => {
           required: true,
         },
       ],
-      group: ['Car.id'],
+      group: ['Property.id'],
       order: [[fn('COUNT', col('Reviews.id')), 'DESC']],
       limit: 10,
     });
 
-    // Best selling car makes
-    const topSellingMakes = await Car.findAll({
+    // Best selling cities
+    const topSellingCities = await Property.findAll({
       attributes: [
-        'make',
+        'city',
         [fn('COUNT', col('id')), 'soldCount'],
         [fn('SUM', col('price')), 'totalRevenue'],
       ],
-      where: { sold: true },
-      group: ['make'],
+      where: { status: 'Sold' },
+      group: ['city'],
       order: [[fn('COUNT', col('id')), 'DESC']],
       limit: 5,
     });
@@ -711,9 +699,9 @@ export const getTopPerformers = async (req, res) => {
       success: true,
       data: {
         topBlogs,
-        topReviewedCars,
-        topSellingMakes: topSellingMakes.map((item) => ({
-          make: item.dataValues.make,
+        topReviewedProperties,
+        topSellingCities: topSellingCities.map((item) => ({
+          city: item.dataValues.city,
           soldCount: item.dataValues.soldCount,
           totalRevenue: formatCurrency(item.dataValues.totalRevenue || 0),
         })),
@@ -737,16 +725,14 @@ export const getListings = async (req, res) => {
 
     // Dynamically build the where clause based on query parameters
     const where = {};
-    if (req.query.make) where.make = req.query.make;
-    if (req.query.year) where.year = parseInt(req.query.year, 10);
-    if (req.query.bodyType) where.bodyType = req.query.bodyType;
-    if (req.query.fuelType) where.fuelType = req.query.fuelType;
-    if (req.query.transmission) where.transmission = req.query.transmission;
-    if (req.query.engineSize)
-      where.engineSize = parseFloat(req.query.engineSize);
-    if (req.query.drivetrain) where.drivetrain = req.query.drivetrain;
+    if (req.query.type) where.type = req.query.type;
+    if (req.query.status) where.status = req.query.status;
     if (req.query.condition) where.condition = req.query.condition;
-    if (req.query.sold) where.sold = req.query.sold === 'true';
+    if (req.query.city) where.city = req.query.city;
+    if (req.query.state) where.state = req.query.state;
+    if (req.query.zipCode) where.zipCode = req.query.zipCode;
+    if (req.query.bedrooms) where.bedrooms = parseInt(req.query.bedrooms, 10);
+    if (req.query.bathrooms) where.bathrooms = parseFloat(req.query.bathrooms);
 
     // Handle price range filter
     if (req.query.minPrice || req.query.maxPrice) {
@@ -760,7 +746,7 @@ export const getListings = async (req, res) => {
     }
 
     // Use findAndCountAll to get both the data and the total count for pagination
-    const { count, rows: cars } = await Car.findAndCountAll({
+    const { count, rows: properties } = await Property.findAndCountAll({
       where,
       limit,
       offset,
@@ -776,7 +762,7 @@ export const getListings = async (req, res) => {
               fn(
                 'AVG',
                 literal(
-                  '(interiorRating + exteriorRating + comfortRating + performanceRating) / 4'
+                  '(locationRating + conditionRating + valueRating + amenitiesRating) / 4'
                 )
               ),
               'averageRating',
@@ -785,16 +771,16 @@ export const getListings = async (req, res) => {
           ],
         },
       ],
-      group: ['Car.id', 'reviews.id'], // Group by Car ID to get one entry per car
+      group: ['Property.id', 'reviews.id'], // Group by Property ID to get one entry per property
       subQuery: false,
     });
 
     // Process the results to structure the data properly
-    const processedCars = cars.map((car) => {
+    const processedProperties = properties.map((property) => {
       // The aggregated values are in the included `reviews` object
-      const reviewData = car.reviews[0];
+      const reviewData = property.reviews[0];
       return {
-        ...car.toJSON(),
+        ...property.toJSON(),
         averageRating: reviewData?.dataValues.averageRating
           ? parseFloat(reviewData.dataValues.averageRating).toFixed(2)
           : null,
@@ -806,7 +792,7 @@ export const getListings = async (req, res) => {
       totalItems: count,
       totalPages: Math.ceil(count / limit),
       currentPage: page,
-      listings: processedCars,
+      listings: processedProperties,
     });
   } catch (error) {
     console.error('Error in getListings controller:', error);
@@ -1116,14 +1102,14 @@ export const getReviews = async (req, res) => {
     const page = parseInt(req.query.page) || 1;
     const limit = parseInt(req.query.limit) || 10;
     const offset = (page - 1) * limit;
-    const { status, carId } = req.query;
+    const { status, propertyId } = req.query;
 
     const where = {};
     if (status && status !== 'all') {
       where.status = status;
     }
-    if (carId) {
-      where.carId = carId;
+    if (propertyId) {
+      where.propertyId = propertyId;
     }
 
     const { count, rows: reviews } = await Review.findAndCountAll({
@@ -1133,9 +1119,8 @@ export const getReviews = async (req, res) => {
       order: [['createdAt', 'DESC']],
       include: [
         {
-          model: Car,
-          as: 'car',
-          attributes: ['id', 'make', 'model', 'year'],
+          model: Property,
+          attributes: ['id', 'title', 'city'],
         },
         {
           model: User,

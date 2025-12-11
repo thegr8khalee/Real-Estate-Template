@@ -172,6 +172,17 @@ const withDefaults = (config) => {
     longitude: parseCoordinate(config.contact?.location?.longitude),
   };
 
+  const features = {
+    blog: true,
+    reviews: true,
+    sell: true,
+    neighborhoods: true,
+    comparison: true,
+    mortgageCalculator: true,
+    newsletter: true,
+    ...(config.features ?? {}),
+  };
+
   return {
     company: {
       name: companyName,
@@ -191,12 +202,14 @@ const withDefaults = (config) => {
       assets,
       logoAlt: config.branding?.logoAlt ?? `${companyName} logo`,
     },
+    features,
     contact: {
       emails,
       phones,
       address,
       hours,
       location,
+      socials: config.contact?.socials ?? {},
     },
   };
 };

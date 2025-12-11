@@ -5,10 +5,10 @@ import { Star } from 'lucide-react';
 const Review = ({ review }) => {
     
   const CalculatedRating = Math.round(
-    (review?.interiorRating +
-      review?.exteriorRating +
-      review?.comfortRating +
-      review?.performanceRating) /
+    (review?.locationRating +
+      review?.conditionRating +
+      review?.valueRating +
+      review?.amenitiesRating) /
       4
   );
 
