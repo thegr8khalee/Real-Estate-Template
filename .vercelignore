@@ -1,0 +1,12 @@
+backend/tests
+backend/coverage
+backend/scripts
+backend/jest.config.js
+frontend/node_modules
+node_modules
+.env
+.env.*
+!.env.example
+*.log
+.claude
+.git
