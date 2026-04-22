@@ -6,7 +6,8 @@
       "src": "backend/src/index.js",
       "use": "@vercel/node",
       "config": {
-        "includeFiles": ["backend/**", "branding.config.json"]
+        "includeFiles": ["backend/**", "branding.config.json"],
+        "maxDuration": 30
       }
     },
     {
@@ -22,10 +23,5 @@
     { "src": "/health", "dest": "/backend/src/index.js" },
     { "handle": "filesystem" },
     { "src": "/(.*)", "dest": "/frontend/$1" }
-  ],
-  "functions": {
-    "backend/src/index.js": {
-      "maxDuration": 30
-    }
-  }
+  ]
 }
