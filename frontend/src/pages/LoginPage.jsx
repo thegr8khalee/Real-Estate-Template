@@ -72,9 +72,9 @@ const LoginPage = () => {
   // Render the login form or forgot password form
   return (
     <div>
-      <section className="w-full sticky top-0 bg-secondary pt-16 px-4 h-16 z-50">
+      {/* <section className="w-full sticky top-0 bg-secondary pt-16 px-4 h-16 z-50">
         <hr className="border-t border-gray-500" />
-      </section>
+      </section> */}
       <div className="p-4 flex justify-center items-center h-screen bg-base-300 font-inter">
         <div className="card w-md bg-base-100 shadow-xl rounded-2xl">
           <div className="card-body p-8">

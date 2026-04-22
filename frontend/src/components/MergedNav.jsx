@@ -529,31 +529,34 @@ const MergedNavbar = ({ className = '' }) => {
                     min={SLIDER_MIN}
                     max={SLIDER_MAX}
                     values={values}
-                    onChange={(values) => setValues(values)}
-                    renderTrack={({ props, children }) => (
+                    onChange={(vals) => setValues(vals)}
+                    renderTrack={({ props: { key, ...trackProps }, children }) => (
                       <div
-                        {...props}
-                        className="h-2 w-full bg-base-200 rounded-full"
+                        key={key}
+                        {...trackProps}
+                        style={{...trackProps.style, height: '36px', display: 'flex', width: '100%'}}
                       >
                         <div
-                          ref={props.ref}
-                          className="h-full bg-primary rounded-full"
                           style={{
-                            background: `linear-gradient(to right, 
-                              #e5e7eb ${((values[0] - SLIDER_MIN) / (SLIDER_MAX - SLIDER_MIN)) * 100}%, 
-                              var(--p) ${((values[0] - SLIDER_MIN) / (SLIDER_MAX - SLIDER_MIN)) * 100}%, 
-                              var(--p) ${((values[1] - SLIDER_MIN) / (SLIDER_MAX - SLIDER_MIN)) * 100}%, 
+                            height: '8px',
+                            width: '100%',
+                            borderRadius: '999px',
+                            alignSelf: 'center',
+                            background: `linear-gradient(to right,
+                              #e5e7eb ${((values[0] - SLIDER_MIN) / (SLIDER_MAX - SLIDER_MIN)) * 100}%,
+                              var(--color-primary, #f0c710) ${((values[0] - SLIDER_MIN) / (SLIDER_MAX - SLIDER_MIN)) * 100}%,
+                              var(--color-primary, #f0c710) ${((values[1] - SLIDER_MIN) / (SLIDER_MAX - SLIDER_MIN)) * 100}%,
                               #e5e7eb ${((values[1] - SLIDER_MIN) / (SLIDER_MAX - SLIDER_MIN)) * 100}%)`
                           }}
-                        >
-                          {children}
-                        </div>
+                        />
+                        {children}
                       </div>
                     )}
-                    renderThumb={({ props }) => (
+                    renderThumb={({ props: { key, ...thumbProps } }) => (
                       <div
-                        {...props}
-                        className="h-5 w-5 bg-white border-2 border-primary rounded-full shadow-md focus:outline-none"
+                        key={key}
+                        {...thumbProps}
+                        style={{...thumbProps.style, height: '20px', width: '20px', borderRadius: '50%', backgroundColor: 'white', border: '2px solid var(--color-primary, #f0c710)', boxShadow: '0 2px 6px rgba(0,0,0,0.2)', outline: 'none'}}
                       />
                     )}
                   />

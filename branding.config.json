@@ -1,15 +1,15 @@
 {
   "company": {
-    "name": "Demo Dealership",
-    "legalName": "Demo Dealership Automobile",
-    "tagline": "Where automotive dreams meet expert guidance",
+    "name": "Elite Properties",
+    "legalName": "Elite Properties LLC",
+    "tagline": "Where property dreams meet expert guidance",
     "ceo": {
       "name": "Saminu",
-      "bioTemplate": "I am {ceoName}, the CEO of {companyName}. With a passion for cars and a vision to revolutionize the automotive industry, I lead our team to deliver exceptional service and value to our customers."
+      "bioTemplate": "I am {ceoName}, the CEO of {companyName}. With a passion for real estate and a vision to revolutionize the property industry, I lead our team to deliver exceptional service and value to our clients."
     }
   },
   "branding": {
-    "logoAlt": "Demo Dealership logo",
+    "logoAlt": "Elite Properties logo",
     "colors": {
       "primary": "#ff0000",
       "secondary": "#000000",
@@ -44,36 +44,52 @@
     "neighborhoods": true,
     "comparison": true,
     "mortgageCalculator": true,
-    "newsletter": true
+    "newsletter": true,
+    "favorites": true
+  },
+  "currency": {
+    "code": "NGN",
+    "locale": "en-NG",
+    "symbol": "₦",
+    "decimals": 0,
+    "priceRange": {
+      "min": 1000000,
+      "max": 500000000,
+      "step": 1000000
+    },
+    "mortgageDefaults": {
+      "interestRate": 5,
+      "termYears": 20
+    }
   },
   "contact": {
     "emails": {
-      "info": "info@demodealership.com",
-      "support": "support@demodealership.com",
-      "sales": "sales@demodealership.com"
+      "info": "info@eliteproperties.com",
+      "support": "support@eliteproperties.com",
+      "sales": "sales@eliteproperties.com"
     },
     "phones": {
       "main": {
-        "display": "+123456789",
-        "value": "+123456789"
+        "display": "+234 800 000 0000",
+        "value": "+2348000000000"
       },
       "support": {
-        "display": "+123456789",
-        "value": "+123456789"
+        "display": "+234 800 000 0000",
+        "value": "+2348000000000"
       },
       "sales": {
-        "display": "+123456789",
-        "value": "+123456789"
+        "display": "+234 800 000 0000",
+        "value": "+2348000000000"
       }
     },
     "address": {
-      "line1": "3F3G+74Q, Olusegun Obasanjo Wy",
-      "line2": "Beside NNPC Mega Gas Station, Central Business District",
+      "line1": "Plot 1, Central Business District",
+      "line2": "",
       "city": "Abuja",
       "region": "Federal Capital Territory",
       "country": "Nigeria",
       "postalCode": "900103",
-      "formatted": "3F3G+74Q, Olusegun Obasanjo Wy, beside NNPC Mega Gas Station, Central Business District, Abuja 900103, Federal Capital Territory, Nigeria"
+      "formatted": "Plot 1, Central Business District, Abuja 900103, Federal Capital Territory, Nigeria"
     },
     "hours": [
       {

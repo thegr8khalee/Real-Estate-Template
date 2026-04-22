@@ -4,6 +4,7 @@ import './index.css';
 import App from './App.jsx';
 import { BrowserRouter } from 'react-router-dom';
 import { BreadcrumbProvider } from './components/BreadCrumbContext.jsx';
+import { HelmetProvider } from 'react-helmet-async';
 import branding from './config/branding.js';
 
 const applyBrandingTheme = () => {
@@ -175,11 +176,13 @@ applyBrandingTheme();
 applyBrandAssets();
 
 createRoot(document.getElementById('root')).render(
-  <BrowserRouter>
-    <StrictMode>
-      <BreadcrumbProvider>
-        <App />
-      </BreadcrumbProvider>
-    </StrictMode>
-  </BrowserRouter>
+  <HelmetProvider>
+    <BrowserRouter>
+      <StrictMode>
+        <BreadcrumbProvider>
+          <App />
+        </BreadcrumbProvider>
+      </StrictMode>
+    </BrowserRouter>
+  </HelmetProvider>
 );

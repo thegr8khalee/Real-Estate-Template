@@ -1,6 +1,6 @@
 // AdminReviews.jsx
 import React, { useEffect, useState } from 'react';
-import { useDashboardStore } from '../../store/useDasboardStore';
+import { useDashboardStore } from '../../store/useDashboardStore';
 import {
   Star,
   Clock,
@@ -10,7 +10,7 @@ import {
   ChevronDown,
   ChevronLeft,
   Filter,
-  Car as CarIcon,
+  Home as PropertyIcon,
 } from 'lucide-react';
 
 const AdminReviews = () => {
@@ -307,10 +307,10 @@ const ReviewCard = ({ review }) => {
               )}
             </div>
             <p className="text-sm text-gray-500 flex items-center gap-1">
-              <CarIcon className="size-4" />
-              {review.car
-                ? `${review.car.make} ${review.car.model} ${review.car.year}`
-                : 'Unknown Car'}
+              <PropertyIcon className="size-4" />
+              {review.property
+                ? `${review.property.title || 'Untitled Property'}`
+                : 'Unknown Property'}
             </p>
             <p className="text-xs text-gray-400 mt-1">
               {formatDate(review.createdAt)}

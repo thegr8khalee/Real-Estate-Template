@@ -297,7 +297,7 @@ const SellPropertyPage = () => {
                       value={formData.city}
                       onChange={handleInputChange}
                       className="input input-bordered w-full rounded-full"
-                      placeholder="New York"
+                      placeholder="Lekki"
                       required
                     />
                   </div>
@@ -312,14 +312,14 @@ const SellPropertyPage = () => {
                       value={formData.state}
                       onChange={handleInputChange}
                       className="input input-bordered w-full rounded-full"
-                      placeholder="NY"
+                      placeholder="Lagos"
                       required
                     />
                   </div>
 
                   <div>
                     <label className="label font-medium">
-                      <span className="label-text">Zip Code *</span>
+                      <span className="label-text">Postal Code *</span>
                     </label>
                     <input
                       type="text"
@@ -327,14 +327,14 @@ const SellPropertyPage = () => {
                       value={formData.zipCode}
                       onChange={handleInputChange}
                       className="input input-bordered w-full rounded-full"
-                      placeholder="10001"
+                      placeholder="106104"
                       required
                     />
                   </div>
 
                   <div>
                     <label className="label font-medium">
-                      <span className="label-text">Asking Price ($) *</span>
+                      <span className="label-text">Asking Price (₦) *</span>
                     </label>
                     <input
                       type="number"

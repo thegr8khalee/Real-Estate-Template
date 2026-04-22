@@ -4,6 +4,7 @@ import Breadcrumbs from '../components/BreadCrumbs';
 import BlogCard from '../components/BlogCard';
 import { useBlogStore } from '../store/useBlogStore';
 import { formatTime } from '../lib/utils';
+import SEO from '../components/SEO';
 import {
   Check,
   ChevronLeft,
@@ -15,15 +16,12 @@ import {
   Tag,
   MessageCircle,
 } from 'lucide-react';
-import CarCard from '../components/CarCard';
+import PropertyCard from '../components/PropertyCard';
 import {
-  bmwm4,
+  propertyBanner,
   ceo,
   date,
-  gas,
-  m4,
-  mileage,
-  transmission,
+  propertyPlaceholder,
 } from '../config/images';
 import { useUserAuthStore } from '../store/useUserAuthStore';
 import { useInteractStore } from '../store/useInteractStore';
@@ -181,7 +179,13 @@ const BlogDetail = () => {
   }
 
   return (
-    <div className="pt-16 font-inter bg-base-200 min-h-screen">
+    <div className="font-inter bg-base-200 min-h-screen">
+      <SEO
+        title={blog?.title}
+        description={blog?.content?.replace(/<[^>]+>/g, '').slice(0, 160)}
+        image={blog?.imageUrl}
+        type="article"
+      />
       {/* Sticky Header */}
       {/* <section className="w-full bg-secondary pt-16 px-4 h-16 sticky top-0 z-50 shadow-sm"></section> */}
 
@@ -241,11 +245,11 @@ const BlogDetail = () => {
         <section className="mb-8">
           <figure className="w-full max-w-4xl mx-auto">
             <img
-              src={blogDetail.featuredImage || bmwm4}
+              src={blogDetail.featuredImage || propertyBanner}
               alt={blogDetail.title || 'Blog featured image'}
               className="w-full h-full max-h-[60vh] object-cover"
               onError={(e) => {
-                e.target.src = bmwm4; // Fallback image
+                e.target.src = propertyBanner; // Fallback image
               }}
             />
           </figure>
@@ -286,26 +290,24 @@ const BlogDetail = () => {
 
           <hr className="border-t border-gray-300 my-8" />
 
-          {/** Related Cars */}
-          {currentBlog?.cars?.length > 0 && (
+          {/** Related Properties */}
+          {(currentBlog?.properties?.length > 0) && (
             <div className="mb-8 w-full overflow-x-auto">
-              <h2 className="text-xl font-semibold mb-6 ">Related Cars</h2>
+              <h2 className="text-xl font-semibold mb-6 ">Related Properties</h2>
               <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-6">
-                {currentBlog.cars.map((car) => (
-                  <CarCard
-                    key={car.id}
-                    image={car.imageUrls[0] || m4}
-                    title={car.make + ' ' + car.model}
-                    description={car.description}
-                    mileage={{ icon: mileage, value: car.mileage }}
-                    transmission={{
-                      icon: transmission,
-                      value: car.transmission,
-                    }}
-                    fuel={{ icon: gas, value: car.fuelType }}
-                    year={{ icon: date, value: car.year }}
-                    price={car.price}
-                    link={`/car/${car.id}`}
+                {currentBlog.properties.map((property) => (
+                  <PropertyCard
+                    key={property.id}
+                    id={property.id}
+                    image={property.imageUrls?.[0] || property.images?.[0] || propertyPlaceholder}
+                    title={property.title || (property.make + ' ' + property.model)}
+                    address={property.address || property.description}
+                    bedrooms={property.bedrooms || 0}
+                    bathrooms={property.bathrooms || 0}
+                    sqft={property.sqft || 0}
+                    price={property.price}
+                    type={property.type}
+                    link={`/property/${property.id}`}
                   />
                 ))}
               </div>

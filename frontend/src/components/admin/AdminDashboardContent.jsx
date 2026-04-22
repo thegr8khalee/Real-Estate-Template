@@ -2,14 +2,14 @@
 import React, { useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import {
-  Car,
-  CarFront,
+  Home,
+  Building2,
   MessageSquareMore,
   MessageSquareText,
   Newspaper,
   StickyNote,
   UserRound,
-  DollarSign,
+  Banknote,
   TrendingUp,
   TrendingDown,
   Eye,
@@ -25,7 +25,7 @@ import {
   RefreshCcw,
 } from 'lucide-react';
 import { useUserAuthStore } from '../../store/useUserAuthStore';
-import { useDashboardStore } from '../../store/useDasboardStore';
+import { useDashboardStore } from '../../store/useDashboardStore';
 
 const AdminDashboardContent = () => {
   const { authUser } = useUserAuthStore();
@@ -34,7 +34,7 @@ const AdminDashboardContent = () => {
   // Dashboard store
   const {
     dashboardStats,
-    carStats,
+    propertyStats,
     blogStats,
     userStats,
     sellingToUs,
@@ -98,36 +98,36 @@ const AdminDashboardContent = () => {
   const primaryStats = dashboardStats
     ? [
         {
-          label: 'Total Cars',
-          value: dashboardStats.cars?.total || 0,
-          change: carStats?.monthlyTrend
-            ? formatTrend(carStats.monthlyTrend.percentageChange).change
+          label: 'Total Properties',
+          value: dashboardStats.properties?.total || 0,
+          change: propertyStats?.monthlyTrend
+            ? formatTrend(propertyStats.monthlyTrend.percentageChange).change
             : '+0%',
-          trend: carStats?.monthlyTrend
-            ? formatTrend(carStats.monthlyTrend.percentageChange).trend
+          trend: propertyStats?.monthlyTrend
+            ? formatTrend(propertyStats.monthlyTrend.percentageChange).trend
             : 'up',
-          subtitle: `${dashboardStats.cars?.availableCars || 0} available`,
-          icon: CarFront,
+          subtitle: `${dashboardStats.properties?.availableProperties || 0} available`,
+          icon: Building2,
           color: 'bg-blue-500',
         },
         {
-          label: 'Cars Sold',
-          value: dashboardStats.cars?.sold || 0,
-          change: carStats?.monthlyTrend
-            ? formatTrend(carStats.monthlyTrend.percentageChange).change
+          label: 'Properties Sold',
+          value: dashboardStats.properties?.sold || 0,
+          change: propertyStats?.monthlyTrend
+            ? formatTrend(propertyStats.monthlyTrend.percentageChange).change
             : '+0%',
-          trend: carStats?.monthlyTrend
-            ? formatTrend(carStats.monthlyTrend.percentageChange).trend
+          trend: propertyStats?.monthlyTrend
+            ? formatTrend(propertyStats.monthlyTrend.percentageChange).trend
             : 'up',
           subtitle: `${
-            dashboardStats.cars?.carsAddedThisMonth || 0
+            dashboardStats.properties?.propertiesAddedThisMonth || 0
           } added this month`,
-          icon: Car,
+          icon: Home,
           color: 'bg-green-500',
         },
         {
           label: 'Inventory Rate',
-          value: `${Number(dashboardStats.cars?.inventoryRate || 0).toFixed(
+          value: `${Number(dashboardStats.properties?.inventoryRate || 0).toFixed(
             1
           )}%`,
           change: '+2%',
@@ -168,7 +168,7 @@ const AdminDashboardContent = () => {
                 trend: 'up',
                 subtitle:
                   dashboardStats.revenue?.monthlyRevenue + ' this month',
-                icon: DollarSign,
+                icon: Banknote,
                 color: 'bg-emerald-500',
               },
             ]
@@ -188,7 +188,7 @@ const AdminDashboardContent = () => {
             ? formatTrend(sellingToUs?.monthlyTrend.percentageChange).trend
             : 'up',
           subtitle: `${dashboardStats.sellingToUs?.lastMonth || 0} last month`,
-          icon: Car,
+          icon: Building2,
           color: 'bg-green-500',
         },
         {
@@ -201,7 +201,7 @@ const AdminDashboardContent = () => {
             ? formatTrend(sellingToUs?.yearlyTrend.percentageChange).trend
             : 'up',
           subtitle: `${dashboardStats.sellingToUs?.lastYear || 0} last year`,
-          icon: Car,
+          icon: Building2,
           color: 'bg-green-500',
         },
         {
@@ -214,7 +214,7 @@ const AdminDashboardContent = () => {
             ? formatTrend(sellingToUs?.totalTrend.percentageChange).trend
             : 'up',
           subtitle: `${dashboardStats.sellingToUs?.lastTotal || 0} last year`,
-          icon: Car,
+          icon: Building2,
           color: 'bg-green-500',
         },
         {
@@ -227,7 +227,7 @@ const AdminDashboardContent = () => {
             ? formatTrend(sellingToUs?.pendingTrend.percentageChange).trend
             : 'up',
           subtitle: `${dashboardStats.sellingToUs?.lastPending || 0} last month`,
-          icon: Car,
+          icon: Building2,
           color: 'bg-green-500',
         },
         { label: 'Offers Sent',
@@ -239,7 +239,7 @@ const AdminDashboardContent = () => {
             ? formatTrend(sellingToUs?.offerSentTrend.percentageChange).trend
             : 'up',
           subtitle: `${dashboardStats.sellingToUs?.lastOfferSent || 0} last month`,
-          icon: Car,
+          icon: Building2,
           color: 'bg-green-500',
         },
         { label: 'Offers Accepted',
@@ -251,7 +251,7 @@ const AdminDashboardContent = () => {
             ? formatTrend(sellingToUs?.acceptedTrend.percentageChange).trend
             : 'up',
           subtitle: `${dashboardStats.sellingToUs?.lastAccepted || 0} last month`,
-          icon: Car,
+          icon: Building2,
           color: 'bg-green-500',
         },
         { label: 'Offers Rejected',
@@ -263,7 +263,7 @@ const AdminDashboardContent = () => {
             ? formatTrend(sellingToUs?.rejectedTrend.percentageChange).trend
             : 'up',
           subtitle: `${dashboardStats.sellingToUs?.lastRejected || 0} last month`,
-          icon: Car,
+          icon: Building2,
           color: 'bg-green-500',
         },
       ]
@@ -399,11 +399,11 @@ const AdminDashboardContent = () => {
 
   // Recent activity data
   const allRecentActivities = [
-    ...(recentActivity?.recentCars?.map((car) => ({
-      action: 'New car added',
-      item: `${car.make || ''} ${car.model}`.trim(),
-      time: new Date(car.createdAt).toLocaleString(),
-      icon: Car,
+    ...(recentActivity?.recentProperties?.map((property) => ({
+      action: 'New property added',
+      item: property.title || 'Untitled Property',
+      time: new Date(property.createdAt).toLocaleString(),
+      icon: Home,
     })) || []),
     ...(recentActivity?.recentBlogs?.map((blog) => ({
       action: 'Blog published',
@@ -706,7 +706,7 @@ const AdminDashboardContent = () => {
           </h2>
           <p className="text-base-content opacity-60 mt-1">
             Welcome back, {authUser?.username}! Here's what's happening with
-            your dealership.
+            your platform.
           </p>
           {lastUpdated && (
             <div className="flex items-center space-x-2 mt-2 text-sm text-base-content opacity-50">
@@ -755,7 +755,7 @@ const AdminDashboardContent = () => {
         </div>
       </div>
 
-      {/* Primary Stats - Cars and Revenue */}
+      {/* Primary Stats - Properties and Revenue */}
       {primaryStats.length > 0 && (
         <div>
           <h3 className="text-xl font-semibold mb-4 text-base-content">
@@ -897,10 +897,10 @@ const AdminDashboardContent = () => {
             <div className="space-y-4">
               <button
                 className="btn btn-primary w-full rounded-xl text-lg font-medium"
-                onClick={() => navigate('/admin/cars/new')}
+                onClick={() => navigate('/admin/properties/new')}
               >
-                <Car className="size-5" />
-                Add New Car
+                <Home className="size-5" />
+                Add New Property
               </button>
 
               <button

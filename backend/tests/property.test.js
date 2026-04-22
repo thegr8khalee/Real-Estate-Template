@@ -53,7 +53,7 @@ describe('Property Controller', () => {
 
   describe('GET /api/properties', () => {
     it('should return all properties', async () => {
-      const mockProperties = [{ id: 1, title: 'Luxury Villa', city: 'Beverly Hills' }];
+      const mockProperties = [{ id: 1, title: 'Luxury Duplex', city: 'Lekki' }];
       Property.findAndCountAll.mockResolvedValue({ count: 1, rows: mockProperties });
 
       const res = await request(app).get('/api/properties');
@@ -65,7 +65,7 @@ describe('Property Controller', () => {
 
   describe('GET /api/properties/:id', () => {
     it('should return a property by id', async () => {
-      const mockProperty = { id: 1, title: 'Luxury Villa', city: 'Beverly Hills' };
+      const mockProperty = { id: 1, title: 'Luxury Duplex', city: 'Lekki' };
       Property.findByPk.mockResolvedValue(mockProperty);
       Property.findAll.mockResolvedValue([]); // For related properties
       Review.findAll.mockResolvedValue([]); // For reviews

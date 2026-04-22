@@ -1,6 +1,6 @@
 // AdminUsers.jsx
 import React, { useEffect, useState } from 'react';
-import { useDashboardStore } from '../../store/useDasboardStore';
+import { useDashboardStore } from '../../store/useDashboardStore';
 import {
   ChevronDown,
   ChevronLeft,

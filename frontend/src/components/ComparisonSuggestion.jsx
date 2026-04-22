@@ -1,34 +1,16 @@
-import { Link } from 'react-router-dom';
-import { ArrowUpRight } from 'lucide-react';
+import { BedDouble, Bath, Maximize, Home } from 'lucide-react';
 
-import { electric, gas, hybrid } from '../config/images';
-
-const CarCardSuggestion = ({
+const PropertyCardSuggestion = ({
   image,
   title,
   description,
-  mileage,
-  transmission,
-  fuel,
-  year,
+  sqft,
+  bedrooms,
+  bathrooms,
+  type,
   price,
   link = '#',
 }) => {
-  const returnFuelIcon = (fuelType) => {
-    switch (fuelType.toLowerCase()) {
-      case 'gasoline':
-        return gas;
-      case 'diesel':
-        return gas;
-      case 'electric':
-        return electric;
-      case 'hybrid':
-        return hybrid;
-      default:
-        return gas;
-    }
-  };
-
   return (
     <button 
     onClick={link}
@@ -45,49 +27,32 @@ const CarCardSuggestion = ({
         {/* Info Grid */}
         <div className="grid grid-cols-2 gap-4 my-4 text-sm">
           <div className="flex items-center">
-            <img src={mileage.icon} alt="Mileage" className="mr-2 size-5" />
-            <span>{mileage.value}</span>
+            <BedDouble className="mr-2 size-5 text-gray-500" />
+            <span>{bedrooms} {bedrooms === 1 ? 'Bed' : 'Beds'}</span>
           </div>
           <div className="flex items-center">
-            <img
-              src={transmission.icon}
-              alt="Transmission"
-              className="mr-2 size-5"
-            />
-            <span className="capitalize">{transmission.value}</span>
+            <Bath className="mr-2 size-5 text-gray-500" />
+            <span>{bathrooms} {bathrooms === 1 ? 'Bath' : 'Baths'}</span>
           </div>
           <div className="flex items-center">
-            <img
-              src={returnFuelIcon(fuel.value)}
-              alt="Fuel"
-              className="mr-2 size-5"
-            />
-            <span className="capitalize">{fuel.value}</span>
+            <Maximize className="mr-2 size-5 text-gray-500" />
+            <span>{sqft} sqft</span>
           </div>
           <div className="flex items-center">
-            <img src={year.icon} alt="Year" className="mr-2 size-5" />
-            <span className="capitalize">{year.value}</span>
+            <Home className="mr-2 size-5 text-gray-500" />
+            <span className="capitalize">{type}</span>
           </div>
         </div>
 
         <hr className="border-t border-gray-300 my-2" />
 
-        {/* Price + button */}
+        {/* Price */}
         <div className="flex justify-between items-center">
           <h1 className="font-semibold">N{price}</h1>
-          <div className="flex items-center">
-            {/* <button to={link} className="text-primary text-sm">
-              View Details
-            </button> */}
-            {/* <button className="btn btn-sm btn-primary rounded-full">
-              View Details
-              <ArrowUpRight className="stroke-secondary size-5 ml-1" />
-            </button> */}
-          </div>
         </div>
       </div>
     </button>
   );
 };
 
-export default CarCardSuggestion;
+export default PropertyCardSuggestion;

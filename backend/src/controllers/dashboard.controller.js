@@ -32,7 +32,7 @@ export const getUserDetails = async (req, res) => {
       order: [['createdAt', 'DESC']],
     });
 
-    // Get reviews - no include needed if you don't need car details
+    // Get reviews - no include needed if you don't need property details
     const reviews = await Review.findAll({
       where: { userId },
       order: [['createdAt', 'DESC']],
@@ -105,16 +105,16 @@ export const getDashboardStats = async (req, res) => {
     );
     const sellingToUsTotal = await SellNow.count();
     const SellingToUsPending = await SellNow.count({
-      where: { OfferStatus: 'Pending' },
+      where: { status: 'Pending' },
     });
     const SellingToUsOfferSent = await SellNow.count({
-      where: { OfferStatus: 'Offer Sent' },
+      where: { status: 'Reviewed' },
     });
     const SellingToUsAccepted = await SellNow.count({
-      where: { OfferStatus: 'Accepted' },
+      where: { status: 'Accepted' },
     });
     const SellingToUsRejected = await SellNow.count({
-      where: { OfferStatus: 'Rejected' },
+      where: { status: 'Rejected' },
     });
 
     // Blog stats
@@ -649,7 +649,7 @@ export const getRecentActivity = async (req, res) => {
   }
 };
 
-// Top performers (cars, blogs, etc.)
+// Top performers (properties, blogs, etc.)
 export const getTopPerformers = async (req, res) => {
   try {
     // Most viewed blogs

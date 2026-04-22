@@ -4,21 +4,33 @@ import cors from 'cors';
 import dotenv from 'dotenv';
 import { testConnection } from './models/index.js';
 import cookieParser from 'cookie-parser'
-import path from 'path';
 
 dotenv.config();
 
 const app = express();
 const PORT = process.env.PORT || 3000;
-const __dirname = path.resolve();
+const isVercel = !!process.env.VERCEL;
 
 // Middleware
+// In production on Vercel, frontend and API share the same origin so CORS is not strictly needed,
+// but we still allow FRONTEND_URL (and Vercel preview URLs) for safety.
+const allowedOrigins = (process.env.NODE_ENV === 'production'
+  ? [process.env.FRONTEND_URL].filter(Boolean)
+  : ['http://localhost:5173']);
+
 const corsOptions = {
-  origin: process.env.NODE_ENV === 'production'
-    ? process.env.FRONTEND_URL || 'https://your-domain.com'
-    : 'http://localhost:5173',
+  origin: (origin, callback) => {
+    // Same-origin or server-to-server requests have no Origin header — always allow
+    if (!origin) return callback(null, true);
+    if (allowedOrigins.includes(origin)) return callback(null, true);
+    // Allow any *.vercel.app preview deployment when running on Vercel
+    if (isVercel && /\.vercel\.app$/.test(new URL(origin).hostname)) {
+      return callback(null, true);
+    }
+    return callback(new Error(`CORS: origin ${origin} not allowed`));
+  },
   credentials: true,
-  optionsSuccessStatus: 200
+  optionsSuccessStatus: 200,
 };
 
 app.use(cors(corsOptions));
@@ -29,7 +41,7 @@ app.use(cookieParser());
 // Basic route
 app.get('/api', (req, res) => {
   res.json({
-    message: 'Car Dealership API is running!',
+    message: 'Real Estate Platform API is running!',
     status: 'success',
     timestamp: new Date().toISOString(),
   });
@@ -65,6 +77,9 @@ import sellRoutes from './routes/sell.routes.js';
 import sellSubmissionRoutes from './routes/sellSubmission.routes.js';
 import adminStaffRoutes from './routes/adminStaff.routes.js';
 import broadcastRoutes from './routes/broadcast.routes.js';
+import favoriteRoutes from './routes/favorite.routes.js';
+import inquiryRoutes from './routes/inquiry.routes.js';
+import notificationRoutes from './routes/notification.routes.js';
 import { globalErrorHandler, notFound } from './middleware/error.middleware.js';
 
 app.use('/api/admin/auth', adminRouts);
@@ -78,30 +93,17 @@ app.use('/api/sell', sellRoutes);
 app.use('/api/admin/dashboard/sell-submissions', sellSubmissionRoutes);
 app.use('/api/admin/staff', adminStaffRoutes);
 app.use('/api/admin/broadcast', broadcastRoutes);
-// Serve frontend static assets in production before the 404 handler
-if (process.env.NODE_ENV === 'production') {
-  // __dirname is the backend folder when started from backend/ (start script: node src/index.js)
-  // frontend is a sibling folder of backend, so go up one level to reach it.
-  const frontendDistPath = path.join(__dirname, '../frontend', 'dist');
-
-  app.use(express.static(frontendDistPath));
-
-  app.get('*', (req, res, next) => {
-    // If the request is for an API route, skip and allow API routes/handlers to run
-    if (req.originalUrl.startsWith('/api')) return next();
-
-    res.sendFile(path.join(frontendDistPath, 'index.html'));
-  });
-}
-
-// 404 handler (placed after static serving and API routes)
+app.use('/api/favorites', favoriteRoutes);
+app.use('/api/inquiries', inquiryRoutes);
+app.use('/api/notifications', notificationRoutes);
+// 404 handler
 app.use(notFound);
 app.use(globalErrorHandler);
 
-// Start server
+// Start server only when running as a long-lived process (local dev / Render / Fly).
+// On Vercel, the platform invokes the exported app per-request — never call listen().
 const startServer = async () => {
   try {
-    // Test database connection
     await testConnection();
     console.log('✅ Database connected successfully');
 
@@ -116,6 +118,8 @@ const startServer = async () => {
   }
 };
 
-startServer();
+if (!isVercel) {
+  startServer();
+}
 
 export default app;

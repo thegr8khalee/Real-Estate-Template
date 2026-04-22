@@ -15,11 +15,12 @@ import {
   Image,
   ImageIcon,
   MapPin,
-  DollarSign,
+  Banknote,
   Bed,
   Bath,
 } from 'lucide-react';
-import { useDashboardStore } from '../../store/useDasboardStore';
+import { useDashboardStore } from '../../store/useDashboardStore';
+import { formatPrice } from '../../lib/utils';
 
 const AdminSellingToUs = () => {
   const {
@@ -324,10 +325,10 @@ const SubmissionCard = ({ submission }) => {
         {/* Property Details */}
         <div className="grid grid-cols-2 md:grid-cols-5 gap-2 my-3 p-3 bg-base-200 rounded-lg">
           <div className="flex items-center gap-2">
-            <DollarSign className="size-4 text-gray-500" />
+            <Banknote className="size-4 text-gray-500" />
             <div>
               <p className="text-xs text-gray-500">Asking Price</p>
-              <p className="text-sm font-medium">${submission.askingPrice?.toLocaleString()}</p>
+              <p className="text-sm font-medium">{formatPrice(submission.askingPrice)}</p>
             </div>
           </div>
           <div className="flex items-center gap-2">
@@ -371,7 +372,7 @@ const SubmissionCard = ({ submission }) => {
           <div className="mt-2 p-3 bg-success/10 rounded-lg">
             <p className="text-xs text-gray-500 mb-1">Offer Amount:</p>
             <p className="text-lg font-bold text-success">
-              ${parseFloat(submission.offerAmount).toLocaleString()}
+              {formatPrice(parseFloat(submission.offerAmount))}
             </p>
             {submission.offerSentDate && (
               <p className="text-xs text-gray-500 mt-1">

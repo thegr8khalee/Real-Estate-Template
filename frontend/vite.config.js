@@ -19,11 +19,6 @@ export default defineConfig({
     fs: {
       allow: [resolve(__dirname, '..')],
     },
-    host: true, // allow external access (important for ngrok)
-    origin: 'https://43160d029324.ngrok-free.app', // set correct origin
-    cors: {
-      origin: 'https://43160d029324.ngrok-free.app',
-      credentials: true,
-    },
+    host: true, // allow external access for tunneling tools in dev
   },
 });

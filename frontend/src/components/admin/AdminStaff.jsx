@@ -1,6 +1,6 @@
 // AdminStaff.jsx
 import React, { useEffect } from 'react';
-import { useDashboardStore } from '../../store/useDasboardStore';
+import { useDashboardStore } from '../../store/useDashboardStore';
 import { ChevronDown, ChevronLeft, UserPlus, Shield, Mail } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 import { useAdminStaffStore } from '../../store/useAdminStaffStore';

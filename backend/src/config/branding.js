@@ -69,7 +69,7 @@ const parseCoordinate = (value) => {
 let brandingConfig = {
   company: {
     name: 'Your Brand',
-    legalName: 'Your Brand Automobile',
+    legalName: 'Your Brand Real Estate',
   },
   branding: {
     colors: {

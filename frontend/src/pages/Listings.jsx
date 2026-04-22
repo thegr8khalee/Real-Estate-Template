@@ -1,13 +1,14 @@
 import { ChevronLeft, Loader2 } from 'lucide-react';
 import { useLocation } from 'react-router-dom'; // Add this import
 import { motion } from 'framer-motion';
+import SEO from '../components/SEO';
 import {
-  m4,
+  propertyPlaceholder,
 } from '../config/images';
 import PropertyCard from '../components/PropertyCard';
 import { usePropertyStore } from '../store/usePropertyStore';
-import { useEffect } from 'react';
-// import CarSearchBar from '../components/Searchbar';
+import { useEffect, useState } from 'react';
+import Searchbar from '../components/Searchbar';
 
 const Listings = () => {
   const location = useLocation(); // Get navigation state
@@ -22,6 +23,9 @@ const Listings = () => {
 
   console.log(searchResults);
 
+  // Sort state
+  const [sortBy, setSortBy] = useState('date-desc');
+
   useEffect(() => {
     // Check if we navigated here with filters
     const navigationState = location.state;
@@ -30,19 +34,11 @@ const Listings = () => {
       // Call getProperties with the filters from navigation state
       getProperties(navigationState);
     } else {
-      // Only fetch all properties if no search results and no filters
+      // Drop any lingering search results so the unfiltered view shows everything
+      clearSearchResults();
       getProperties();
     }
-  }, [getProperties, location.state]);
-
-  // Format as currency
-  const formatPrice = (price) =>
-    new Intl.NumberFormat('en-US', {
-      style: 'currency',
-      currency: 'USD',
-      minimumFractionDigits: 0,
-      maximumFractionDigits: 0,
-    }).format(price);
+  }, [getProperties, clearSearchResults, location.state]);
 
   const handlePageChange = (page) => {
     // Preserve type filter when paginating
@@ -88,7 +84,18 @@ const Listings = () => {
   };
 
   const renderProperties = () => {
-    const propertiesToRender = searchResults.length > 0 ? searchResults : properties;
+    const raw = searchResults.length > 0 ? searchResults : properties;
+    
+    // Apply client-side sorting
+    const propertiesToRender = [...raw].sort((a, b) => {
+      switch (sortBy) {
+        case 'price-asc': return parseFloat(a.price) - parseFloat(b.price);
+        case 'price-desc': return parseFloat(b.price) - parseFloat(a.price);
+        case 'date-asc': return new Date(a.createdAt) - new Date(b.createdAt);
+        case 'date-desc': return new Date(b.createdAt) - new Date(a.createdAt);
+        default: return 0;
+      }
+    });
 
     if (propertiesToRender.length === 0 && !isLoading) {
       return (
@@ -121,10 +128,11 @@ const Listings = () => {
                 transition={{ duration: 0.5, delay: index * 0.05 }}
               >
                 <PropertyCard
+                  id={property.id}
                   image={
                     property.imageUrls && property.imageUrls.length > 0
                       ? property.imageUrls[0]
-                      : m4
+                      : propertyPlaceholder
                   }
                   title={property.title}
                   address={property.address}
@@ -144,11 +152,12 @@ const Listings = () => {
   };
 
   return (
-    <div className="pt-26 font-inter bg-base-200">
+    <div className=" font-inter bg-base-200">
+      <SEO title="Properties" description="Browse all available properties for sale and rent." />
       <div id="mobile" className="w-full">
         {/* <section className="w-full bg-secondary pt-16 px-4 h-40 sticky top-0 z-50">
           <hr className="border-t border-gray-500" />
-          <CarSearchBar />
+          <Searchbar />
         </section> */}
         <motion.section
           initial={{ opacity: 0, y: 20 }}
@@ -165,7 +174,11 @@ const Listings = () => {
                 <p className="text-sm text-gray-600 flex-shrink-0 pr-1">
                   Sort by
                 </p>
-                <select className="select border-0 bg-gray-200 select-xs max-w-30 sm:max-w-50">
+                <select
+                  className="select border-0 bg-gray-200 select-xs max-w-30 sm:max-w-50"
+                  value={sortBy}
+                  onChange={(e) => setSortBy(e.target.value)}
+                >
                   <option value="price-asc">Price: Low to High</option>
                   <option value="price-desc">Price: High to Low</option>
                   <option value="date-asc">Date: Oldest to Newest</option>

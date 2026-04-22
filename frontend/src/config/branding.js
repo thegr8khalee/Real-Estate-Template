@@ -2,7 +2,7 @@ import rawBranding from '@branding-config';
 
 const withDefaults = (config) => {
   const companyName = config.company?.name ?? 'Your Brand';
-  const legalName = config.company?.legalName ?? `${companyName} Automobile`;
+  const legalName = config.company?.legalName ?? `${companyName} Real Estate`;
   const ceoName = config.company?.ceo?.name ?? 'Your CEO';
   const bioTemplate =
     config.company?.ceo?.bioTemplate ??
@@ -180,7 +180,24 @@ const withDefaults = (config) => {
     comparison: true,
     mortgageCalculator: true,
     newsletter: true,
+    favorites: true,
     ...(config.features ?? {}),
+  };
+
+  const defaultCurrency = {
+    code: 'NGN',
+    locale: 'en-NG',
+    symbol: '₦',
+    decimals: 0,
+    priceRange: { min: 1000000, max: 500000000, step: 1000000 },
+    mortgageDefaults: { interestRate: 5, termYears: 20 },
+  };
+
+  const currency = {
+    ...defaultCurrency,
+    ...(config.currency ?? {}),
+    priceRange: { ...defaultCurrency.priceRange, ...(config.currency?.priceRange ?? {}) },
+    mortgageDefaults: { ...defaultCurrency.mortgageDefaults, ...(config.currency?.mortgageDefaults ?? {}) },
   };
 
   return {
@@ -203,6 +220,7 @@ const withDefaults = (config) => {
       logoAlt: config.branding?.logoAlt ?? `${companyName} logo`,
     },
     features,
+    currency,
     contact: {
       emails,
       phones,

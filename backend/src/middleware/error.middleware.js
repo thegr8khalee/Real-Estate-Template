@@ -1,4 +1,4 @@
-// Error handling middleware for the car dealership API
+// Error handling middleware for the real estate platform API
 
 // Custom error class
 export class AppError extends Error {

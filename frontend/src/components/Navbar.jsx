@@ -7,6 +7,7 @@ import { useUserAuthStore } from '../store/useUserAuthStore';
 import { useAdminAuthStore } from '../store/useAdminAuthStore';
 import branding from '../config/branding';
 import { logo } from '../config/images';
+import NotificationBell from './NotificationBell';
 
 const Navbar = ({ className = '' }) => {
   const { adminLogout } = useAdminAuthStore();
@@ -66,7 +67,7 @@ const Navbar = ({ className = '' }) => {
             <div className="pl-4 space-x-4 hidden md:flex font-inter text-sm text-white">
               <Link to={'/'}>Home</Link>
               <Link to={'/listings'}>Listing</Link>
-              <Link to={'/makes'}>Makes</Link>
+              <Link to={'/categories'}>Categories</Link>
               <Link to={'/blogs'}>Blogs</Link>
               <Link to={'/contact'}>Contact Us</Link>
               {isAdmin ? <Link to={'/admin/dashboard'}>Dashboard</Link> : null}
@@ -83,7 +84,8 @@ const Navbar = ({ className = '' }) => {
             </a>
           </div> */}
 
-          <div className="navbar-end sm:flex hidden">
+          <div className="navbar-end sm:flex hidden items-center gap-2">
+            {authUser && <NotificationBell />}
             {!authUser ? (
               <button
                 className="btn btn-primary rounded-full text-xs font-normal"
@@ -101,7 +103,8 @@ const Navbar = ({ className = '' }) => {
               </button>
             )}
           </div>
-          <div className="navbar-end sm:hidden flex">
+          <div className="navbar-end sm:hidden flex items-center gap-1">
+            {authUser && <NotificationBell />}
             {!authUser ? (
               <button
                 className="btn btn-circle btn-primary rounded-full text-xs font-normal"
@@ -154,12 +157,12 @@ const Navbar = ({ className = '' }) => {
             <li className="p-2">
               <button
                 onClick={() => {
-                  navigate('/makes');
+                  navigate('/categories');
                   closeDrawer();
                 }}
-                className={getButtonClass('/makes')}
+                className={getButtonClass('/categories')}
               >
-                Makes
+                Categories
               </button>
             </li>
             <li className="p-2">

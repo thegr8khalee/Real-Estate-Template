@@ -4,7 +4,7 @@ import toast from 'react-hot-toast';
 
 export const useDashboardStore = create((set, get) => ({
   dashboardStats: null,
-  carStats: null,
+  propertyStats: null,
   blogStats: null,
   userStats: null,
   moderationStats: null,
@@ -88,18 +88,18 @@ export const useDashboardStore = create((set, get) => ({
     }
   },
 
-  getCarStats: async () => {
+  getPropertyStats: async () => {
     set({ isLoading: true, error: null });
     try {
-      const res = await axiosInstance.get('admin/dashboard/cars/stats');
+      const res = await axiosInstance.get('admin/dashboard/properties/stats');
 
       if (res.data.success) {
-        set({ carStats: res.data.data });
+        set({ propertyStats: res.data.data });
         return res.data.data;
       }
     } catch (error) {
       const errorMessage =
-        error.response?.data?.message || 'Failed to fetch car statistics';
+        error.response?.data?.message || 'Failed to fetch property statistics';
       toast.error(errorMessage);
       set({ error: errorMessage });
     } finally {
@@ -238,7 +238,7 @@ export const useDashboardStore = create((set, get) => ({
       // Fetch role-specific stats
       if (adminRole === 'super_admin' || adminRole === 'editor') {
         promises.push(
-          get().getCarStats(),
+          get().getPropertyStats(),
           get().getBlogStats(),
           get().getTopPerformers()
         );
@@ -270,9 +270,9 @@ export const useDashboardStore = create((set, get) => ({
     if (!dashboardStats) return null;
 
     return {
-      totalCars: dashboardStats.cars?.total || 0,
-      availableCars: dashboardStats.cars?.available || 0,
-      soldCars: dashboardStats.cars?.sold || 0,
+      totalProperties: dashboardStats.properties?.total || 0,
+      availableProperties: dashboardStats.properties?.available || 0,
+      soldProperties: dashboardStats.properties?.sold || 0,
       totalBlogs: dashboardStats.blogs?.total || 0,
       publishedBlogs: dashboardStats.blogs?.published || 0,
       totalUsers: dashboardStats.users?.total || 0,
@@ -297,7 +297,7 @@ export const useDashboardStore = create((set, get) => ({
   clearStats: () => {
     set({
       dashboardStats: null,
-      carStats: null,
+      propertyStats: null,
       blogStats: null,
       userStats: null,
       moderationStats: null,
@@ -342,7 +342,7 @@ export const useDashboardStore = create((set, get) => ({
         isFetchingListings: false,
       });
 
-      toast.success('Car listings loaded successfully!');
+      toast.success('Property listings loaded successfully!');
     } catch (error) {
       const errorMessage =
         error.response?.data?.message || 'Failed to fetch listings.';

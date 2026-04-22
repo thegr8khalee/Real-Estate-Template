@@ -265,7 +265,7 @@ const AddStaffPage = () => {
                   <p className="text-xs text-gray-500 mt-2">
                     <strong>Super Admin:</strong> Full access to all features
                     <br />
-                    <strong>Editor:</strong> Can manage content (cars, blogs)
+                    <strong>Editor:</strong> Can manage content (properties, blogs)
                     <br />
                     <strong>Moderator:</strong> Can manage reviews and comments
                   </p>

@@ -61,13 +61,13 @@ export const getBlogById = async (req, res) => {
       return res.status(404).json({ message: 'Blog post not found' });
     }
 
-    // Now fetch the cars referenced in the blog's carIds field.
-    let cars = [];
-    if (blog.carIds && blog.carIds.length > 0) {
-      cars = await Car.findAll({
+    // Now fetch the properties referenced in the blog's propertyIds field.
+    let properties = [];
+    if (blog.propertyIds && blog.propertyIds.length > 0) {
+      properties = await Property.findAll({
         where: {
           id: {
-            [Op.in]: blog.carIds,
+            [Op.in]: blog.propertyIds,
           },
         },
       });
@@ -91,7 +91,7 @@ export const getBlogById = async (req, res) => {
         currentBlog: blog,
         prevBlog: prevBlog || null, // Return null if a previous blog doesn't exist
         nextBlog: nextBlog || null, // Return null if a next blog doesn't exist
-        cars: cars, // Add the fetched cars to the response
+        properties: properties, // Add the fetched properties to the response
       },
     });
   } catch (error) {
@@ -119,33 +119,26 @@ export const searchBlogs = async (req, res) => {
       where: {
         status: 'published', // Only search within published blogs
         [Op.or]: [
-          { title: { [Op.like]: searchQuery } },
-          { tagline: { [Op.like]: searchQuery } },
-          // Convert tags JSON array to a string for a string-based search
+          { title: { [Op.iLike]: searchQuery } },
+          { tagline: { [Op.iLike]: searchQuery } },
+          // Postgres: cast the JSON tags column to text for substring search
           sequelize.where(
-            sequelize.fn(
-              'JSON_UNQUOTE',
-              sequelize.fn('JSON_EXTRACT', sequelize.col('tags'), '$')
-            ),
-            {
-              [Op.like]: searchQuery,
-            }
+            sequelize.cast(sequelize.col('tags'), 'text'),
+            { [Op.iLike]: searchQuery }
           ),
         ],
       },
       order: [['publishedAt', 'DESC']],
     });
 
-    if (blogs.length > 0) {
-      res.status(200).json({
-        message: 'Blogs found successfully',
-        data: blogs,
-      });
-    } else {
-      res.status(404).json({
-        message: `No blogs found matching the query: "${query}"`,
-      });
-    }
+    res.status(200).json({
+      message:
+        blogs.length > 0
+          ? 'Blogs found successfully'
+          : `No blogs found matching the query: "${query}"`,
+      totalItems: blogs.length,
+      data: blogs,
+    });
   } catch (error) {
     console.error('Error during blog search:', error);
     res.status(500).json({
@@ -170,7 +163,7 @@ export const getRelatedBlogsById = async (req, res) => {
 
     // First, get the target blog
     const targetBlog = await Blog.findByPk(id, {
-      attributes: ['id', 'category', 'tags', 'carIds'],
+      attributes: ['id', 'category', 'tags', 'propertyIds'],
     });
 
     if (!targetBlog) {
@@ -194,12 +187,12 @@ export const getRelatedBlogsById = async (req, res) => {
       category: targetBlog.category,
     });
 
-    // 2. Shared car IDs
-    if (targetBlog.carIds && targetBlog.carIds.length > 0) {
-      // Using JSON_OVERLAPS for MySQL or JSON array operations
+    // 2. Shared property IDs
+    if (targetBlog.propertyIds && targetBlog.propertyIds.length > 0) {
+      // Using JSON_OVERLAPS for PostgreSQL or JSON array operations
       orConditions.push(
         sequelize.literal(
-          `JSON_OVERLAPS(carIds, '${JSON.stringify(targetBlog.carIds)}')`
+          `JSON_OVERLAPS(propertyIds, '${JSON.stringify(targetBlog.propertyIds)}')`
         )
       );
     }
@@ -226,7 +219,7 @@ export const getRelatedBlogsById = async (req, res) => {
         'featuredImage',
         'category',
         'tags',
-        'carIds',
+        'propertyIds',
         'viewCount',
         'createdAt',
         'publishedAt',
@@ -241,8 +234,8 @@ export const getRelatedBlogsById = async (req, res) => {
               ELSE 0
             END +
             CASE 
-              WHEN JSON_OVERLAPS(carIds, '${JSON.stringify(
-                targetBlog.carIds || []
+              WHEN JSON_OVERLAPS(propertyIds, '${JSON.stringify(
+                targetBlog.propertyIds || []
               )}') THEN 2
               ELSE 0
             END +
@@ -281,7 +274,7 @@ export const getRelatedBlogsById = async (req, res) => {
           'featuredImage',
           'category',
           'tags',
-          'carIds',
+          'propertyIds',
           'viewCount',
           'createdAt',
           'publishedAt',
@@ -315,7 +308,7 @@ export const getRelatedBlogsById = async (req, res) => {
           'featuredImage',
           'category',
           'tags',
-          'carIds',
+          'propertyIds',
           'viewCount',
           'createdAt',
           'publishedAt',

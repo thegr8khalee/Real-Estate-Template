@@ -1,5 +1,6 @@
 import Property from '../models/property.model.js';
 import { Op } from 'sequelize';
+import sequelize from '../lib/db.js';
 import Review from '../models/review.model.js';
 
 export const getAllProperties = async (req, res) => {
@@ -26,14 +27,16 @@ export const getAllProperties = async (req, res) => {
     if (req.query.zipCode) where.zipCode = req.query.zipCode;
     if (req.query.condition) where.condition = req.query.condition;
 
-    // Search query
+    // Search query (case-insensitive)
     if (req.query.query) {
         const search = `%${req.query.query}%`;
         where[Op.or] = [
-            { title: { [Op.like]: search } },
-            { address: { [Op.like]: search } },
-            { city: { [Op.like]: search } },
-            { description: { [Op.like]: search } }
+            { title: { [Op.iLike]: search } },
+            { address: { [Op.iLike]: search } },
+            { city: { [Op.iLike]: search } },
+            { state: { [Op.iLike]: search } },
+            { zipCode: { [Op.iLike]: search } },
+            { description: { [Op.iLike]: search } }
         ];
     }
 
@@ -104,16 +107,23 @@ export const getPropertyById = async (req, res) => {
     }
 
     // Find up to 4 related properties that share similar attributes.
+    // Prioritize same city + type, then same city, then same type with similar price
+    const priceRange = parseFloat(property.price) * 0.3; // 30% price range
+    const minPrice = parseFloat(property.price) - priceRange;
+    const maxPrice = parseFloat(property.price) + priceRange;
+
     const relatedProperties = await Property.findAll({
       where: {
-        id: { [Op.ne]: property.id }, // Exclude the current property
+        id: { [Op.ne]: property.id },
+        status: { [Op.in]: ['For Sale', 'For Rent'] },
         [Op.or]: [
+          { city: property.city, type: property.type },
           { city: property.city },
-          { type: property.type },
+          { type: property.type, price: { [Op.between]: [minPrice, maxPrice] } },
           { zipCode: property.zipCode },
         ],
       },
-      limit: 4, 
+      limit: 4,
     });
 
     // Find all approved reviews for the primary property
@@ -126,15 +136,35 @@ export const getPropertyById = async (req, res) => {
         {
             model: Review.sequelize.models.User,
             as: 'user',
-            attributes: ['fullName', 'profilePic'],
+            attributes: ['id', 'username', 'email'],
         }
       ]
     });
+
+    // Compute average ratings from approved reviews
+    const averageRatings = { location: 0, condition: 0, value: 0, amenities: 0, overall: 0 };
+    if (reviews.length > 0) {
+      let totals = { location: 0, condition: 0, value: 0, amenities: 0 };
+      let counts = { location: 0, condition: 0, value: 0, amenities: 0 };
+      for (const r of reviews) {
+        if (r.locationRating) { totals.location += r.locationRating; counts.location++; }
+        if (r.conditionRating) { totals.condition += r.conditionRating; counts.condition++; }
+        if (r.valueRating) { totals.value += r.valueRating; counts.value++; }
+        if (r.amenitiesRating) { totals.amenities += r.amenitiesRating; counts.amenities++; }
+      }
+      averageRatings.location = counts.location ? totals.location / counts.location : 0;
+      averageRatings.condition = counts.condition ? totals.condition / counts.condition : 0;
+      averageRatings.value = counts.value ? totals.value / counts.value : 0;
+      averageRatings.amenities = counts.amenities ? totals.amenities / counts.amenities : 0;
+      const allRatings = [averageRatings.location, averageRatings.condition, averageRatings.value, averageRatings.amenities].filter(v => v > 0);
+      averageRatings.overall = allRatings.length ? allRatings.reduce((a, b) => a + b, 0) / allRatings.length : 0;
+    }
 
     res.status(200).json({
       property,
       relatedProperties,
       reviews,
+      averageRatings,
     });
   } catch (error) {
     console.error('Error in getPropertyById controller:', error);
@@ -162,7 +192,10 @@ export const Search = async (req, res) => {
             limit: 20
         });
 
-        res.status(200).json(properties);
+        res.status(200).json({
+            totalItems: properties.length,
+            properties,
+        });
     } catch (error) {
         console.error("Error in Search controller:", error);
         res.status(500).json({ message: "Internal Server Error" });

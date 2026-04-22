@@ -2,14 +2,14 @@
 // Central export for all Zustand stores
 
 import { useAdminStore } from './useAdminStore.js';
-import { useCarStore } from './useCarStore.js';
+import { usePropertyStore } from './usePropertyStore.js';
 import { useContentStore } from './useContentStore.js';
-import { useDashboardStore } from './useDasboardStore.js';
+import { useDashboardStore } from './useDashboardStore.js';
 
 export { useAdminStore } from './useAdminStore.js';
 export { useDashboardStore } from './useDashboardStore.js';
 export { useContentStore } from './useContentStore.js';
-export { useCarStore } from './useCarStore.js'; // Your existing car store
+export { usePropertyStore } from './usePropertyStore.js';
 
 // Store initialization function
 export const initializeStores = async () => {
@@ -38,9 +38,9 @@ export const useGlobalLoading = () => {
   const adminLoading = useAdminStore(state => state.isLoading);
   const dashboardLoading = useDashboardStore(state => state.isLoading);
   const contentLoading = useContentStore(state => state.isLoading);
-  const carLoading = useCarStore(state => state.isLoading);
+  const propertyLoading = usePropertyStore(state => state.isLoading);
   
-  return adminLoading || dashboardLoading || contentLoading || carLoading;
+  return adminLoading || dashboardLoading || contentLoading || propertyLoading;
 };
 
 // Combined error state hook
@@ -48,7 +48,7 @@ export const useGlobalError = () => {
   const adminError = useAdminStore(state => state.error);
   const dashboardError = useDashboardStore(state => state.error);
   const contentError = useContentStore(state => state.error);
-  const carError = useCarStore(state => state.error);
-  
-  return adminError || dashboardError || contentError || carError;
+  const propertyError = usePropertyStore(state => state.error);
+
+  return adminError || dashboardError || contentError || propertyError;
 };

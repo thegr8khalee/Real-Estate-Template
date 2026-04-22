@@ -36,7 +36,7 @@ const Blogs = () => {
         animate={{ opacity: 1, y: 0 }}
         transition={{ duration: 0.6 }}
         id="Blogs"
-        className="my-12 pt-26 mx-auto w-full overflow-hidden flex flex-col justify-center items-center text-center border-none px-4 lg:px-12 gap-6"
+        className=" pt-26 mx-auto w-full overflow-hidden flex flex-col justify-center items-center text-center border-none px-4 lg:px-12 gap-6"
       >
         <div className="w-full flex justify-start  items-center">
           <h1 className="text-5xl font-medium font-inter text-start">

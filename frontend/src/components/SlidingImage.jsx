@@ -1,12 +1,12 @@
 import React, { useState, useEffect } from 'react';
 import { ChevronLeft, ChevronRight, Video } from 'lucide-react';
 
-const SlidingImageCarousel = ({ car }) => {
+const SlidingImageCarousel = ({ property }) => {
   const [currentIndex, setCurrentIndex] = useState(0);
   const [isTransitioning, setIsTransitioning] = useState(false);
 
-  // Extract images from car data
-  const images = car?.imageUrls?.map(img => 
+  // Extract images from property data
+  const images = property?.imageUrls?.map(img => 
     typeof img === 'object' ? img.url : img
   ) || [];
 
@@ -66,7 +66,7 @@ const SlidingImageCarousel = ({ car }) => {
     return () => window.removeEventListener('keydown', handleKeyPress);
   }, []);
 
-  if (!car?.imageUrls || car.imageUrls.length === 0) {
+  if (!property?.imageUrls || property.imageUrls.length === 0) {
     return (
       <div className="w-full h-96 flex items-center justify-center rounded-xl bg-gray-100 text-gray-500">
         <div className="text-center">
@@ -95,7 +95,7 @@ const SlidingImageCarousel = ({ car }) => {
           >
             <img
               src={image}
-              alt={`${car.make} ${car.model} - Image ${index + 1}`}
+              alt={`${property.title || 'Property'} - Image ${index + 1}`}
               className="w-full h-full object-cover"
               loading={index === 0 ? 'eager' : 'lazy'}
             />

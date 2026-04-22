@@ -20,6 +20,8 @@ const AddPropertyPage = () => {
     condition: 'Used',
     description: '',
     features: [],
+    latitude: '',
+    longitude: '',
   });
 
   const [images, setImages] = useState([]);
@@ -30,7 +32,7 @@ const AddPropertyPage = () => {
   const { isLoading, addProperty, error } = useAdminOpsStore();
 
   // Options
-  const typeOptions = ['House', 'Apartment', 'Condo', 'Land', 'Commercial', 'Townhouse', 'Villa'];
+  const typeOptions = ['House', 'Apartment', 'Duplex', 'Bungalow', 'Terrace', 'Self-Contain', 'Mini Flat', 'Penthouse', 'Townhouse', 'Villa', 'Condo', 'Land', 'Commercial'];
   const statusOptions = ['For Sale', 'For Rent', 'Sold', 'Pending'];
   const conditionOptions = ['New', 'Used', 'Renovated', 'Under Construction'];
 
@@ -88,6 +90,8 @@ const AddPropertyPage = () => {
         bathrooms: formData.bathrooms ? parseFloat(formData.bathrooms) : null,
         sqft: formData.sqft ? parseInt(formData.sqft) : null,
         yearBuilt: formData.yearBuilt ? parseInt(formData.yearBuilt) : null,
+        latitude: formData.latitude ? parseFloat(formData.latitude) : null,
+        longitude: formData.longitude ? parseFloat(formData.longitude) : null,
       };
       
       const success = await addProperty(propertyData);
@@ -109,6 +113,8 @@ const AddPropertyPage = () => {
           condition: 'Used',
           description: '',
           features: [],
+          latitude: '',
+          longitude: '',
         });
         setImages([]);
         setImagePreview([]);
@@ -230,7 +236,7 @@ const AddPropertyPage = () => {
                   value={formData.city}
                   onChange={handleInputChange}
                   className="input input-bordered w-full rounded-full"
-                  placeholder="Los Angeles"
+                  placeholder="Lekki"
                   required
                 />
               </div>
@@ -242,20 +248,44 @@ const AddPropertyPage = () => {
                   value={formData.state}
                   onChange={handleInputChange}
                   className="input input-bordered w-full rounded-full"
-                  placeholder="CA"
+                  placeholder="Lagos"
                   required
                 />
               </div>
               <div>
-                <label className="label font-medium">Zip Code *</label>
+                <label className="label font-medium">Postal Code *</label>
                 <input
                   type="text"
                   name="zipCode"
                   value={formData.zipCode}
                   onChange={handleInputChange}
                   className="input input-bordered w-full rounded-full"
-                  placeholder="90001"
+                  placeholder="106104"
                   required
+                />
+              </div>
+              <div>
+                <label className="label font-medium">Latitude</label>
+                <input
+                  type="number"
+                  name="latitude"
+                  value={formData.latitude}
+                  onChange={handleInputChange}
+                  className="input input-bordered w-full rounded-full"
+                  placeholder="6.5244"
+                  step="any"
+                />
+              </div>
+              <div>
+                <label className="label font-medium">Longitude</label>
+                <input
+                  type="number"
+                  name="longitude"
+                  value={formData.longitude}
+                  onChange={handleInputChange}
+                  className="input input-bordered w-full rounded-full"
+                  placeholder="3.3792"
+                  step="any"
                 />
               </div>
             </div>

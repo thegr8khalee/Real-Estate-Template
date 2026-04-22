@@ -55,7 +55,7 @@ const Contact = () => {
       : null;
 
   return (
-    <div className=" pt-26 font-inter min-h-screen items-center justify-center">
+    <div className=" font-inter min-h-screen items-center justify-center">
       {/* <section className="w-full bg-secondary pt-16 px-4 h-16 sticky top-0 z-50"></section> */}
       <div className="min-h-screen w-full max-w-7xl mx-auto flex items-center justify-center flex-col">
         <div className="grid grid-cols-1 md:grid-cols-2 gap-4 p-4">
@@ -68,7 +68,7 @@ const Contact = () => {
             <h1 className="text-4xl font-bold mb-4">Contact Us</h1>
             <p className="mb-2">
               We would love to hear from you! Whether you have questions about
-              our cars, need assistance, or want to provide feedback, feel free
+              our properties, need assistance, or want to provide feedback, feel free
               to reach out.
             </p>
             <p className="mb-2">
@@ -232,8 +232,8 @@ const Contact = () => {
             <h1 className="text-4xl font-bold mb-4">Our Location</h1>
             {addressText && (
               <p className="mb-2">
-                Visit us at our dealership! We're located at {addressText}. Our
-                friendly team is ready to assist you with all your car needs.
+                Visit us at our office! We're located at {addressText}. Our
+                friendly team is ready to assist you with all your real estate needs.
               </p>
             )}
             <h3>Opening Hours</h3>
@@ -311,7 +311,7 @@ const Contact = () => {
               Sales Inquiries
             </h2>
             <p>
-              If you're interested in purchasing a vehicle, please contact our
+              If you're interested in purchasing a property, please contact our
               sales team.
             </p>
             <p>

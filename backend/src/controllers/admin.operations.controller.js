@@ -65,6 +65,8 @@ export const addProperty = async (req, res) => {
       features,
       images,
       condition,
+      latitude,
+      longitude,
     } = req.body;
 
     console.log('Received property data:', req.body);
@@ -116,6 +118,8 @@ export const addProperty = async (req, res) => {
       features,
       images: imageUrls,
       condition,
+      latitude: latitude || null,
+      longitude: longitude || null,
     });
 
     // Respond with the newly created property object
@@ -264,7 +268,7 @@ export const addBlog = async (req, res) => {
       category,
       status,
       content,
-      propertyIds, // Changed from carIds
+      propertyIds,
       tags,
       publishedAt,
       seoTitle,
@@ -296,7 +300,7 @@ export const addBlog = async (req, res) => {
       category,
       status,
       content,
-      propertyIds, // Changed from carIds
+      propertyIds,
       tags,
       publishedAt,
       seoTitle,
@@ -328,7 +332,7 @@ export const updateBlog = async (req, res) => {
       category,
       status,
       content,
-      propertyIds, // Changed from carIds
+      propertyIds,
       tags,
       publishedAt,
       seoTitle,
@@ -378,7 +382,7 @@ export const updateBlog = async (req, res) => {
       category,
       status,
       content,
-      propertyIds, // Changed from carIds
+      propertyIds,
       tags,
       publishedAt,
       seoTitle,

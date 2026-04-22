@@ -74,7 +74,7 @@ describe('Blog Controller', () => {
       const mockBlog = { 
         id: 1, 
         title: 'Blog 1', 
-        carIds: [],
+        propertyIds: [],
         index: 1
       };
       Blog.findByPk.mockResolvedValue(mockBlog);

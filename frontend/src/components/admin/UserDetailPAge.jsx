@@ -45,10 +45,10 @@ const UserDetailPage = ({ user, setActiveSection }) => {
     if (reviews.length === 0) return 0;
     const total = reviews.reduce((acc, review) => {
       return acc + (
-        (review.interiorRating || 0) +
-        (review.exteriorRating || 0) +
-        (review.comfortRating || 0) +
-        (review.performanceRating || 0)
+        (review.locationRating || 0) +
+        (review.conditionRating || 0) +
+        (review.valueRating || 0) +
+        (review.amenitiesRating || 0)
       ) / 4;
     }, 0);
     return (total / reviews.length).toFixed(1);
@@ -264,10 +264,10 @@ const UserDetailPage = ({ user, setActiveSection }) => {
                     <div className="space-y-3">
                       {reviews.slice(0, 3).map((review) => {
                         const avgRating = (
-                          (review.interiorRating || 0) +
-                          (review.exteriorRating || 0) +
-                          (review.comfortRating || 0) +
-                          (review.performanceRating || 0)
+                          (review.locationRating || 0) +
+                          (review.conditionRating || 0) +
+                          (review.valueRating || 0) +
+                          (review.amenitiesRating || 0)
                         ) / 4;
                         const status = getStatusBadge(review.status);
                         
@@ -376,24 +376,24 @@ const UserDetailPage = ({ user, setActiveSection }) => {
 
                           {/* Ratings */}
                           <div className="grid grid-cols-2 md:grid-cols-4 gap-2 mb-3">
-                            {review.interiorRating && (
-                              <RatingDisplay label="Interior" value={review.interiorRating} />
+                            {review.locationRating && (
+                              <RatingDisplay label="Location" value={review.locationRating} />
                             )}
-                            {review.exteriorRating && (
-                              <RatingDisplay label="Exterior" value={review.exteriorRating} />
+                            {review.conditionRating && (
+                              <RatingDisplay label="Condition" value={review.conditionRating} />
                             )}
-                            {review.comfortRating && (
-                              <RatingDisplay label="Comfort" value={review.comfortRating} />
+                            {review.valueRating && (
+                              <RatingDisplay label="Value" value={review.valueRating} />
                             )}
-                            {review.performanceRating && (
-                              <RatingDisplay label="Performance" value={review.performanceRating} />
+                            {review.amenitiesRating && (
+                              <RatingDisplay label="Amenities" value={review.amenitiesRating} />
                             )}
                           </div>
 
                           <p className="text-sm whitespace-pre-wrap">{review.content}</p>
-                          {review.carId && (
+                          {review.propertyId && (
                             <p className="text-xs text-gray-500 mt-2">
-                              Car ID: {review.carId}
+                              Property ID: {review.propertyId}
                             </p>
                           )}
                         </div>

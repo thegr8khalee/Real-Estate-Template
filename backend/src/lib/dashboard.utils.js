@@ -191,18 +191,18 @@ export const generateDateLabels = (count, period = 'days') => {
 
 /**
  * Calculate inventory turnover rate
- * @param {number} soldCars - Number of cars sold
- * @param {number} totalCars - Total cars in inventory
+ * @param {number} soldProperties - Number of properties sold
+ * @param {number} totalProperties - Total properties in inventory
  * @param {number} days - Period in days (default: 30)
  * @returns {number} Turnover rate percentage
  */
-export const calculateInventoryTurnover = (soldCars, totalCars, days = 30) => {
-  if (!totalCars || totalCars === 0) return 0;
+export const calculateInventoryTurnover = (soldProperties, totalProperties, days = 30) => {
+  if (!totalProperties || totalProperties === 0) return 0;
   
   // Annualized turnover rate
-  const dailyTurnover = soldCars / days;
+  const dailyTurnover = soldProperties / days;
   const annualTurnover = dailyTurnover * 365;
-  const turnoverRate = (annualTurnover / totalCars) * 100;
+  const turnoverRate = (annualTurnover / totalProperties) * 100;
   
   return parseFloat(turnoverRate.toFixed(2));
 };

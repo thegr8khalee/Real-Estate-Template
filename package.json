@@ -1,7 +1,7 @@
 {
-  "name": "sarkin_mota_automobile",
+  "name": "real-estate-template",
   "version": "1.0.0",
-  "description": "Sarkin Mota Automobile - Car Dealership Web Application (MVP)",
+  "description": "Real Estate Web Application (MVP)",
   "main": "index.js",
   "scripts": {
     "build": "npm install --prefix backend && npm install --prefix frontend && npm run build --prefix frontend",

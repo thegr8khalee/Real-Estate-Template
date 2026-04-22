@@ -1,8 +1,9 @@
 import React, { useEffect } from 'react';
-import { useDashboardStore } from '../../store/useDasboardStore';
+import { useDashboardStore } from '../../store/useDashboardStore';
 import { ChevronDown, ChevronLeft, User } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 import { useAdminOpsStore } from '../../store/useAdminOpsStore';
+import { formatPrice } from '../../lib/utils';
 
 const AdminListings = () => {
   const {
@@ -139,7 +140,7 @@ const ListCard = ({ item }) => {
               {item.condition}
             </span>
           </h2>
-          <p className="text-sm font-[inter]">${item.price?.toLocaleString()}</p>
+          <p className="text-sm font-[inter]">{formatPrice(item.price)}</p>
           <p className="text-xs text-gray-500">{item.address}, {item.city}</p>
         </div>
         <div>

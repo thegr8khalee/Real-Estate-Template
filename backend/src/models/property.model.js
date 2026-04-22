@@ -49,7 +49,13 @@ const Property = sequelize.define(
         'Land',
         'Commercial',
         'Townhouse',
-        'Villa'
+        'Villa',
+        'Duplex',
+        'Bungalow',
+        'Terrace',
+        'Self-Contain',
+        'Mini Flat',
+        'Penthouse'
       ),
       allowNull: false,
     },
@@ -87,6 +93,14 @@ const Property = sequelize.define(
     condition: {
       type: DataTypes.ENUM('New', 'Used', 'Renovated', 'Under Construction'),
       defaultValue: 'Used',
+    },
+    latitude: {
+      type: DataTypes.DECIMAL(10, 7),
+      allowNull: true,
+    },
+    longitude: {
+      type: DataTypes.DECIMAL(10, 7),
+      allowNull: true,
     },
   },
   {

@@ -10,7 +10,7 @@ const uploadImageToCloudinary = async (base64Image) => {
 
     try {
         const result = await cloudinary.uploader.upload(base64Image, {
-            folder: 'car-dealership/broadcasts',
+            folder: 'real-estate/broadcasts',
         });
         return result.secure_url;
     } catch (error) {
@@ -232,7 +232,7 @@ export const deleteBroadcast = async (req, res) => {
         if (broadcast.imageUrl) {
             try {
                 const urlParts = broadcast.imageUrl.split('/');
-                const publicIdWithExt = urlParts.slice(urlParts.indexOf('car-dealership')).join('/');
+                const publicIdWithExt = urlParts.slice(urlParts.indexOf('real-estate')).join('/');
                 const publicId = publicIdWithExt.split('.')[0];
                 await cloudinary.uploader.destroy(publicId);
             } catch (error) {

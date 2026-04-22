@@ -33,16 +33,22 @@ import Neighborhoods from './pages/Neighborhoods';
 import MergedNavbar from './components/MergedNav';
 import Categories from './pages/Categories';
 import branding from './config/branding';
+import { useFavoriteStore } from './store/useFavoriteStore';
 
 function App() {
   const { checkAuth, authUser } = useUserAuthStore();
+  const { fetchFavoriteIds } = useFavoriteStore();
   const location = useLocation(); // Get the current location
 
   useEffect(() => {
     checkAuth();
   }, [checkAuth]);
 
-  console.log('Authenticated User:', authUser);
+  useEffect(() => {
+    if (authUser) {
+      fetchFavoriteIds();
+    }
+  }, [authUser, fetchFavoriteIds]);
 
   // Determine if the footer should be visible
   const showFooter = !location.pathname.startsWith('/admin');

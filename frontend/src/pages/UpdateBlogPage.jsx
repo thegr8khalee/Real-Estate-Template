@@ -15,7 +15,8 @@ import {
 } from 'lucide-react';
 import { useParams, useNavigate } from 'react-router-dom';
 import ErrorLogger from '../components/ErrorLogger';
-import { useCarStore } from '../store/useCarStore';
+import { usePropertyStore } from '../store/usePropertyStore';
+import { formatPrice } from '../lib/utils';
 import { Editor } from '@tinymce/tinymce-react';
 import { useAdminOpsStore } from '../store/useAdminOpsStore';
 import { useUserAuthStore } from '../store/useUserAuthStore';
@@ -24,7 +25,7 @@ import { useBlogStore } from '../store/useBlogStore';
 const UpdateBlogPage = () => {
   const { id } = useParams();
   const navigate = useNavigate();
-  const { search, isSearching, searchResults, getCarById } = useCarStore();
+  const { search, isSearching, searchResults, getProperty } = usePropertyStore();
   const {
     updateBlog,
     isLoading: isBlogLoading,
@@ -55,7 +56,7 @@ const UpdateBlogPage = () => {
     content: '',
     category: '',
     status: 'draft',
-    carIds: [],
+    propertyIds: [],
     tags: [],
     seoTitle: '',
     seoDescription: '',
@@ -68,15 +69,15 @@ const UpdateBlogPage = () => {
     featuredImage: '',
   });
 
-  const [selectedCars, setSelectedCars] = useState([]);
-  const [searchData, setSearchData] = useState({ carSearchQuery: '' });
-  const [showCarDropdown, setShowCarDropdown] = useState(false);
+  const [selectedProperties, setSelectedProperties] = useState([]);
+  const [searchData, setSearchData] = useState({ propertySearchQuery: '' });
+  const [showPropertyDropdown, setShowPropertyDropdown] = useState(false);
   const [newTag, setNewTag] = useState('');
   const [error, setError] = useState('');
   const [isInitialized, setIsInitialized] = useState(false);
 
   // Refs
-  const carDropdownRef = useRef(null);
+  const propertyDropdownRef = useRef(null);
   const editorRef = useRef(null);
 
   // Category options
@@ -114,7 +115,7 @@ const UpdateBlogPage = () => {
         content: currentBlog.currentBlog.content || '',
         category: currentBlog.currentBlog.category || '',
         status: currentBlog.currentBlog.status || 'draft',
-        carIds: currentBlog.currentBlog.carIds || [],
+        propertyIds: currentBlog.currentBlog.propertyIds || [],
         tags: currentBlog.currentBlog.tags || [],
         seoTitle: currentBlog.currentBlog.seoTitle || '',
         seoDescription: currentBlog.currentBlog.seoDescription || '',
@@ -128,39 +129,38 @@ const UpdateBlogPage = () => {
         featuredImage: currentBlog.currentBlog.featuredImage || '',
       });
 
-      // ✅ Fetch car details if IDs exist
-      const fetchSelectedCars = async () => {
-        if (!currentBlog.currentBlog.carIds) return;
+      // ✅ Fetch property details if IDs exist
+      const fetchSelectedProperties = async () => {
+        if (!currentBlog.currentBlog.propertyIds) return;
 
-        const carData = await Promise.all(
-          currentBlog.currentBlog.carIds.map(async (c) => {
-            // console.log("Fetching car for ID:", c);
-            if (typeof c === 'string' || typeof c === 'number') {
-              return await getCarById(c); // fetch car details
+        const propertyData = await Promise.all(
+          currentBlog.currentBlog.propertyIds.map(async (p) => {
+            if (typeof p === 'string' || typeof p === 'number') {
+              return await getProperty(p); // fetch property details
             }
-            return c; // already a car object
+            return p; // already a property object
           })
         );
 
-        console.log("Resolved carData:", carData);
-        setSelectedCars(carData.filter((car) => car)); // filter out nulls
+        console.log("Resolved propertyData:", propertyData);
+        setSelectedProperties(propertyData.filter((property) => property)); // filter out nulls
       };
 
-      fetchSelectedCars();
+      fetchSelectedProperties();
       setIsInitialized(true);
     }
-  }, [currentBlog, authUser, isInitialized, getCarById]);
+  }, [currentBlog, authUser, isInitialized, getProperty]);
 
-//   console.log(selectedCars)
+//   console.log(selectedProperties)
 
   // Close dropdown when clicking outside
   useEffect(() => {
     const handleClickOutside = (event) => {
       if (
-        carDropdownRef.current &&
-        !carDropdownRef.current.contains(event.target)
+        propertyDropdownRef.current &&
+        !propertyDropdownRef.current.contains(event.target)
       ) {
-        setShowCarDropdown(false);
+        setShowPropertyDropdown(false);
       }
     };
 
@@ -197,25 +197,25 @@ const UpdateBlogPage = () => {
     }));
   };
 
-  const handleCarSelection = (car) => {
-    if (!selectedCars.find((selected) => selected.id === car.id)) {
-      const newSelectedCars = [...selectedCars, car];
-      setSelectedCars(newSelectedCars);
+  const handlePropertySelection = (property) => {
+    if (!selectedProperties.find((selected) => selected.id === property.id)) {
+      const newSelectedProperties = [...selectedProperties, property];
+      setSelectedProperties(newSelectedProperties);
       setFormData((prev) => ({
         ...prev,
-        carIds: newSelectedCars.map((c) => c.id),
+        propertyIds: newSelectedProperties.map((c) => c.id),
       }));
     }
-    setSearchData({ carSearchQuery: '' });
-    setShowCarDropdown(false);
+    setSearchData({ propertySearchQuery: '' });
+    setShowPropertyDropdown(false);
   };
 
-  const removeCar = (carId) => {
-    const newSelectedCars = selectedCars.filter((car) => car.id !== carId);
-    setSelectedCars(newSelectedCars);
+  const removeProperty = (propertyId) => {
+    const newSelectedProperties = selectedProperties.filter((property) => property.id !== propertyId);
+    setSelectedProperties(newSelectedProperties);
     setFormData((prev) => ({
       ...prev,
-      carIds: newSelectedCars.map((c) => c.id),
+      propertyIds: newSelectedProperties.map((c) => c.id),
     }));
   };
 
@@ -594,69 +594,69 @@ const UpdateBlogPage = () => {
               </div>
             </div>
 
-            {/* Related Cars Section */}
+            {/* Related Properties Section */}
             <div className="card bg-base-100 rounded-2xl shadow-xl">
               <div className="card-body">
-                <h3 className="card-title mb-4">Related Cars</h3>
+                <h3 className="card-title mb-4">Related Properties</h3>
 
-                {/* Car Search Dropdown */}
-                <div className="relative" ref={carDropdownRef}>
+                {/* Property Search Dropdown */}
+                <div className="relative" ref={propertyDropdownRef}>
                   <div className="flex gap-2">
                     <div className="relative flex-1">
                       <input
                         type="text"
-                        value={searchData.carSearchQuery}
+                        value={searchData.propertySearchQuery}
                         onChange={(e) =>
-                          setSearchData({ carSearchQuery: e.target.value })
+                          setSearchData({ propertySearchQuery: e.target.value })
                         }
                         className="input input-bordered w-full pr-10 rounded-l-full"
-                        placeholder="Search for cars..."
+                        placeholder="Search for properties..."
                       />
                       <Search className="absolute right-3 top-3 h-5 w-5 text-gray-400" />
                     </div>
                     <button
                       type="button"
                       onClick={() => {
-                        if (searchData.carSearchQuery.trim()) {
-                          search(searchData.carSearchQuery);
-                          setShowCarDropdown(true);
+                        if (searchData.propertySearchQuery.trim()) {
+                          search({ query: searchData.propertySearchQuery });
+                          setShowPropertyDropdown(true);
                         }
                       }}
                       className="btn btn-primary rounded-r-full"
-                      disabled={!searchData.carSearchQuery.trim()}
+                      disabled={!searchData.propertySearchQuery.trim()}
                     >
                       <SearchIcon className="h-5 w-5" />
                     </button>
                   </div>
 
                   {/* Dropdown */}
-                  {showCarDropdown && (
+                  {showPropertyDropdown && (
                     <div className="absolute top-full left-0 right-0 z-50 mt-1 bg-base-100 border border-base-300 rounded-lg shadow-lg max-h-60 overflow-y-auto">
                       {isSearching ? (
                         <div className="p-4 text-center">
                           <Loader2 className="animate-spin mx-auto mb-2" />
-                          Loading cars...
+                          Loading properties...
                         </div>
                       ) : !searchResults || searchResults.length === 0 ? (
                         <div className="p-4 text-center text-gray-500">
-                          No cars found
+                          No properties found
                         </div>
                       ) : (
-                        (searchResults.data || searchResults).map((car) => (
+                        (searchResults.data || searchResults).map((property) => (
                           <button
-                            key={car.id}
+                            key={property.id}
                             type="button"
-                            onClick={() => handleCarSelection(car)}
+                            onClick={() => handlePropertySelection(property)}
                             className="w-full text-left p-3 hover:bg-base-200 border-b border-base-300 last:border-b-0"
-                            disabled={selectedCars.some(
-                              (selected) => selected.id === car.id
+                            disabled={selectedProperties.some(
+                              (selected) => selected.id === property.id
                             )}
                           >
                             <div className="font-medium">
-                              {car.year} {car.make} {car.model}
+                              {property.title}
                             </div>
                             <div className="text-sm text-gray-500">
-                              {car.condition} • ${car.price?.toLocaleString()}
+                              {property.type} • {formatPrice(property.price)}
                             </div>
                           </button>
                         ))
@@ -665,22 +665,22 @@ const UpdateBlogPage = () => {
                   )}
                 </div>
 
-                {/* Selected Cars */}
-                {selectedCars.length > 0 && (
+                {/* Selected Properties */}
+                {selectedProperties.length > 0 && (
                   <div className="mt-4">
-                    <h4 className="font-medium mb-2">Selected Cars:</h4>
+                    <h4 className="font-medium mb-2">Selected Properties:</h4>
                     <div className="flex flex-wrap gap-2">
-                      {selectedCars.map((car) => (
+                      {selectedProperties.map((property) => (
                         <div
-                          key={car.id}
+                          key={property.id}
                           className="badge badge-lg badge-outline gap-2 py-3 px-4"
                         >
                           <span>
-                            {car.year} {car.make} {car.model}
+                            {property.title}
                           </span>
                           <button
                             type="button"
-                            onClick={() => removeCar(car.id)}
+                            onClick={() => removeProperty(property.id)}
                             className="hover:text-red-500"
                           >
                             <X className="h-3 w-3" />

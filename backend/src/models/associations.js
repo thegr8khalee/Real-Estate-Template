@@ -8,6 +8,9 @@ import Blog from './blog.model.js';
 import Comment from './comment.model.js';
 import Newsletter from './news.model.js';
 import Review from './review.model.js';
+import Favorite from './favorite.model.js';
+import Inquiry from './inquiry.model.js';
+import Notification from './notification.model.js';
 import Broadcast from './broadcast.model.js';
 
 Admin.hasMany(Broadcast, {
@@ -158,8 +161,71 @@ Admin.hasMany(Property, {
 // Newsletter associations (if you want to track subscription sources)
 // Newsletter doesn't need direct associations since it's standalone
 
+// Favorite associations
+User.hasMany(Favorite, {
+  foreignKey: 'userId',
+  as: 'favorites',
+  onDelete: 'CASCADE',
+  onUpdate: 'CASCADE',
+});
+
+Favorite.belongsTo(User, {
+  foreignKey: 'userId',
+  as: 'user',
+});
+
+Property.hasMany(Favorite, {
+  foreignKey: 'propertyId',
+  as: 'favorites',
+  onDelete: 'CASCADE',
+  onUpdate: 'CASCADE',
+});
+
+Favorite.belongsTo(Property, {
+  foreignKey: 'propertyId',
+  as: 'property',
+});
+
+// Inquiry associations
+Property.hasMany(Inquiry, {
+  foreignKey: 'propertyId',
+  as: 'inquiries',
+  onDelete: 'CASCADE',
+  onUpdate: 'CASCADE',
+});
+
+Inquiry.belongsTo(Property, {
+  foreignKey: 'propertyId',
+  as: 'property',
+});
+
+User.hasMany(Inquiry, {
+  foreignKey: 'userId',
+  as: 'inquiries',
+  onDelete: 'SET NULL',
+  onUpdate: 'CASCADE',
+});
+
+Inquiry.belongsTo(User, {
+  foreignKey: 'userId',
+  as: 'user',
+});
+
+// Notification associations
+User.hasMany(Notification, {
+  foreignKey: 'userId',
+  as: 'notifications',
+  onDelete: 'CASCADE',
+  onUpdate: 'CASCADE',
+});
+
+Notification.belongsTo(User, {
+  foreignKey: 'userId',
+  as: 'user',
+});
+
 // Export all models and the junction table
-export { User, Admin, Property, Blog, Comment, Newsletter, Review, BlogProperty };
+export { User, Admin, Property, Blog, Comment, Newsletter, Review, BlogProperty, Favorite, Inquiry, Notification };
 
 // Export a function to initialize all associations
 export const initializeAssociations = () => {
@@ -173,6 +239,9 @@ export const initializeAssociations = () => {
   console.log('- User hasMany Comments, Comment belongsTo User');
   console.log('- Property hasMany Reviews, Review belongsTo Property');
   console.log('- User hasMany Reviews, Review belongsTo User');
+  console.log('- User hasMany Favorites, Favorite belongsTo User & Property');
+  console.log('- Property hasMany Inquiries, Inquiry belongsTo Property & User');
+  console.log('- User hasMany Notifications, Notification belongsTo User');
   console.log('- Admin hasMany Properties (for tracking creator)');
 };
 
@@ -186,6 +255,9 @@ export const Models = {
   Newsletter,
   Review,
   BlogProperty,
+  Favorite,
+  Inquiry,
+  Notification,
 };
 
 export default {
@@ -197,6 +269,9 @@ export default {
   Newsletter,
   Review,
   BlogProperty,
+  Favorite,
+  Inquiry,
+  Notification,
   initializeAssociations,
   Models,
 };

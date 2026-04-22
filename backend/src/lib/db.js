@@ -15,9 +15,10 @@ const sequelize = new Sequelize(process.env.DATABASE_URL, {
     }
   },
 
-  // Connection pool - reduced for stability
+  // Connection pool — small on serverless (each lambda has its own pool; Supabase pooler caps connections).
+  // On long-running hosts (local dev, Render, Fly) we can afford more.
   pool: {
-    max: 5,
+    max: process.env.VERCEL ? 1 : 5,
     min: 0,
     acquire: 90000,
     idle: 10000,
@@ -53,21 +54,21 @@ export default sequelize;
 // config/database.js - Environment-specific configurations
 export const databaseConfig = {
   development: {
-    username: process.env.DB_USER || 'root',
+    username: process.env.DB_USER || 'postgres',
     password: process.env.DB_PASSWORD || '',
-    database: process.env.DB_NAME || 'car_blog_dev',
+    database: process.env.DB_NAME || 'real_estate_dev',
     host: process.env.DB_HOST || 'localhost',
-    port: process.env.DB_PORT || 3306,
-    dialect: 'mysql',
+    port: process.env.DB_PORT || 5432,
+    dialect: 'postgres',
     logging: console.log,
   },
   test: {
-    username: process.env.TEST_DB_USER || 'root',
+    username: process.env.TEST_DB_USER || 'postgres',
     password: process.env.TEST_DB_PASSWORD || '',
-    database: process.env.TEST_DB_NAME || 'car_blog_test',
+    database: process.env.TEST_DB_NAME || 'real_estate_test',
     host: process.env.TEST_DB_HOST || 'localhost',
-    port: process.env.TEST_DB_PORT || 3306,
-    dialect: 'mysql',
+    port: process.env.TEST_DB_PORT || 5432,
+    dialect: 'postgres',
     logging: false,
   },
   production: {
@@ -75,8 +76,8 @@ export const databaseConfig = {
     password: process.env.DB_PASSWORD,
     database: process.env.DB_NAME,
     host: process.env.DB_HOST,
-    port: process.env.DB_PORT || 3306,
-    dialect: 'mysql',
+    port: process.env.DB_PORT || 5432,
+    dialect: 'postgres',
     logging: false,
     pool: {
       max: 30,
@@ -121,7 +122,7 @@ const setupDatabase = async () => {
     console.log('\n✅ Database setup completed successfully!');
     console.log('\n📊 Database Statistics:');
     console.log(`- Models created: ${Object.keys(models).length - 1}`); // -1 for sequelize instance
-    console.log('- Tables: Users, Admins, Cars, Blogs, Comments, Likes, Newsletters, BlogCars');
+    console.log('- Tables: Users, Admins, Properties, Blogs, Comments, Likes, Newsletters, BlogProperties');
     console.log('- Associations: All relationships configured');
     console.log('- Indexes: Optimized for performance');
     console.log('- Constraints: Foreign keys and validations in place\n');
@@ -165,10 +166,10 @@ export { setupDatabase };
 
 // utils/query-helpers.js - Useful query utilities
 import { Op } from 'sequelize';
-import { Blog, Admin, Car, Comment, User } from '../models/index.js';
+import { Blog, Admin, Property, Comment, User } from '../models/index.js';
 
 export const QueryHelpers = {
-  // Get published blogs with author and car info
+  // Get published blogs with author and property info
   getPublishedBlogs: async (options = {}) => {
     const {
       page = 1,
@@ -200,9 +201,9 @@ export const QueryHelpers = {
           attributes: ['id', 'username', 'position', 'avatar', 'bio']
         },
         {
-          model: Car,
-          as: 'cars',
-          attributes: ['id', 'make', 'model', 'year', 'imageUrls'],
+          model: Property,
+          as: 'properties',
+          attributes: ['id', 'title', 'type', 'city', 'images'],
           through: { attributes: [] }
         }
       ],
@@ -224,9 +225,9 @@ export const QueryHelpers = {
           attributes: ['id', 'username', 'position', 'avatar', 'bio']
         },
         {
-          model: Car,
-          as: 'cars',
-          attributes: ['id', 'make', 'model', 'year', 'imageUrls', 'bodyType'],
+          model: Property,
+          as: 'properties',
+          attributes: ['id', 'title', 'type', 'city', 'images', 'price'],
           through: { attributes: [] }
         },
         {
@@ -246,11 +247,11 @@ export const QueryHelpers = {
     });
   },
 
-  // Get popular cars (by blog count)
-  getPopularCars: async (limit = 10) => {
-    return await Car.findAll({
+  // Get popular properties (by blog count)
+  getPopularProperties: async (limit = 10) => {
+    return await Property.findAll({
       attributes: [
-        'id', 'make', 'model', 'year', 'imageUrls',
+        'id', 'title', 'type', 'city', 'images',
         [sequelize.fn('COUNT', sequelize.col('blogs.id')), 'blogCount']
       ],
       include: [
@@ -263,7 +264,7 @@ export const QueryHelpers = {
           through: { attributes: [] }
         }
       ],
-      group: ['Car.id'],
+      group: ['Property.id'],
       order: [[sequelize.literal('blogCount'), 'DESC']],
       limit,
       subQuery: false
@@ -291,9 +292,9 @@ export const QueryHelpers = {
           attributes: ['id', 'username', 'position', 'avatar']
         },
         {
-          model: Car,
-          as: 'cars',
-          attributes: ['id', 'make', 'model', 'year'],
+          model: Property,
+          as: 'properties',
+          attributes: ['id', 'title', 'type', 'city'],
           through: { attributes: [] }
         }
       ],
@@ -327,19 +328,20 @@ export const QueryHelpers = {
 
 // .env.example - Environment variables template
 /*
-# Database Configuration
-DB_NAME=car_blog
-DB_USER=root
+# Database Configuration (Postgres)
+DATABASE_URL=postgres://user:password@host:5432/real_estate
+DB_NAME=real_estate
+DB_USER=postgres
 DB_PASSWORD=your_password
 DB_HOST=localhost
-DB_PORT=3306
+DB_PORT=5432
 
 # Test Database
-TEST_DB_NAME=car_blog_test
-TEST_DB_USER=root
+TEST_DB_NAME=real_estate_test
+TEST_DB_USER=postgres
 TEST_DB_PASSWORD=your_password
 TEST_DB_HOST=localhost
-TEST_DB_PORT=3306
+TEST_DB_PORT=5432
 
 # Application
 NODE_ENV=development

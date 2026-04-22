@@ -10,7 +10,7 @@ const uploadImageToCloudinary = async (base64Image) => {
   
   try {
     const result = await cloudinary.uploader.upload(base64Image, {
-      folder: 'car-dealership/staff-avatars',
+      folder: 'real-estate/staff-avatars',
     });
     return {
       url: result.secure_url,
@@ -27,7 +27,7 @@ const extractPublicIdFromUrl = (url) => {
   if (!url) return null;
   const parts = url.split('/');
   const filename = parts[parts.length - 1];
-  const folderIndex = parts.indexOf('car-dealership');
+  const folderIndex = parts.indexOf('real-estate');
   if (folderIndex !== -1) {
     const pathAfterFolder = parts.slice(folderIndex).join('/');
     return pathAfterFolder.replace(/\.[^/.]+$/, ''); // Remove extension

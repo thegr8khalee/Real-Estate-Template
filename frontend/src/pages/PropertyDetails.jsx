@@ -6,6 +6,7 @@ import {
   Check,
   ChevronLeft,
   ChevronRight,
+  Download,
   Loader2,
   Phone,
   Share,
@@ -18,7 +19,7 @@ import {
   MapPin,
 } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { m4 } from '../config/images';
+import { propertyPlaceholder } from '../config/images';
 import PropertyCard from '../components/PropertyCard';
 import { useNavigate, useParams } from 'react-router-dom';
 import { usePropertyStore } from '../store/usePropertyStore';
@@ -26,12 +27,16 @@ import Review from '../components/Review';
 import toast from 'react-hot-toast';
 import { useInteractStore } from '../store/useInteractStore';
 import { useUserAuthStore } from '../store/useUserAuthStore';
+import { useInquiryStore } from '../store/useInquiryStore';
 import { formatPrice } from '../lib/utils';
+import branding from '../config/branding';
+import SEO from '../components/SEO';
 
 const PropertyDetails = () => {
   const { id } = useParams();
-  const { property: currentProperty, getPropertyById, isLoading } = usePropertyStore();
+  const { propertyDetails: currentProperty, getPropertyById, isLoading } = usePropertyStore();
   const { authUser } = useUserAuthStore();
+  const { submitInquiry, isSubmitting } = useInquiryStore();
 
   useEffect(() => {
     getPropertyById(id);
@@ -52,17 +57,39 @@ const PropertyDetails = () => {
   const [tourFormData, setTourFormData] = useState({
     name: '',
     email: '',
+    phone: '',
     date: '',
+    message: '',
   });
   const [calcFormData, setCalcFormData] = useState({
     price: '',
-    years: '',
+    years: branding.currency?.mortgageDefaults?.termYears?.toString() || '25',
     downPayment: '',
+    interestRate: branding.currency?.mortgageDefaults?.interestRate?.toString() || '5',
   });
 
   const handleTourChange = (e) => {
     const { name, value } = e.target;
     setTourFormData((prevState) => ({ ...prevState, [name]: value }));
+  };
+
+  const handleTourSubmit = async () => {
+    if (!tourFormData.name || !tourFormData.email) {
+      toast.error('Name and email are required');
+      return;
+    }
+    const result = await submitInquiry({
+      propertyId: id,
+      name: tourFormData.name,
+      email: tourFormData.email,
+      phone: tourFormData.phone || undefined,
+      type: 'tour',
+      preferredDate: tourFormData.date || undefined,
+      message: tourFormData.message || undefined,
+    });
+    if (result) {
+      setTourFormData({ name: '', email: '', phone: '', date: '', message: '' });
+    }
   };
 
   const handleCalcChange = (e) => {
@@ -77,6 +104,7 @@ const PropertyDetails = () => {
   };
 
   const [currentIndex, setCurrentIndex] = useState(0);
+  const [lightboxOpen, setLightboxOpen] = useState(false);
 
   const images = property?.imageUrls || [];
 
@@ -194,10 +222,65 @@ const PropertyDetails = () => {
     });
   };
 
+  const handleDownloadBrochure = async () => {
+    const html2pdf = (await import('html2pdf.js')).default;
+    const brochureHtml = `
+      <div style="font-family: Arial, sans-serif; padding: 40px; max-width: 800px;">
+        <h1 style="color: #333; margin-bottom: 8px;">${property.title}</h1>
+        <p style="color: #666; font-size: 14px; margin-bottom: 20px;">${property.address}, ${property.city}, ${property.state} ${property.zipCode}</p>
+        ${images[0] ? `<img src="${images[0]}" style="width: 100%; max-height: 400px; object-fit: cover; border-radius: 8px; margin-bottom: 20px;" crossorigin="anonymous" />` : ''}
+        <div style="display: flex; gap: 20px; margin-bottom: 20px; flex-wrap: wrap;">
+          <div style="background: #f3f4f6; padding: 12px 20px; border-radius: 8px; flex: 1; min-width: 120px;">
+            <div style="font-size: 12px; color: #666;">Price</div>
+            <div style="font-size: 18px; font-weight: bold;">${formatPrice(property.price)}</div>
+          </div>
+          ${property.bedrooms ? `<div style="background: #f3f4f6; padding: 12px 20px; border-radius: 8px; flex: 1; min-width: 120px;"><div style="font-size: 12px; color: #666;">Bedrooms</div><div style="font-size: 18px; font-weight: bold;">${property.bedrooms}</div></div>` : ''}
+          ${property.bathrooms ? `<div style="background: #f3f4f6; padding: 12px 20px; border-radius: 8px; flex: 1; min-width: 120px;"><div style="font-size: 12px; color: #666;">Bathrooms</div><div style="font-size: 18px; font-weight: bold;">${property.bathrooms}</div></div>` : ''}
+          ${property.sqft ? `<div style="background: #f3f4f6; padding: 12px 20px; border-radius: 8px; flex: 1; min-width: 120px;"><div style="font-size: 12px; color: #666;">Area</div><div style="font-size: 18px; font-weight: bold;">${Number(property.sqft).toLocaleString()} sqft</div></div>` : ''}
+        </div>
+        <div style="margin-bottom: 20px;">
+          <h3 style="color: #333; margin-bottom: 8px;">Description</h3>
+          <p style="color: #555; line-height: 1.6; font-size: 14px;">${property.description}</p>
+        </div>
+        ${property.features?.length ? `
+          <div style="margin-bottom: 20px;">
+            <h3 style="color: #333; margin-bottom: 8px;">Features</h3>
+            <div style="display: flex; flex-wrap: wrap; gap: 8px;">
+              ${property.features.map(f => `<span style="background: #e5e7eb; padding: 4px 12px; border-radius: 16px; font-size: 13px;">${f}</span>`).join('')}
+            </div>
+          </div>
+        ` : ''}
+        <div style="margin-top: 30px; padding-top: 20px; border-top: 1px solid #e5e7eb; font-size: 12px; color: #999; text-align: center;">
+          ${branding.company?.name || 'Real Estate'} &bull; Generated on ${new Date().toLocaleDateString()}
+        </div>
+      </div>
+    `;
+
+    const container = document.createElement('div');
+    container.innerHTML = brochureHtml;
+    document.body.appendChild(container);
+
+    html2pdf()
+      .set({
+        margin: 0,
+        filename: `${property.title.replace(/[^a-zA-Z0-9]/g, '_')}_brochure.pdf`,
+        image: { type: 'jpeg', quality: 0.95 },
+        html2canvas: { scale: 2, useCORS: true },
+        jsPDF: { unit: 'mm', format: 'a4', orientation: 'portrait' },
+      })
+      .from(container)
+      .save()
+      .then(() => {
+        document.body.removeChild(container);
+        toast.success('Brochure downloaded!');
+      });
+  };
+
   const [monthlyPayment, setMonthlyPayment] = useState(null);
+  const [mortgageSummary, setMortgageSummary] = useState(null);
 
   const calculateMortgage = () => {
-    if (!calcFormData.years || !calcFormData.downPayment) {
+    if (!calcFormData.years || !calcFormData.downPayment || !calcFormData.interestRate) {
       toast.error('Please fill in all fields');
       return;
     }
@@ -205,8 +288,9 @@ const PropertyDetails = () => {
     const price = parseFloat(property?.price);
     const down = parseFloat(calcFormData.downPayment);
     const years = parseFloat(calcFormData.years);
+    const rate = parseFloat(calcFormData.interestRate);
 
-    if (price <= 0 || down < 0 || years <= 0) {
+    if (price <= 0 || down < 0 || years <= 0 || rate < 0) {
       toast.error('Please enter valid positive numbers');
       return;
     }
@@ -217,7 +301,7 @@ const PropertyDetails = () => {
     }
 
     const loanAmount = price - down;
-    const annualInterestRate = 0.05; // 5% annual interest rate
+    const annualInterestRate = rate / 100;
     const monthlyInterestRate = annualInterestRate / 12;
     const numberOfPayments = years * 12;
 
@@ -230,7 +314,16 @@ const PropertyDetails = () => {
       monthly = (loanAmount * (monthlyInterestRate * x)) / (x - 1);
     }
 
+    const totalPaid = monthly * numberOfPayments;
+    const totalInterest = totalPaid - loanAmount;
+
     setMonthlyPayment(monthly);
+    setMortgageSummary({
+      loanAmount,
+      totalPaid,
+      totalInterest,
+      numberOfPayments,
+    });
   };
 
   const ratingCategories = ['Location', 'Condition', 'Value', 'Amenities'];
@@ -253,14 +346,20 @@ const PropertyDetails = () => {
 
   return (
     <div className="pt-20 font-inter bg-base-200">
+      <SEO
+        title={property?.title}
+        description={property?.description?.slice(0, 160)}
+        image={images[0]}
+        type="article"
+      />
       <div className="w-full max-w-7xl mx-auto px-4 mt-2">
         <section id="hero" className="grid grid-cols-1 md:grid-cols-2 mb-6 gap-8">
           {/* Image Gallery */}
-          <div className="relative h-64 md:h-96 bg-gray-200 rounded-lg overflow-hidden mt-4">
+          <div className="relative h-64 md:h-96 bg-gray-200 rounded-lg overflow-hidden mt-4 cursor-pointer" onClick={() => setLightboxOpen(true)}>
             <AnimatePresence mode="wait">
               <motion.img
                 key={currentIndex}
-                src={images[currentIndex] || m4}
+                src={images[currentIndex] || propertyPlaceholder}
                 alt={property.title}
                 className="w-full h-full object-cover"
                 initial={{ opacity: 0 }}
@@ -346,6 +445,13 @@ const PropertyDetails = () => {
                 className="p-3 bg-white border border-gray-300 rounded-lg hover:bg-gray-50 transition-colors"
               >
                 <Share className="size-5 text-gray-600" />
+              </button>
+              <button
+                onClick={handleDownloadBrochure}
+                className="p-3 bg-white border border-gray-300 rounded-lg hover:bg-gray-50 transition-colors"
+                title="Download Brochure"
+              >
+                <Download className="size-5 text-gray-600" />
               </button>
             </div>
           </div>
@@ -445,7 +551,7 @@ const PropertyDetails = () => {
           {/* Schedule Tour Form */}
           <div className="bg-white rounded-lg p-6 shadow-sm">
             <h3 className="text-xl font-bold mb-6">Schedule a Tour</h3>
-            <form className="space-y-4">
+            <form className="space-y-4" onSubmit={(e) => e.preventDefault()}>
               <div>
                 <label className="block text-sm font-medium text-gray-700 mb-1">
                   Name
@@ -474,6 +580,19 @@ const PropertyDetails = () => {
               </div>
               <div>
                 <label className="block text-sm font-medium text-gray-700 mb-1">
+                  Phone (optional)
+                </label>
+                <input
+                  type="tel"
+                  name="phone"
+                  value={tourFormData.phone}
+                  onChange={handleTourChange}
+                  className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary focus:border-transparent"
+                  placeholder="Your phone number"
+                />
+              </div>
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-1">
                   Preferred Date
                 </label>
                 <input
@@ -484,11 +603,26 @@ const PropertyDetails = () => {
                   className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary focus:border-transparent"
                 />
               </div>
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-1">
+                  Message (optional)
+                </label>
+                <textarea
+                  name="message"
+                  value={tourFormData.message}
+                  onChange={handleTourChange}
+                  rows={3}
+                  className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary focus:border-transparent"
+                  placeholder="Any specific questions or preferences?"
+                />
+              </div>
               <button
                 type="button"
-                className="w-full bg-primary text-white py-3 rounded-lg font-semibold hover:bg-primary/90 transition-colors"
+                onClick={handleTourSubmit}
+                disabled={isSubmitting}
+                className="w-full bg-primary text-white py-3 rounded-lg font-semibold hover:bg-primary/90 transition-colors disabled:opacity-50"
               >
-                Request Tour
+                {isSubmitting ? 'Submitting...' : 'Request Tour'}
               </button>
             </form>
           </div>
@@ -503,7 +637,7 @@ const PropertyDetails = () => {
                 </label>
                 <div className="relative">
                   <span className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-500">
-                    $
+                    {branding.currency?.symbol || '$'}
                   </span>
                   <input
                     type="number"
@@ -520,7 +654,7 @@ const PropertyDetails = () => {
                 </label>
                 <div className="relative">
                   <span className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-500">
-                    $
+                    {branding.currency?.symbol || '$'}
                   </span>
                   <input
                     type="number"
@@ -531,6 +665,20 @@ const PropertyDetails = () => {
                     placeholder="0"
                   />
                 </div>
+              </div>
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-1">
+                  Interest Rate (%)
+                </label>
+                <input
+                  type="number"
+                  name="interestRate"
+                  value={calcFormData.interestRate}
+                  onChange={handleCalcChange}
+                  className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary focus:border-transparent"
+                  placeholder="5"
+                  step="0.1"
+                />
               </div>
               <div>
                 <label className="block text-sm font-medium text-gray-700 mb-1">
@@ -551,14 +699,34 @@ const PropertyDetails = () => {
               >
                 Calculate Payment
               </button>
-              {monthlyPayment && (
-                <div className="mt-4 p-4 bg-green-50 rounded-lg border border-green-100 text-center">
-                  <p className="text-sm text-green-800 mb-1">
-                    Estimated Monthly Payment
-                  </p>
-                  <p className="text-2xl font-bold text-green-700">
-                    {formatPrice(monthlyPayment)}
-                  </p>
+              {monthlyPayment && mortgageSummary && (
+                <div className="mt-4 space-y-3">
+                  <div className="p-4 bg-green-50 rounded-lg border border-green-100 text-center">
+                    <p className="text-sm text-green-800 mb-1">
+                      Estimated Monthly Payment
+                    </p>
+                    <p className="text-2xl font-bold text-green-700">
+                      {formatPrice(monthlyPayment)}
+                    </p>
+                  </div>
+                  <div className="grid grid-cols-2 gap-3 text-sm">
+                    <div className="p-3 bg-gray-50 rounded-lg">
+                      <p className="text-gray-500">Loan Amount</p>
+                      <p className="font-semibold">{formatPrice(mortgageSummary.loanAmount)}</p>
+                    </div>
+                    <div className="p-3 bg-gray-50 rounded-lg">
+                      <p className="text-gray-500">Total Interest</p>
+                      <p className="font-semibold">{formatPrice(mortgageSummary.totalInterest)}</p>
+                    </div>
+                    <div className="p-3 bg-gray-50 rounded-lg">
+                      <p className="text-gray-500">Total Paid</p>
+                      <p className="font-semibold">{formatPrice(mortgageSummary.totalPaid)}</p>
+                    </div>
+                    <div className="p-3 bg-gray-50 rounded-lg">
+                      <p className="text-gray-500">Payments</p>
+                      <p className="font-semibold">{mortgageSummary.numberOfPayments} months</p>
+                    </div>
+                  </div>
                 </div>
               )}
             </div>
@@ -682,10 +850,11 @@ const PropertyDetails = () => {
               {currentProperty.relatedProperties.map((relatedProperty) => (
                 <PropertyCard
                   key={relatedProperty.id}
+                  id={relatedProperty.id}
                   image={
                     relatedProperty.imageUrls && relatedProperty.imageUrls.length > 0
                       ? relatedProperty.imageUrls[0]
-                      : m4
+                      : propertyPlaceholder
                   }
                   title={relatedProperty.title}
                   address={relatedProperty.address}
@@ -701,6 +870,56 @@ const PropertyDetails = () => {
           </section>
         )}
       </div>
+
+      {/* Image Lightbox Modal */}
+      {lightboxOpen && images.length > 0 && (
+        <div
+          className="fixed inset-0 z-50 bg-black/90 flex items-center justify-center"
+          onClick={() => setLightboxOpen(false)}
+        >
+          <button
+            onClick={() => setLightboxOpen(false)}
+            className="absolute top-4 right-4 text-white hover:text-gray-300 z-50"
+          >
+            <X className="size-8" />
+          </button>
+          <button
+            onClick={(e) => { e.stopPropagation(); prevImage(); }}
+            className="absolute left-4 top-1/2 -translate-y-1/2 bg-white/20 hover:bg-white/40 p-3 rounded-full text-white z-50"
+          >
+            <ChevronLeft className="size-8" />
+          </button>
+          <img
+            src={images[currentIndex]}
+            alt={`${property.title} - Image ${currentIndex + 1}`}
+            className="max-h-[85vh] max-w-[90vw] object-contain"
+            onClick={(e) => e.stopPropagation()}
+          />
+          <button
+            onClick={(e) => { e.stopPropagation(); nextImage(); }}
+            className="absolute right-4 top-1/2 -translate-y-1/2 bg-white/20 hover:bg-white/40 p-3 rounded-full text-white z-50"
+          >
+            <ChevronRight className="size-8" />
+          </button>
+          <div className="absolute bottom-6 left-1/2 -translate-x-1/2 text-white text-sm bg-black/50 px-4 py-2 rounded-full">
+            {currentIndex + 1} / {images.length}
+          </div>
+          {/* Thumbnail strip */}
+          <div className="absolute bottom-16 left-1/2 -translate-x-1/2 flex gap-2 max-w-[90vw] overflow-x-auto px-4">
+            {images.map((img, idx) => (
+              <img
+                key={idx}
+                src={img}
+                alt=""
+                onClick={(e) => { e.stopPropagation(); setCurrentIndex(idx); }}
+                className={`w-16 h-12 object-cover rounded cursor-pointer border-2 transition-all ${
+                  idx === currentIndex ? 'border-white opacity-100' : 'border-transparent opacity-60 hover:opacity-80'
+                }`}
+              />
+            ))}
+          </div>
+        </div>
+      )}
     </div>
   );
 };

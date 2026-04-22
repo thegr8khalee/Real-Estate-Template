@@ -12,6 +12,7 @@ export const usePropertyStore = create((set) => ({
   // State
   properties: [],
   property: null,
+  propertyDetails: null, // Full envelope: { property, relatedProperties, reviews, averageRatings }
   isLoading: false,
   error: null,
   searchResults: [],
@@ -75,7 +76,9 @@ export const usePropertyStore = create((set) => ({
         }
       });
 
-      const url = `/properties/search?${searchParams.toString()}`;
+      // Use get-all so the full filter set (price, type, beds, status, etc.) is honored.
+      // The dedicated /search endpoint only supports the `query` param.
+      const url = `/properties/get-all?${searchParams.toString()}`;
       const cacheConfig = buildCacheConfig(url);
       const hasCachedData = hasCachedResponse(cacheConfig, cacheOptions);
 
@@ -88,9 +91,10 @@ export const usePropertyStore = create((set) => ({
       const data = response.data;
 
       if (response.status === 200) {
+        const results = data.properties ?? data.data ?? [];
         set({
-          searchResults: data.data,
-          properties: data.data, // Update both for compatibility
+          searchResults: results,
+          properties: results, // Update both for compatibility
           isSearching: false,
         });
       } else {
@@ -113,26 +117,61 @@ export const usePropertyStore = create((set) => ({
   },
 
   /**
-   * Fetches a single property by its ID.
-   * @param {string} id - The ID of the property to retrieve.
+   * Clears any cached search results so the next listings view shows the full property list.
    */
-  getProperty: async (id, options = {}) => {
-    const cacheConfig = buildCacheConfig(`properties/get-one/${id}`);
+  clearSearchResults: () => set({ searchResults: [] }),
+
+  /**
+   * Fetches a property plus its related properties, reviews, and average ratings.
+   * Stores the full envelope under `propertyDetails` for the property details page.
+   */
+  getPropertyById: async (id, options = {}) => {
+    const cacheConfig = buildCacheConfig(`properties/get/${id}`);
     const cacheOptions = buildAxiosCacheOptions(options);
     const hasCachedData = hasCachedResponse(cacheConfig, cacheOptions);
 
     set({ isLoading: !hasCachedData, error: null });
     try {
       const res = await axiosInstance.get(
-        `properties/get-one/${id}`,
+        `properties/get/${id}`,
+        createAxiosRequestConfig(cacheOptions)
+      );
+      set({ propertyDetails: res.data });
+      return res.data;
+    } catch (error) {
+      const errorMessage =
+        error.response?.data?.message || 'Failed to retrieve property details.';
+      toast.error(errorMessage);
+      set({ error: errorMessage, propertyDetails: null });
+      return null;
+    } finally {
+      set({ isLoading: false });
+    }
+  },
+
+  /**
+   * Fetches a single property by its ID (bare property only — used by edit forms).
+   * @param {string} id - The ID of the property to retrieve.
+   */
+  getProperty: async (id, options = {}) => {
+    const cacheConfig = buildCacheConfig(`properties/get/${id}`);
+    const cacheOptions = buildAxiosCacheOptions(options);
+    const hasCachedData = hasCachedResponse(cacheConfig, cacheOptions);
+
+    set({ isLoading: !hasCachedData, error: null });
+    try {
+      const res = await axiosInstance.get(
+        `properties/get/${id}`,
         createAxiosRequestConfig(cacheOptions)
       );
       set({ property: res.data.property });
+      return res.data;
     } catch (error) {
       const errorMessage =
         error.response?.data?.message || 'Failed to retrieve property details.';
       toast.error(errorMessage);
       set({ error: errorMessage });
+      return null;
     } finally {
       set({ isLoading: false });
     }

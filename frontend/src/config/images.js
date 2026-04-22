@@ -1,55 +1,38 @@
 const IMAGE_BASE_PATH = '/images';
 
-export const Hero = `${IMAGE_BASE_PATH}/Hero.webp`;
-export const Herolg = `${IMAGE_BASE_PATH}/Hero.webp`;
-export const Heromobile = `${IMAGE_BASE_PATH}/HeroMobile.png`;
-export const HeroMobile = `${IMAGE_BASE_PATH}/HeroMobile.png`;
-export const suv = `${IMAGE_BASE_PATH}/suv.png`;
-export const sedan = `${IMAGE_BASE_PATH}/sedan.png`;
-export const pickup = `${IMAGE_BASE_PATH}/pickup.png`;
-export const sport = `${IMAGE_BASE_PATH}/sport.png`;
-export const coupe = `${IMAGE_BASE_PATH}/coupe.png`;
-export const convertible = `${IMAGE_BASE_PATH}/convertible.png`;
-export const gas = `${IMAGE_BASE_PATH}/gas.png`;
-export const benz = `${IMAGE_BASE_PATH}/benz.png`;
-export const bmw = `${IMAGE_BASE_PATH}/bmw.png`;
-export const audi = `${IMAGE_BASE_PATH}/audi.png`;
-export const toyota = `${IMAGE_BASE_PATH}/toyota.png`;
-export const honda = `${IMAGE_BASE_PATH}/honda.png`;
-export const mercedes = `${IMAGE_BASE_PATH}/mercedes.png`;
-export const sell = `${IMAGE_BASE_PATH}/sell.jpg`;
-export const mileage = `${IMAGE_BASE_PATH}/mileage.png`;
-export const transmission = `${IMAGE_BASE_PATH}/transmission.png`;
+// Hero images
+export const Hero = 'https://images.unsplash.com/photo-1600596542815-ffad4c1539a9?w=1920&q=80';
+export const HeroMobile = 'https://images.unsplash.com/photo-1600585154340-be6161a56a0c?w=800&q=80';
+export const heroSlides = [
+  'https://images.unsplash.com/photo-1600596542815-ffad4c1539a9?w=1920&q=80',
+  'https://images.unsplash.com/photo-1600585154340-be6161a56a0c?w=1920&q=80',
+  'https://images.unsplash.com/photo-1613490493576-7fde63acd811?w=1920&q=80',
+];
+
+// Property type images
+export const house = 'https://images.unsplash.com/photo-1568605114967-8130f3a36994?w=400&q=80';
+export const apartment = 'https://images.unsplash.com/photo-1545324418-cc1a3fa10c00?w=400&q=80';
+export const villa = 'https://images.unsplash.com/photo-1613490493576-7fde63acd811?w=400&q=80';
+export const commercial = 'https://images.unsplash.com/photo-1486406146926-c627a92ad1ab?w=400&q=80';
+export const condo = 'https://images.unsplash.com/photo-1574362848149-11496d93a7c7?w=400&q=80';
+export const land = 'https://images.unsplash.com/photo-1500382017468-9049fed747ef?w=400&q=80';
+
+// Property showcase / placeholder images
+export const propertyShowcase = 'https://images.unsplash.com/photo-1600607687939-ce8a6c25118c?w=800&q=80';
+export const propertyBanner = 'https://images.unsplash.com/photo-1600566753190-17f0baa2a6c3?w=1200&q=80';
+export const propertyPlaceholder = 'https://images.unsplash.com/photo-1600566753190-17f0baa2a6c3?w=800&q=80';
+
+// General icons & images
+export const sell = 'https://images.unsplash.com/photo-1560518883-ce09059eeffa?w=800&q=80';
+export const calc = 'https://images.unsplash.com/photo-1600607687939-ce8a6c25118c?w=1920&q=80';
+export const ctaBg = 'https://images.unsplash.com/photo-1512917774080-9991f1c4c750?w=1920&q=80';
 export const date = `${IMAGE_BASE_PATH}/date.png`;
 export const price = `${IMAGE_BASE_PATH}/price.png`;
 export const discount = `${IMAGE_BASE_PATH}/discount.png`;
 export const service = `${IMAGE_BASE_PATH}/service.png`;
 export const trusted = `${IMAGE_BASE_PATH}/trusted.png`;
 export const ceo = `${IMAGE_BASE_PATH}/ceo.jpg`;
-export const calc = `${IMAGE_BASE_PATH}/calc.jpg`;
-export const engine = `${IMAGE_BASE_PATH}/engine.png`;
-export const electric = `${IMAGE_BASE_PATH}/electric.png`;
-export const hybrid = `${IMAGE_BASE_PATH}/hybrid.png`;
 export const logo = `${IMAGE_BASE_PATH}/logo.png`;
-export const m4 = `${IMAGE_BASE_PATH}/m4.jpg`;
-export const BMWM4 = `${IMAGE_BASE_PATH}/BMWM4.png`;
-export const bmwm4 = `${IMAGE_BASE_PATH}/BMWM4.png`;
-export const door = `${IMAGE_BASE_PATH}/door.png`;
-export const cylinder = `${IMAGE_BASE_PATH}/cylinder.png`;
 export const whatsapp = `${IMAGE_BASE_PATH}/whatsapp.png`;
-export const engineIcon = engine;
-export const HeroLg = Herolg;
-export const benz1 = `${IMAGE_BASE_PATH}/benz.webp`;
-export const bmw1 = `${IMAGE_BASE_PATH}/bmw.webp`;
-export const toyota1 = `${IMAGE_BASE_PATH}/toyota.webp`;
-export const honda1 = `${IMAGE_BASE_PATH}/honda.webp`;
-export const audi1 = `${IMAGE_BASE_PATH}/audi.webp`;
-export const suv1 = `${IMAGE_BASE_PATH}/suv.jpg`;
-export const sport1 = `${IMAGE_BASE_PATH}/sport.jpg`;
-export const luxury = `${IMAGE_BASE_PATH}/luxury.webp`;
-export const comfort = `${IMAGE_BASE_PATH}/comfort.webp`;
-export const ev = `${IMAGE_BASE_PATH}/ev.webp`;
-export const budget = `${IMAGE_BASE_PATH}/budget.webp`;
-export const pickup1 = `${IMAGE_BASE_PATH}/pickup.webp`;
 
 export const imagePath = (fileName = '') => `${IMAGE_BASE_PATH}/${fileName}`;

@@ -26,7 +26,7 @@ const setupDatabase = async () => {
     console.log('\n✅ Database setup completed successfully!');
     console.log('\n📊 Database Statistics:');
     console.log(`- Models created: ${Object.keys(models).length - 1}`); // -1 for sequelize instance
-    console.log('- Tables: Users, Admins, Cars, Blogs, Comments, Likes, Newsletters, BlogCars');
+    console.log('- Tables: Users, Admins, Properties, Blogs, Comments, Likes, Newsletters, BlogProperties');
     console.log('- Associations: All relationships configured');
     console.log('- Indexes: Optimized for performance');
     console.log('- Constraints: Foreign keys and validations in place\n');

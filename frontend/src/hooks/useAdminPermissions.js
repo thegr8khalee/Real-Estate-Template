@@ -46,11 +46,11 @@ export const useAdminPermissions = () => {
       // User management
       canManageUsers: isSuperAdmin,
       
-      // Car management
-      canManageCars: isSuperAdmin || isEditor,
-      canDeleteCars: isSuperAdmin,
-      canEditCarPrices: isSuperAdmin || isEditor,
-      canMarkCarsSold: isSuperAdmin || isEditor,
+      // Property management
+      canManageProperties: isSuperAdmin || isEditor,
+      canDeleteProperties: isSuperAdmin,
+      canEditPropertyPrices: isSuperAdmin || isEditor,
+      canMarkPropertiesSold: isSuperAdmin || isEditor,
       
       // Blog management
       canManageBlogs: isSuperAdmin || isEditor,
@@ -92,13 +92,13 @@ export const useAdminPermissions = () => {
           'manage_users': isSuperAdmin,
           'ban_users': isSuperAdmin,
           
-          // Car management
-          'create_car': isSuperAdmin || isEditor,
-          'edit_car': isSuperAdmin || isEditor,
-          'delete_car': isSuperAdmin,
-          'edit_car_price': isSuperAdmin || isEditor,
-          'mark_car_sold': isSuperAdmin || isEditor,
-          'view_car_stats': isSuperAdmin || isEditor,
+          // Property management
+          'create_property': isSuperAdmin || isEditor,
+          'edit_property': isSuperAdmin || isEditor,
+          'delete_property': isSuperAdmin,
+          'edit_property_price': isSuperAdmin || isEditor,
+          'mark_property_sold': isSuperAdmin || isEditor,
+          'view_property_stats': isSuperAdmin || isEditor,
           
           // Blog management
           'create_blog': isSuperAdmin || isEditor,
@@ -138,7 +138,7 @@ export const useAdminPermissions = () => {
         const sections = ['overview', 'moderation', 'activity'];
         
         if (isSuperAdmin || isEditor) {
-          sections.push('cars', 'blogs', 'analytics');
+          sections.push('properties', 'blogs', 'analytics');
         }
         
         if (isSuperAdmin) {

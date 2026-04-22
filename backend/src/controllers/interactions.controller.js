@@ -279,12 +279,14 @@ export const getAllReviews = async (req, res) => {
       raw: true, // Returns a plain data object
     });
 
-    // Handle case where no reviews are found
+    // No reviews is a valid 200 — return empty list rather than 404
     if (reviews.length === 0) {
-      return res.status(404).json({
+      return res.status(200).json({
         message: 'No reviews found.',
         totalItems: 0,
-        averageOverallRating: 0,
+        totalPages: 0,
+        currentPage: parseInt(page, 10),
+        averageRatings: 0,
         reviews: [],
       });
     }
