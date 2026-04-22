@@ -1,1 +1,1 @@
-This is a real estate template
+This is a real estate template.
